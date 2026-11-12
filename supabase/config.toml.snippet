@@ -1,0 +1,9 @@
+# Add to supabase/config.toml
+[functions.payment-webhook]
+verify_jwt = false   # providers call this directly; we verify their signature instead
+
+[functions.payment-verify]
+verify_jwt = false   # called from the order-confirmation page; reference is unguessable and response is minimal
+
+[functions.payment-initiate]
+verify_jwt = false   # we authenticate ourselves so guest checkout works (user JWT or order access_token)

@@ -1,0 +1,124 @@
+-- EBONIMODE: payment finalisation (run after 0001_ebonimode_schema.sql)
+
+alter table public.orders
+  add column if not exists access_token uuid not null default gen_random_uuid(), -- lets guests pay for / view their own order
+  add column if not exists needs_attention boolean not null default false,       -- admin must review (stock, amount, gift card)
+  add column if not exists attention_reason text,
+  add column if not exists last_payment_status text;
+
+-- Settles a verified payment atomically. Called ONLY by Edge Functions using the service role.
+-- Idempotent: a second call for an order that is no longer 'pending' changes nothing.
+create or replace function public.finalize_order_payment(
+  p_reference  text,
+  p_provider   text,
+  p_paid_minor bigint,   -- amount the provider says was paid, in minor units (kobo/cents)
+  p_currency   text
+) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare
+  o public.orders%rowtype;
+  it record;
+  gc public.gift_cards%rowtype;
+  expected_minor bigint;
+  reasons text[] := '{}';
+  v_stock int;
+begin
+  select * into o from public.orders where payment_reference = p_reference for update;
+  if not found then
+    return jsonb_build_object('result', 'order_not_found');
+  end if;
+
+  if o.status <> 'pending' then
+    return jsonb_build_object('result', 'already_processed', 'order_id', o.id, 'status', o.status);
+  end if;
+
+  -- Amount due = order total minus any gift card portion, in the currency charged
+  expected_minor := round((o.total_ngn - o.gift_card_ngn) * o.exchange_rate * 100);
+
+  if upper(p_currency) <> upper(o.currency) or p_paid_minor < expected_minor then
+    update public.orders set
+      needs_attention = true,
+      attention_reason = format('payment mismatch: paid %s %s, expected %s %s', p_paid_minor, p_currency, expected_minor, o.currency),
+      last_payment_status = 'mismatch'
+    where id = o.id;
+    return jsonb_build_object('result', 'amount_mismatch', 'order_id', o.id);
+  end if;
+
+  if p_paid_minor > expected_minor then
+    reasons := reasons || format('overpaid by %s minor units', p_paid_minor - expected_minor);
+  end if;
+
+  -- Decrement stock (oversell is flagged, never silently ignored). The 0003 trigger logs these as 'sale' movements.
+  perform set_config('app.stock_reason', 'sale', true);
+  perform set_config('app.stock_order_id', o.id::text, true);
+  for it in select * from public.order_items where order_id = o.id and variant_id is not null loop
+    select stock into v_stock from public.product_variants where id = it.variant_id for update;
+    if v_stock is null then
+      reasons := reasons || format('variant missing for %s', it.product_name);
+    elsif v_stock < it.quantity then
+      reasons := reasons || format('insufficient stock for %s (%s/%s)', it.product_name, v_stock, it.quantity);
+      update public.product_variants set stock = 0 where id = it.variant_id;
+    else
+      update public.product_variants set stock = stock - it.quantity where id = it.variant_id;
+    end if;
+  end loop;
+
+  -- Redeem gift card
+  if o.gift_card_id is not null and o.gift_card_ngn > 0 then
+    select * into gc from public.gift_cards where id = o.gift_card_id for update;
+    if found and gc.is_active and gc.balance_ngn >= o.gift_card_ngn then
+      update public.gift_cards set balance_ngn = balance_ngn - o.gift_card_ngn where id = gc.id;
+      insert into public.gift_card_transactions (gift_card_id, order_id, amount_ngn, note)
+      values (gc.id, o.id, -o.gift_card_ngn, 'Redeemed at checkout');
+    else
+      reasons := reasons || 'gift card balance insufficient at settlement';
+    end if;
+  end if;
+
+  -- Count promo usage
+  if o.promo_code_id is not null then
+    update public.promo_codes set times_used = times_used + 1 where id = o.promo_code_id;
+  end if;
+
+  update public.orders set
+    status = 'paid',
+    paid_at = now(),
+    payment_provider = p_provider,
+    last_payment_status = 'success',
+    needs_attention = coalesce(array_length(reasons, 1), 0) > 0,
+    attention_reason = nullif(array_to_string(reasons, '; '), '')
+  where id = o.id;
+
+  return jsonb_build_object(
+    'result', 'paid',
+    'order_id', o.id,
+    'order_number', o.order_number,
+    'needs_attention', coalesce(array_length(reasons, 1), 0) > 0
+  );
+end $$;
+
+revoke all on function public.finalize_order_payment(text, text, bigint, text) from public, anon, authenticated;
+grant execute on function public.finalize_order_payment(text, text, bigint, text) to service_role;
+
+-- Records a failed/abandoned attempt without changing the order status
+create or replace function public.record_payment_attempt(p_reference text, p_status text)
+returns void language sql security definer set search_path = public as $$
+  update public.orders set last_payment_status = p_status
+  where payment_reference = p_reference and status = 'pending';
+$$;
+revoke all on function public.record_payment_attempt(text, text) from public, anon, authenticated;
+grant execute on function public.record_payment_attempt(text, text) to service_role;
+
+-- Pending orders hold no stock; cancel stale ones so the admin list stays clean.
+-- Schedule with pg_cron (e.g. hourly) or call from a scheduled Edge Function.
+create or replace function public.cancel_stale_pending_orders(p_hours int default 24)
+returns int language plpgsql security definer set search_path = public as $$
+declare n int;
+begin
+  update public.orders set status = 'cancelled', notes = coalesce(notes || E'\n', '') || 'Auto-cancelled: unpaid'
+  where status = 'pending' and created_at < now() - make_interval(hours => p_hours);
+  get diagnostics n = row_count;
+  return n;
+end $$;
+revoke all on function public.cancel_stale_pending_orders(int) from public, anon, authenticated;
+grant execute on function public.cancel_stale_pending_orders(int) to service_role;

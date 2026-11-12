@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ebonímode
 
-## Getting Started
+Afrocentric modest fashion for women and men. A luxury storefront built with Next.js 16 (App Router), TypeScript, Tailwind CSS 4, Supabase and Cloudinary.
 
-First, run the development server:
+The project brief lives in [CLAUDE.md](CLAUDE.md). Build phases are in its section 11.
 
+## Requirements
+- Node.js 20.9 or newer (developed on 22 LTS)
+- A Supabase project and the Supabase CLI (from Phase 1)
+- A Cloudinary account
+
+## Getting started
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local   # fill in values
+npm install
+npm run dev                  # http://localhost:3000
+npm run lint
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project layout
+```
+src/app/               routes (App Router)
+src/components/brand/  PrintName (the batik-filled wordmark), StrataDivider
+src/components/layout/ AnnouncementBar, SiteHeader, MobileTabBar, SiteFooter, CurrencySwitcher
+src/lib/               site copy and nav, motion tokens, Cloudinary helpers
+src/app/globals.css    design tokens (colour, type, motion) as CSS variables + Tailwind theme
+public/prints/         batik fills for the wordmark (PLACEHOLDER tiles for now)
+assets/                source brand assets (logo, prints, cut-outs, sample photos)
+supabase/              migrations and payment Edge Functions
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Design tokens
+All colours, fonts and easings are defined once in `src/app/globals.css` under `@theme`, so Tailwind classes like `bg-ivory`, `text-emerald`, `font-display` and `ease-entrance` work everywhere. Do not hardcode hex values in components.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Fonts (via `next/font`, self-hosted at build): Abril Fatface (display), Cormorant Garamond Italic (editorial), Archivo (UI and body).
 
-## Learn More
+### The print-filled name
+`<PrintName print="a|b|c" />` renders EBONÍMODE filled with a batik texture through `background-clip: text`. The `print` keys match `hero_slides.print_key`. The textures are set in `globals.css` as `--print-a`, `--print-b` and `--print-c`. To swap in the real prints, upload them to Cloudinary (or put them in `public/prints/`) and point those variables at them. If a texture fails to load, the letters fall back to solid ink.
 
-To learn more about Next.js, take a look at the following resources:
+## Supabase
+Migrations are in `supabase/migrations/`. Apply them in order:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| File | Purpose |
+|---|---|
+| 0001_ebonimode_schema.sql | core catalogue, orders, users, RLS |
+| 0002_payments.sql | payment columns, `finalize_order_payment()` |
+| 0003_inventory.sql | inventory ledger, suppliers, purchase orders |
+| 0004_looks.sql | Shop the Look lookbooks and hotspots |
+| 0005_currencies.sql | multi-currency display and charge |
+| 0006_hero_slides.sql | admin-editable hero slides (renamed from a second `0005_` file so versions stay unique) |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Payment Edge Functions and their setup notes are in `supabase/functions/` and [supabase/PAYMENTS_README.md](supabase/PAYMENTS_README.md).
 
-## Deploy on Vercel
+## Cloudinary
+Store each asset's `public_id` in the database. Deliver with `f_auto,q_auto` through `cldImage()` / `cldVideo()` in `src/lib/cloudinary.ts`, or pass `loader={cloudinaryLoader}` to `next/image`. The API secret stays server-side.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Environment variables
+See [.env.example](.env.example). `NEXT_PUBLIC_*` values reach the browser, so never put secrets in them.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+To be documented in Phase 9 (Vercel is recommended for Next.js 16).

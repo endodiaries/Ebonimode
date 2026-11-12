@@ -1,0 +1,8 @@
+<!-- PLACEHOLDER batik tile (green/cocoa). Replace with a real print from assets/prints. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+  <rect width="160" height="160" fill="#1D3714"/>
+  <path d="M0 40c20-14 40 14 60 0s40-14 60 0 40 14 40 0M0 120c20-14 40 14 60 0s40-14 60 0 40 14 40 0" fill="none" stroke="#648B53" stroke-width="7"/>
+  <g fill="#F2C21B"><circle cx="40" cy="80" r="13"/><circle cx="120" cy="80" r="13"/><circle cx="0" cy="0" r="9"/><circle cx="160" cy="0" r="9"/><circle cx="0" cy="160" r="9"/><circle cx="160" cy="160" r="9"/><circle cx="80" cy="0" r="9"/><circle cx="80" cy="160" r="9"/></g>
+  <g fill="#782503"><circle cx="40" cy="80" r="5"/><circle cx="120" cy="80" r="5"/></g>
+  <g fill="#EE8720"><circle cx="80" cy="80" r="4"/><circle cx="0" cy="80" r="4"/><circle cx="160" cy="80" r="4"/></g>
+</svg>

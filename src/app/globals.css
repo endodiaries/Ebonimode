@@ -1,26 +1,190 @@
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────────────────────────
+   EBONÍMODE design tokens. The single source of truth for colour,
+   type and motion. Components use these via Tailwind utilities
+   (bg-ivory, text-ink, font-display, ease-entrance …) or var(--…).
+   Never hardcode hex values in components.
+   ────────────────────────────────────────────────────────────── */
+
+@theme {
+  /* Chrome */
+  --color-ivory: #faf6ef;
+  --color-sand: #efe6d8;
+  --color-ink: #1a1718;
+  --color-white: #ffffff;
+
+  /* Brand */
+  --color-emerald: #0b6b4f;
+  --color-emerald-deep: #064734;
+  --color-burnt-orange: #c2571a;
+  --color-gold: #b8923a; /* hairlines only */
+
+  /* Colour-story palette (logo strata + fabrics) */
+  --color-forest: #1d3714;
+  --color-sage: #648b53;
+  --color-aubergine: #591d2e;
+  --color-crimson: #8e161f;
+  --color-vermilion: #c23302;
+  --color-tangerine: #ee8720;
+  --color-marigold: #f2c21b;
+  --color-chestnut: #782503;
+  --color-indigo: #243b8f;
+  --color-cobalt: #2f6fd0;
+  --color-blush: #e9808f;
+
+  /* Ink tints for secondary text (AA on ivory and sand) */
+  --color-ink-soft: #4a4446;
+
+  /* Typography (variables injected by next/font in layout.tsx) */
+  --font-display: var(--font-abril), "Didot", "Bodoni 72", Georgia, serif;
+  --font-editorial: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-archivo), "Helvetica Neue", Arial, sans-serif;
+
+  /* Motion easing */
+  --ease-entrance: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Square corners everywhere */
+  --radius-none: 0;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Motion durations (mirrored in src/lib/motion.ts) */
+  --dur-micro: 150ms;
+  --dur-ui: 250ms;
+  --dur-section: 400ms;
+  --dur-hero: 1100ms;
+
+  /* Layout */
+  --announcement-h: 2.25rem;
+  --header-h: 4rem;
+  --tabbar-h: 3.75rem;
+  --gutter: clamp(1rem, 4vw, 3rem);
+
+  /* Batik print fills for the brand name, keyed like hero_slides.print_key.
+     PLACEHOLDER textures until the real prints from assets/prints are added. */
+  --print-a: url("/prints/placeholder-print-a.svg");
+  --print-b: url("/prints/placeholder-print-b.svg");
+  --print-c: url("/prints/placeholder-print-c.svg");
+
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@media (min-width: 768px) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --header-h: 5rem;
   }
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 1rem);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-ivory);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Visible, on-brand focus for keyboard users */
+:focus-visible {
+  outline: 2px solid var(--color-emerald);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--color-marigold);
+  color: var(--color-ink);
+}
+
+@layer components {
+  /* Small uppercase UI label: nav, buttons, eyebrows */
+  .label {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  /* Underlined text link: the default action style outside the hero */
+  .text-link {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.35em;
+    transition: text-decoration-color var(--dur-ui) var(--ease-entrance),
+      color var(--dur-ui) var(--ease-entrance);
+  }
+  .text-link:hover {
+    color: var(--color-emerald);
+  }
+
+  /* ── Signature: the brand name filled with batik print ──
+     The print layer sits over a solid ink layer, so if the image is slow
+     or missing the letters render solid ink instead of disappearing. */
+  .print-name {
+    --print: var(--print-a);
+    --print-stroke: 1.5px;
+    --print-size: 22rem;
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 0.9;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    color: var(--color-ink); /* fallback when background-clip:text is unsupported */
+  }
+  .print-name[data-print="b"] {
+    --print: var(--print-b);
+  }
+  .print-name[data-print="c"] {
+    --print: var(--print-c);
+  }
+
+  @supports ((background-clip: text) or (-webkit-background-clip: text)) {
+    .print-name {
+      background-image: var(--print), linear-gradient(var(--color-ink), var(--color-ink));
+      background-size: var(--print-size) auto, cover;
+      background-repeat: repeat, no-repeat;
+      background-position: 0 50%, 0 0;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      -webkit-text-stroke: var(--print-stroke) var(--color-ink);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .print-name {
+      --print-stroke: 2px;
+    }
+  }
+}
+
+@layer utilities {
+  .gutter {
+    padding-inline: var(--gutter);
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
