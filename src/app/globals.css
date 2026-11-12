@@ -126,6 +126,63 @@ body {
     color: var(--color-emerald);
   }
 
+  /* Functional buttons (forms, Add to Bag). Square, flat, no shadow.
+     Marketing calls to action on the homepage live only in the hero. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0.5rem 1.75rem;
+    border: 1px solid var(--color-emerald);
+    background: var(--color-emerald);
+    color: var(--color-ivory);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background-color var(--dur-ui) var(--ease-entrance),
+      border-color var(--dur-ui) var(--ease-entrance), color var(--dur-ui) var(--ease-entrance);
+  }
+  .btn:hover {
+    background: var(--color-emerald-deep);
+    border-color: var(--color-emerald-deep);
+  }
+  .btn:disabled {
+    cursor: progress;
+    opacity: 0.6;
+  }
+  .btn-outline {
+    background: transparent;
+    border-color: var(--color-ink);
+    color: var(--color-ink);
+  }
+  .btn-outline:hover {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-ivory);
+  }
+
+  /* Text inputs: square, 1px rule, 16px text so iOS does not zoom */
+  .field {
+    display: block;
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.5rem 0.875rem;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 35%, transparent);
+    background: var(--color-white);
+    color: var(--color-ink);
+    font-size: 1rem;
+    border-radius: 0;
+    transition: border-color var(--dur-ui) var(--ease-entrance);
+  }
+  .field:hover,
+  .field:focus {
+    border-color: var(--color-emerald);
+  }
+
   /* ── Signature: the brand name filled with batik print ──
      The print layer sits over a solid ink layer, so if the image is slow
      or missing the letters render solid ink instead of disappearing. */
