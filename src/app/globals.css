@@ -245,3 +245,296 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ──────────────────────────────────────────────────────────────
+   HERO SLIDESHOW (section 2.4). Only transform and opacity animate,
+   plus the slow print drift inside the lettering.
+   ────────────────────────────────────────────────────────────── */
+.hero {
+  --hero-fg: var(--color-ink);
+  --hero-bg: var(--color-ivory);
+  position: relative;
+  overflow: hidden;
+  height: clamp(34rem, 52.8vw, 47.5rem); /* 1440 x 760 on desktop */
+  color: var(--hero-fg);
+  background: var(--color-sand);
+  isolation: isolate;
+}
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.hero-slide[data-state="prev"] {
+  z-index: 1;
+}
+.hero-slide[data-state="active"] {
+  z-index: 2;
+}
+
+/* Colour field + giant name crossfade together */
+.hero-backdrop {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+}
+.hero-slide[data-state="active"] .hero-backdrop {
+  opacity: 1;
+  transition: opacity var(--dur-hero) var(--ease-entrance);
+}
+.hero-slide[data-state="prev"] .hero-backdrop {
+  opacity: 1;
+}
+.hero-print {
+  --print-size: clamp(11rem, 30vw, 26rem);
+  --print-stroke: 2px;
+  font-size: 30vw;
+  line-height: 0.86;
+  text-align: center;
+  padding-bottom: 12%;
+}
+.hero-print > span {
+  display: block;
+}
+@media (min-width: 640px) {
+  .hero-print {
+    --print-stroke: 3px;
+    font-size: 15.2vw;
+    padding-bottom: 0;
+  }
+  .hero-print > span {
+    display: inline;
+  }
+}
+.hero-slide[data-state="active"] .hero-print {
+  animation: print-drift 80s linear infinite;
+}
+@keyframes print-drift {
+  to {
+    background-position: var(--print-size) 50%, 0 0;
+  }
+}
+
+/* Cut-out model: in from the right, out to the left */
+.hero-model {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: min(78vw, 30rem);
+  height: 90%;
+  margin-left: calc(min(78vw, 30rem) / -2);
+  opacity: 0;
+  transform: translate3d(40px, 0, 0);
+}
+.hero-slide[data-state="active"] .hero-model {
+  opacity: 1;
+  transform: none;
+  transition: transform var(--dur-hero) var(--ease-entrance), opacity var(--dur-hero) var(--ease-entrance);
+}
+.hero-slide[data-state="prev"] .hero-model {
+  opacity: 0;
+  transform: translate3d(-40px, 0, 0);
+  transition: transform var(--dur-hero) var(--ease-entrance), opacity 700ms var(--ease-entrance);
+}
+.hero-shadow {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -0.5rem;
+  height: 2.25rem;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--color-ink) 28%, transparent), transparent);
+  z-index: -1;
+}
+
+/* Tagline lines stagger in 80ms apart; the note follows */
+.hero-line {
+  display: block;
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+}
+.hero-slide[data-state="active"] .hero-line {
+  opacity: 1;
+  transform: none;
+  transition: transform 700ms var(--ease-entrance), opacity 700ms var(--ease-entrance);
+  transition-delay: calc(300ms + var(--i, 0) * 80ms);
+}
+.hero-slide[data-state="prev"] .hero-line {
+  transition: opacity var(--dur-ui) var(--ease-exit);
+}
+
+/* The only two marketing buttons on the homepage */
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.5rem 1.5rem;
+  border: 1px solid var(--hero-fg);
+  background: var(--hero-bg); /* stays readable where the model passes behind */
+  color: var(--hero-fg);
+  transition: background-color var(--dur-ui) var(--ease-entrance), color var(--dur-ui) var(--ease-entrance);
+}
+.hero-btn-solid,
+.hero-btn:hover {
+  background: var(--hero-fg);
+  color: var(--hero-bg);
+}
+.hero-btn-solid:hover {
+  background: var(--hero-bg);
+  color: var(--hero-fg);
+}
+.hero :focus-visible {
+  outline-color: var(--hero-fg);
+}
+
+/* Thin progress lines (indicators, not calls to action) */
+.hero-progress-track {
+  display: block;
+  position: relative;
+  width: 2.5rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--hero-fg) 30%, transparent);
+  overflow: hidden;
+}
+.hero-progress-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--hero-fg);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+[aria-current="true"] > .hero-progress-track > .hero-progress-fill {
+  transform: scaleX(1);
+}
+[aria-current="true"] > .hero-progress-track > .hero-progress-fill[data-autoplay] {
+  animation: hero-progress 6500ms linear forwards;
+}
+@keyframes hero-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   MOTION SYSTEM (section 2.6)
+   ────────────────────────────────────────────────────────────── */
+
+/* Scroll reveal: fade up 24px, 60ms stagger, once. Only hides content when
+   scripting is on, so nothing is ever lost without JavaScript. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    transition: opacity var(--dur-section) var(--ease-entrance), transform 700ms var(--ease-entrance);
+    transition-delay: calc(var(--i, 0) * 60ms);
+  }
+  [data-reveal][data-revealed] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Skeleton shimmer in the logo's strata colours */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-sand);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    color-mix(in srgb, var(--color-marigold) 22%, transparent) 40%,
+    color-mix(in srgb, var(--color-tangerine) 18%, transparent) 50%,
+    color-mix(in srgb, var(--color-sage) 22%, transparent) 60%,
+    transparent 80%
+  );
+  transform: translate3d(-100%, 0, 0);
+  animation: shimmer 1.6s var(--ease-exit) infinite;
+}
+@keyframes shimmer {
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+/* Mega-menu panel */
+.mega {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, -8px, 0);
+  transition: opacity var(--dur-ui) var(--ease-entrance), transform var(--dur-ui) var(--ease-entrance),
+    visibility 0s linear var(--dur-ui);
+}
+.mega[data-open] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+
+/* Route change: soft crossfade with a 14px upward slide; the header stays put. */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(.page-out) {
+  animation: var(--dur-micro) var(--ease-exit) both vt-fade-out;
+}
+::view-transition-new(.page-in) {
+  animation: var(--dur-section) var(--ease-entrance) 100ms both vt-rise-in;
+}
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-rise-in {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Hero: no autoplay, no drift, no slide. A simple crossfade only. */
+  .hero-print,
+  .hero-progress-fill {
+    animation: none !important;
+  }
+  .hero-model,
+  .hero-line {
+    transform: none !important;
+  }
+  .hero-slide[data-state="active"] .hero-backdrop,
+  .hero-slide[data-state="active"] .hero-model,
+  .hero-slide[data-state="active"] .hero-line {
+    transition: opacity var(--dur-section) linear !important;
+    transition-delay: 0s !important;
+  }
+  .skeleton::after {
+    animation: none !important;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation: none !important;
+  }
+}

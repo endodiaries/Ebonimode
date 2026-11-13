@@ -73,3 +73,31 @@ export const CloseIcon = (p: IconProps) => (
     <path d="M5 5l14 14M19 5 5 19" />
   </Icon>
 );
+
+export const TruckIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M2 6h11v10H2zM13 9h4l4 4v3h-8z" />
+    <circle cx="6.5" cy="17.5" r="1.8" />
+    <circle cx="17" cy="17.5" r="1.8" />
+  </Icon>
+);
+
+export const ReturnIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M8 4 4 8l4 4" />
+    <path d="M4 8h10a6 6 0 0 1 0 12H7" />
+  </Icon>
+);
+
+export const QualityIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="9" r="6" />
+    <path d="m9.5 9 1.8 1.8L14.5 7.5M8.5 14 7 21l5-2.5 5 2.5-1.5-7" />
+  </Icon>
+);
+
+export const LockIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M5 10h14v11H5zM8 10V7a4 4 0 0 1 8 0v3M12 14v3" />
+  </Icon>
+);

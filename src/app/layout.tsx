@@ -4,6 +4,7 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { getMenuData } from "@/lib/data/home";
 import { BRAND_NAME, BRAND_STORY, siteUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -52,7 +53,8 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const menu = await getMenuData();
   return (
     <html lang="en-NG" className={`${abril.variable} ${cormorant.variable} ${archivo.variable}`}>
       <body className="flex min-h-dvh flex-col">
@@ -63,7 +65,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         <AnnouncementBar />
-        <SiteHeader />
+        <SiteHeader menu={menu} />
         <main id="main" className="flex-1">
           {children}
         </main>

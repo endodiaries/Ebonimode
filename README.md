@@ -30,6 +30,23 @@ assets/                source brand assets (logo, prints, cut-outs, sample photo
 supabase/              migrations and payment Edge Functions
 ```
 
+## Homepage and hero
+The homepage (`src/app/page.tsx`) follows section 2.5 of the brief. Its data comes from cached reads in `src/lib/data/home.ts`, so the page is served as static HTML and refreshes hourly.
+
+**Hero slides** live in the `hero_slides` table (colour field, print, tagline, colour-story name, model image). The model image field accepts three kinds of value:
+
+| Value | Meaning |
+|---|---|
+| `placeholder/...` | draws a stand-in silhouette (what the sample slides use) |
+| `/cutouts/indigo.webp` | a transparent cut-out saved in `public/cutouts/` |
+| anything else | a Cloudinary `public_id` (needs `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`) |
+
+**To use the real assets:** put the batik prints in `public/prints/` and point `--print-a`, `--print-b`, `--print-c` in `globals.css` at them; put cut-outs in `public/cutouts/` (or upload to Cloudinary) and update `hero_slides.model_public_id`.
+
+**Placeholders still on the homepage:** model silhouettes, product and journal colour fields, `[₦ PRICE]`, `[COLLECTION DESCRIPTION]`, review cards and the review count `[N]`, journal titles. Each disappears as real data is added.
+
+**Motion** (`globals.css`, bottom): hero transitions, scroll reveals (`data-reveal` plus `RevealObserver`), the `.skeleton` shimmer, the mega-menu, and route crossfades (`src/app/template.tsx`). All respect reduced motion.
+
 ## Design tokens
 All colours, fonts and easings are defined once in `src/app/globals.css` under `@theme`, so Tailwind classes like `bg-ivory`, `text-emerald`, `font-display` and `ease-entrance` work everywhere. Do not hardcode hex values in components.
 
@@ -50,6 +67,7 @@ Migrations are in `supabase/migrations/`. Apply them in order:
 | 0005_currencies.sql | multi-currency display and charge |
 | 0006_hero_slides.sql | admin-editable hero slides (renamed from a second `0005_` file so versions stay unique) |
 | 0007_hardening.sql | advisor fixes: pinned `search_path`, internal functions not callable over the API |
+| 0008_hero_slide_copy.sql | tagline and colour-story name on hero slides |
 
 Payment Edge Functions and their setup notes are in `supabase/functions/` and [supabase/PAYMENTS_README.md](supabase/PAYMENTS_README.md).
 

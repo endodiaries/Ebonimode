@@ -139,4 +139,17 @@ begin
                ('embroidered-kaftan-indigo', 68, 50, 2),
                ('batik-tote-bag-indigo', 48, 72, 3)) as h(slug, x, y, n)
   join public.products p on p.slug = h.slug;
+
+  -- Four sample hero slides (needs 0006 and 0008). Taglines are sample copy; edit them in admin.
+  -- Pairings follow the brief: green print on marigold or ivory, blue on sand, multicolour on sand.
+  insert into public.hero_slides (sort_order, bg_hex, print_key, model_public_id, collection_id, tagline, story_name)
+  select s.n, s.bg, s.print, 'placeholder/model-0' || s.n,
+         (select id from public.collections where slug = s.coll), s.tagline, s.story
+  from (values
+    (1, '#F2C21B', 'a', 'marigold',  'Culture, worn with care.',          'Marigold'),
+    (2, '#EFE6D8', 'b', 'indigo',    'Modest by design. Bold by nature.', 'Indigo'),
+    (3, '#FAF6EF', 'a', 'leaf',      'Made by hand. Made to last.',       'Leaf'),
+    (4, '#EFE6D8', 'c', 'aubergine', 'Heritage in every thread.',         'Aubergine')
+  ) as s(n, bg, print, coll, tagline, story)
+  where not exists (select 1 from public.hero_slides);
 end $$;
