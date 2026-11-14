@@ -7,6 +7,7 @@ import wordmark from "@/assets/ebonimode-wordmark.png";
 import { AccountIcon, BagIcon, CloseIcon, HeartIcon, MenuIcon, SearchIcon } from "@/components/icons";
 import { colourFamilyToken } from "@/lib/colour";
 import type { MenuData } from "@/lib/data/home";
+import { useBagCount } from "@/lib/bag";
 import { primaryNav, footerNav } from "@/lib/site";
 import { CurrencySwitcher } from "./CurrencySwitcher";
 
@@ -20,6 +21,7 @@ const iconBtn =
  * mega-menu with categories, colour swatches and a featured colour story.
  */
 export function SiteHeader({ menu }: { menu: MenuData }) {
+  const bagCount = useBagCount();
   const [hidden, setHidden] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -117,10 +119,10 @@ export function SiteHeader({ menu }: { menu: MenuData }) {
           <Link href="/account/wishlist" className={`${iconBtn} hidden md:flex`} aria-label="Wishlist">
             <HeartIcon />
           </Link>
-          <Link href="/cart" className={`${iconBtn} -mr-2.5 flex sm:mr-0`} aria-label="Bag, 0 items">
+          <Link href="/cart" className={`${iconBtn} -mr-2.5 flex sm:mr-0`} aria-label={`Bag, ${bagCount} ${bagCount === 1 ? "item" : "items"}`}>
             <BagIcon />
             <span className="label tabular-nums" aria-hidden="true">
-              0
+              {bagCount}
             </span>
           </Link>
           <div className="hidden lg:block">

@@ -200,6 +200,20 @@ export async function getBestOf(limit = 8): Promise<ProductCardData[]> {
   }
 }
 
+/** Every published product as a card, newest first. Shared by product and listing pages. */
+export async function getCatalogueCards(): Promise<ProductCardData[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("products");
+  try {
+    const all = await fetchProducts();
+    return all.map((p) => toCard(p, all));
+  } catch (e) {
+    console.error("getCatalogueCards failed", e);
+    return [];
+  }
+}
+
 export async function getDepartmentCounts(): Promise<{ women: number; men: number; total: number }> {
   "use cache";
   cacheLife("hours");
