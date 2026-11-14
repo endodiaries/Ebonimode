@@ -35,6 +35,12 @@ export type ProductCardData = {
   colourHex: string | null;
   image: { publicId: string; alt: string } | null;
   sizes: { size: string; stock: number }[];
+  category: { name: string; slug: string } | null;
+  colourFamily: string | null;
+  sleeve: string | null;
+  /** Slugs of the collections this piece belongs to. */
+  collections: string[];
+  createdAt: string;
   /** Same style in other colours (includes this one), for the swatches. */
   colourways: { slug: string; colour: string; hex: string | null }[];
 };
@@ -65,6 +71,9 @@ type ProductRow = {
   colour_family: string | null;
   colourway_group_id: string | null;
   created_at: string;
+  sleeve_length: string | null;
+  categories: { name: string; slug: string } | null;
+  product_collections: { collections: { slug: string } | null }[];
   product_variants: VariantRow[];
   product_images: { cloudinary_public_id: string; alt: string | null; sort_order: number }[];
 };
@@ -80,7 +89,8 @@ async function fetchProducts(): Promise<ProductRow[]> {
   const { data, error } = await createPublicClient()
     .from("products")
     .select(
-      "id,name,slug,department,price_ngn,tags,is_featured,colour_family,colourway_group_id,created_at," +
+      "id,name,slug,department,price_ngn,tags,is_featured,colour_family,colourway_group_id,created_at,sleeve_length," +
+        "categories(name,slug),product_collections(collections(slug))," +
         "product_variants(size,stock,colour,colour_hex),product_images(cloudinary_public_id,alt,sort_order)",
     )
     .eq("status", "published")
@@ -100,6 +110,11 @@ function toCard(p: ProductRow, all: ProductRow[]): ProductCardData {
     priceNgn: Number(p.price_ngn),
     tags: p.tags,
     colourHex: p.product_variants[0]?.colour_hex ?? null,
+    category: p.categories,
+    colourFamily: p.colour_family,
+    sleeve: p.sleeve_length,
+    collections: p.product_collections.flatMap((l) => (l.collections ? [l.collections.slug] : [])),
+    createdAt: p.created_at,
     image: image ? { publicId: image.cloudinary_public_id, alt: image.alt ?? p.name } : null,
     sizes: p.product_variants
       .filter((v): v is VariantRow & { size: string } => Boolean(v.size))

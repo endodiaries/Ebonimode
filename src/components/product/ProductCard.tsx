@@ -80,14 +80,17 @@ export function ProductCard({
   product,
   index = 0,
   showPrice = true,
+  reveal = true,
 }: {
   product: ProductCardData;
   index?: number;
   showPrice?: boolean;
+  /** Off in filtered lists, where cards change without a page load. */
+  reveal?: boolean;
 }) {
   const href = `/product/${product.slug}`;
   return (
-    <article className="group relative" data-reveal style={{ "--i": index % 4 } as React.CSSProperties}>
+    <article className="group relative" data-reveal={reveal ? "" : undefined} style={{ "--i": index % 4 } as React.CSSProperties}>
       <Link href={href} className="relative block aspect-[3/4] overflow-hidden bg-sand" tabIndex={-1} aria-hidden="true">
         <ProductMedia product={product} sizes="(min-width: 1024px) 25vw, 50vw" />
       </Link>

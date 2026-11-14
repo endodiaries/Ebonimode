@@ -13,6 +13,7 @@ import {
   TrustRow,
 } from "@/components/home/sections";
 import { RevealObserver } from "@/components/motion/RevealObserver";
+import { BRAND_NAME, BRAND_STORY, siteUrl } from "@/lib/site";
 import { getBestOf, getCollections, getFeaturedLook, getHeroSlides, getJournal, getReviews } from "@/lib/data/home";
 
 /**
@@ -33,6 +34,19 @@ export default async function HomePage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: BRAND_NAME,
+            url: siteUrl,
+            logo: `${siteUrl}/brand/ebonimode-logo.png`,
+            description: BRAND_STORY,
+          }).replace(/</g, "\\u003c"),
+        }}
+      />
       <h1 className="sr-only">Ebonímode: Afrocentric modest fashion for women and men</h1>
       <HeroSlideshow slides={slides} />
       <Departments />
