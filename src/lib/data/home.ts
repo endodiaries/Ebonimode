@@ -360,3 +360,28 @@ export async function getMenuData(): Promise<MenuData> {
     return { categories: [], colours: [], collections: [] };
   }
 }
+
+export type Currency = { code: string; symbol: string; decimals: number; ratePerNgn: number; roundingStep: number };
+const NGN: Currency = { code: "NGN", symbol: "₦", decimals: 0, ratePerNgn: 1, roundingStep: 1 };
+
+/** Currencies the admin has switched on for display. Naira is always first and always present. */
+export async function getDisplayCurrencies(): Promise<Currency[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("currencies");
+  try {
+    const { data, error } = await createPublicClient()
+      .from("currencies")
+      .select("code,symbol,decimals,rate_per_ngn,rounding_step")
+      .eq("display_enabled", true)
+      .order("sort_order");
+    if (error) throw error;
+    type Row = { code: string; symbol: string; decimals: number; rate_per_ngn: number; rounding_step: number };
+    const others = ((data ?? []) as Row[])
+      .filter((r) => r.code !== "NGN")
+      .map((r) => ({ code: r.code, symbol: r.symbol, decimals: r.decimals, ratePerNgn: Number(r.rate_per_ngn), roundingStep: Number(r.rounding_step) }));
+    return [NGN, ...others];
+  } catch {
+    return [NGN];
+  }
+}

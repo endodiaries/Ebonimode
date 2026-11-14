@@ -67,6 +67,21 @@ export function addToBag(line: Omit<BagLine, "qty">, max: number): boolean {
   return true;
 }
 
+function write(lines: BagLine[]): boolean {
+  try {
+    window.localStorage.setItem(KEY, JSON.stringify(lines));
+  } catch {
+    return false;
+  }
+  window.dispatchEvent(new Event(EVENT));
+  return true;
+}
+
+/** Sets the quantity of one line; 0 removes it. */
+export function setBagQty(productId: string, size: string, qty: number): void {
+  write(read().flatMap((l) => (l.productId === productId && l.size === size ? (qty > 0 ? [{ ...l, qty }] : []) : [l])));
+}
+
 export function useBag(): readonly BagLine[] {
   return useSyncExternalStore(subscribe, read, () => EMPTY);
 }

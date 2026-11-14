@@ -4,7 +4,9 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { getMenuData } from "@/lib/data/home";
+import { WishlistSync } from "@/components/account/WishlistSync";
+import { CurrencyProvider } from "@/lib/currency";
+import { getDisplayCurrencies, getMenuData } from "@/lib/data/home";
 import { BRAND_NAME, BRAND_STORY, siteUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -53,7 +55,7 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const menu = await getMenuData();
+  const [menu, currencies] = await Promise.all([getMenuData(), getDisplayCurrencies()]);
   return (
     <html lang="en-NG" className={`${display.variable} ${editorial.variable} ${sans.variable}`}>
       <body className="flex min-h-dvh flex-col">
@@ -63,6 +65,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to content
         </a>
+        <CurrencyProvider currencies={currencies}>
         <AnnouncementBar />
         <SiteHeader menu={menu} />
         <main id="main" className="flex-1">
@@ -70,6 +73,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </main>
         <SiteFooter />
         <MobileTabBar />
+        <WishlistSync />
+        </CurrencyProvider>
       </body>
     </html>
   );

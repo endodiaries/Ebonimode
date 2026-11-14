@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
 import { HeartIcon } from "@/components/icons";
+import { saveWishlistChange } from "@/app/actions";
 import { addToBag } from "@/lib/bag";
+import { Price } from "@/lib/currency";
 import type { ProductCardData } from "@/lib/data/home";
 import type { SizeGuide } from "@/lib/data/product";
 import { toggleWishlist, useWishlist } from "@/lib/wishlist";
@@ -14,7 +16,7 @@ const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "");
 const LOW_STOCK = 3;
 
 /** Size choice, Add to Bag (the one primary button), wishlist, WhatsApp order and the size guide. */
-export function BuyBox({ product, price, sizeGuide }: { product: ProductCardData; price: string; sizeGuide: SizeGuide | null }) {
+export function BuyBox({ product, sizeGuide }: { product: ProductCardData; sizeGuide: SizeGuide | null }) {
   const wanted = useSearchParams().get("size");
   const startSize = product.sizes.find((s) => s.size === wanted && s.stock > 0)?.size ?? null;
   const [size, setSize] = useState<string | null>(startSize);
@@ -107,7 +109,10 @@ export function BuyBox({ product, price, sizeGuide }: { product: ProductCardData
           type="button"
           aria-pressed={saved}
           aria-label={`${saved ? "Remove" : "Save"} ${product.name} ${saved ? "from" : "to"} wishlist`}
-          onClick={() => toggleWishlist(product.id)}
+          onClick={() => {
+            toggleWishlist(product.id);
+            void saveWishlistChange(product.id, !saved);
+          }}
           className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center border border-ink/30 transition-colors hover:border-ink"
         >
           <HeartIcon size={20} fill={saved ? "currentColor" : "none"} className={saved ? "text-crimson" : ""} />
@@ -136,7 +141,7 @@ export function BuyBox({ product, price, sizeGuide }: { product: ProductCardData
       {hasSizes && !allSoldOut && (
         <div className="gutter fixed inset-x-0 bottom-[var(--tabbar-h)] z-30 flex items-center gap-3 border-t border-ink/10 bg-ivory py-3 md:hidden">
           <p className="min-w-0 flex-1 truncate text-base font-semibold">
-            {price}
+            <Price ngn={product.priceNgn} tags={product.tags} />
             {size ? ` · size ${size}` : ""}
           </p>
           <button type="button" className="btn" onClick={add}>

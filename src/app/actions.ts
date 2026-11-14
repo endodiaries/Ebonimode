@@ -55,3 +55,35 @@ export async function submitReview(_prev: ReviewState, formData: FormData): Prom
   if (error) return { error: "We could not save your review just now. Please try again." };
   return { ok: true };
 }
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
+/**
+ * Merges this device's wishlist into the signed-in account and returns the combined list.
+ * Returns null for guests, whose list simply stays on the device.
+ */
+export async function mergeWishlist(localIds: string[]): Promise<string[] | null> {
+  const db = await createClient();
+  const {
+    data: { user },
+  } = await db.auth.getUser();
+  if (!user) return null;
+  const ids = [...new Set(localIds.filter((id) => UUID_RE.test(id)))].slice(0, 200);
+  if (ids.length > 0) {
+    await db.from("wishlists").upsert(ids.map((product_id) => ({ user_id: user.id, product_id })), { onConflict: "user_id,product_id", ignoreDuplicates: true });
+  }
+  const { data } = await db.from("wishlists").select("product_id").eq("user_id", user.id);
+  return (data ?? []).map((r) => r.product_id as string);
+}
+
+/** Saves one heart tap to the account. Does nothing for guests. */
+export async function saveWishlistChange(productId: string, saved: boolean): Promise<void> {
+  if (!UUID_RE.test(productId)) return;
+  const db = await createClient();
+  const {
+    data: { user },
+  } = await db.auth.getUser();
+  if (!user) return;
+  if (saved) await db.from("wishlists").upsert({ user_id: user.id, product_id: productId }, { onConflict: "user_id,product_id", ignoreDuplicates: true });
+  else await db.from("wishlists").delete().eq("user_id", user.id).eq("product_id", productId);
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { saveWishlistChange } from "@/app/actions";
 import { HeartIcon } from "@/components/icons";
 import { toggleWishlist, useWishlist } from "@/lib/wishlist";
 
@@ -10,7 +11,10 @@ export function WishlistButton({ productId, productName }: { productId: string; 
       type="button"
       aria-pressed={saved}
       aria-label={`${saved ? "Remove" : "Save"} ${productName} ${saved ? "from" : "to"} wishlist`}
-      onClick={() => toggleWishlist(productId)}
+      onClick={() => {
+        toggleWishlist(productId);
+        void saveWishlistChange(productId, !saved);
+      }}
       className="absolute top-1 right-1 flex h-11 w-11 cursor-pointer items-center justify-center text-ink transition-transform duration-[var(--dur-micro)] active:scale-90"
     >
       <span className="flex h-8 w-8 items-center justify-center bg-ivory/90">

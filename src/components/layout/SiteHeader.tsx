@@ -116,7 +116,7 @@ export function SiteHeader({ menu }: { menu: MenuData }) {
           <Link href="/account" className={`${iconBtn} hidden md:flex`} aria-label="Account">
             <AccountIcon />
           </Link>
-          <Link href="/account/wishlist" className={`${iconBtn} hidden md:flex`} aria-label="Wishlist">
+          <Link href="/wishlist" className={`${iconBtn} hidden md:flex`} aria-label="Wishlist">
             <HeartIcon />
           </Link>
           <Link href="/cart" className={`${iconBtn} -mr-2.5 flex sm:mr-0`} aria-label={`Bag, ${bagCount} ${bagCount === 1 ? "item" : "items"}`}>

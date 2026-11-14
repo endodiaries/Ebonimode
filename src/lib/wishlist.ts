@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 
-/** Guest wishlist kept in local storage. Phase 5 merges it into the account on sign-in. */
+/** Wishlist kept in local storage, and merged with the account when signed in (see WishlistSync). */
 const KEY = "ebonimode:wishlist";
 const EVENT = "ebonimode:wishlist-change";
 const EMPTY: readonly string[] = [];
@@ -45,6 +45,20 @@ export function toggleWishlist(productId: string): void {
     return; // private mode or storage full: nothing to save
   }
   window.dispatchEvent(new Event(EVENT));
+}
+
+/** Replaces the saved list, for example after merging with the signed-in account. */
+export function setWishlist(ids: readonly string[]): void {
+  try {
+    window.localStorage.setItem(KEY, JSON.stringify([...new Set(ids)]));
+  } catch {
+    return;
+  }
+  window.dispatchEvent(new Event(EVENT));
+}
+
+export function readWishlist(): readonly string[] {
+  return read();
 }
 
 export function useWishlist(): readonly string[] {

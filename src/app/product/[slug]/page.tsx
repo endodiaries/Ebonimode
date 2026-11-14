@@ -8,6 +8,7 @@ import { RevealObserver } from "@/components/motion/RevealObserver";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ReviewForm } from "@/components/product/ReviewForm";
 import { cldImage, cloudinaryEnabled } from "@/lib/cloudinary";
+import { Price } from "@/lib/currency";
 import { getProduct, getProductSlugs } from "@/lib/data/product";
 import { formatPrice, PRICE_PLACEHOLDER } from "@/lib/price";
 import { BRAND_NAME, siteUrl } from "@/lib/site";
@@ -116,7 +117,9 @@ export default async function ProductPage({ params }: Props) {
 
             <div className="md:sticky md:top-28 md:self-start">
               <h1 className="font-display text-4xl leading-[0.98] text-balance md:text-5xl">{card.name}</h1>
-              <p className="mt-4 text-2xl font-semibold">{price}</p>
+              <p className="mt-4 text-2xl font-semibold">
+                <Price ngn={card.priceNgn} tags={card.tags} />
+              </p>
               {rating.count > 0 && (
                 <p className="mt-2">
                   <a href="#reviews" className="text-link">
@@ -150,7 +153,7 @@ export default async function ProductPage({ params }: Props) {
 
               <div className="mt-8">
                 <Suspense fallback={<div className="h-40" />}>
-                  <BuyBox product={card} price={price} sizeGuide={sizeGuide} />
+                  <BuyBox product={card} sizeGuide={sizeGuide} />
                 </Suspense>
               </div>
 

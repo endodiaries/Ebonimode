@@ -4,7 +4,7 @@ import { PlaceholderFigure } from "@/components/brand/PlaceholderFigure";
 import { cloudinaryEnabled } from "@/lib/cloudinary";
 import { readableOn } from "@/lib/colour";
 import type { ProductCardData } from "@/lib/data/home";
-import { formatPrice } from "@/lib/price";
+import { Price } from "@/lib/currency";
 import { WishlistButton } from "./WishlistButton";
 
 const isCutout = (publicId: string) => publicId.startsWith("site/product-cutouts/");
@@ -101,7 +101,11 @@ export function ProductCard({
           {product.name}
         </Link>
       </h3>
-      {showPrice && <p className="mt-1 text-base text-ink-soft">{formatPrice(product.priceNgn, product.tags)}</p>}
+      {showPrice && (
+        <p className="mt-1 text-base text-ink-soft">
+          <Price ngn={product.priceNgn} tags={product.tags} />
+        </p>
+      )}
 
       {product.colourways.length > 1 && (
         <ul aria-label="Colours" className="mt-3 flex gap-1.5">

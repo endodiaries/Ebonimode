@@ -8,7 +8,7 @@ const tabs = [
   { label: "Home", href: "/", Icon: HomeIcon },
   { label: "Shop", href: "/shop", Icon: ShopIcon },
   { label: "Search", href: "/search", Icon: SearchIcon },
-  { label: "Wishlist", href: "/account/wishlist", Icon: HeartIcon },
+  { label: "Wishlist", href: "/wishlist", Icon: HeartIcon },
   { label: "Bag", href: "/cart", Icon: BagIcon },
 ];
 
