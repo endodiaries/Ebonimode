@@ -72,7 +72,8 @@ type ProductRow = {
 const SIZE_ORDER = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "3XL"];
 const bySize = (a: { size: string }, b: { size: string }) => {
   const [i, j] = [SIZE_ORDER.indexOf(a.size), SIZE_ORDER.indexOf(b.size)];
-  return (i < 0 ? 99 : i) - (j < 0 ? 99 : j) || a.size.localeCompare(b.size);
+  // Numbered sizes (8, 10, 12...) sort by value, so 8 comes before 10.
+  return (i < 0 ? 99 : i) - (j < 0 ? 99 : j) || a.size.localeCompare(b.size, undefined, { numeric: true });
 };
 
 async function fetchProducts(): Promise<ProductRow[]> {
