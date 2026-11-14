@@ -8,7 +8,6 @@ import { ProductMedia } from "@/components/product/ProductCard";
 import { cloudinaryEnabled } from "@/lib/cloudinary";
 import { readableOn } from "@/lib/colour";
 import type { LookData } from "@/lib/data/home";
-import { formatPrice } from "@/lib/price";
 
 /** Campaign photo with tappable hotspots. The chosen piece shows beside it with its sizes. */
 export function ShopTheLook({ look }: { look: LookData }) {
@@ -70,7 +69,6 @@ export function ShopTheLook({ look }: { look: LookData }) {
               Piece {selected + 1} of {look.hotspots.length}
             </p>
             <h3 className="mt-2 font-display text-2xl leading-tight md:text-3xl">{current.product.name}</h3>
-            <p className="mt-2 text-ink-soft">{formatPrice(current.product.priceNgn, current.product.tags)}</p>
             <p className="mt-5">
               <Link href={`/product/${current.product.slug}`} className="text-link label">
                 View piece →

@@ -75,7 +75,16 @@ export function SizeChips({ product }: { product: ProductCardData }) {
   );
 }
 
-export function ProductCard({ product, index = 0 }: { product: ProductCardData; index?: number }) {
+/** `showPrice` is off on the homepage, where the owner wants prices kept for the product page. */
+export function ProductCard({
+  product,
+  index = 0,
+  showPrice = true,
+}: {
+  product: ProductCardData;
+  index?: number;
+  showPrice?: boolean;
+}) {
   const href = `/product/${product.slug}`;
   return (
     <article className="group relative" data-reveal style={{ "--i": index % 4 } as React.CSSProperties}>
@@ -89,7 +98,7 @@ export function ProductCard({ product, index = 0 }: { product: ProductCardData; 
           {product.name}
         </Link>
       </h3>
-      <p className="mt-1 text-base text-ink-soft">{formatPrice(product.priceNgn, product.tags)}</p>
+      {showPrice && <p className="mt-1 text-base text-ink-soft">{formatPrice(product.priceNgn, product.tags)}</p>}
 
       {product.colourways.length > 1 && (
         <ul aria-label="Colours" className="mt-3 flex gap-1.5">
