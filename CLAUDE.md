@@ -64,7 +64,7 @@ A full-width, landscape hero (about 1440 x 760 on desktop) with 4 to 5 slides. E
 - **Only two marketing call-to-action buttons exist on the whole homepage, both in the hero.** Everything else is an underlined text link or a clickable image. Functional controls (size chips, quick add, newsletter submit) are small and understated.
 
 ### 2.5 Homepage sections, in order (restructured by the owner, November 2026)
-1. Thin announcement bar: "Free delivery in Lagos over [₦ AMOUNT] · Pay in installments"; right side: Track order, Help.
+1. Thin announcement bar: the made-to-order note for women's sizes and "Pay in installments"; right side: Track order, Help. **There is no free delivery: never promise it anywhere.**
 2. Header: left Women, Men, Collections; centre the bold handwritten wordmark; right Search, Account, Wishlist, Bag (0), currency switcher. Hides on scroll down, returns on scroll up. Mega-menu with colour swatches and a featured image.
 3. Hero slideshow (2.4).
 4. **Departments:** two large photo tiles, Women and Men, each with one line of copy and an underlined link.
@@ -75,7 +75,7 @@ A full-width, landscape hero (about 1440 x 760 on desktop) with 4 to 5 slides. E
 9. **Trust row:** fast delivery, easy returns, quality assured, secure payment.
 10. **Reviews** and **Journal:** shown only when real reviews or posts exist. No placeholders.
 11. Newsletter with one underlined email field and a consent line.
-12. Colour-band divider, then the footer: **logo on an ivory card**, Shop, Explore, Policies, social links, payment methods.
+12. Colour-band divider, then the footer: a small logo straight on the green (no card behind it), Shop, Explore, Policies, social links, payment methods.
 
 ### 2.6 Motion (subtle and expensive-feeling)
 Motion tokens: 150ms micro, 250ms UI, 400ms page and sections, 700 to 1100ms hero. Entrance easing `cubic-bezier(0.22, 1, 0.36, 1)`. Soft route crossfade with a 12 to 16px upward slide (View Transitions API with a fallback), header persistent. Product card image morphs into the product page gallery. Scroll reveals (fade up 24px, 60ms stagger, once). Cart badge bump and fly-to-cart. Skeletons shimmer in the logo's strata colours. Only `transform` and `opacity`, lazy-loaded animation code, honour reduced motion, never hurt LCP, CLS or INP.
@@ -153,7 +153,7 @@ Delivery rates by location (shown in the active currency); emails with Resend (o
 9. Polish and launch: analytics, WhatsApp, SEO, PWA, performance and accessibility audit, Playwright suite, security review, error tracking. Give me a before/after scorecard and a list of anything still imperfect.
 
 ## 12. Never
-No batik-print brand name, no giant name in the hero, no print behind the hero model, no invented colour-story names. No more than two marketing buttons on the homepage. No pill buttons, no card shadows, no generic template feel. No invented statistics or product claims. Never expose service-role or payment secrets to the client. Never disable RLS to make something work. Never mark an order paid from the browser.
+No batik-print brand name, no giant name in the hero, no print behind the hero model, no invented colour-story names. No more than two marketing buttons on the homepage. No pill buttons, no card shadows, no generic template feel. No invented statistics or product claims. No free-delivery offers (the owner does not offer free delivery). Never expose service-role or payment secrets to the client. Never disable RLS to make something work. Never mark an order paid from the browser.
 
 
 ## Next.js version note

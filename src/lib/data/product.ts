@@ -53,7 +53,9 @@ export async function getProduct(slug: string): Promise<ProductDetail | null> {
       fabricCare: row.fabric_care,
       images: [...row.product_images]
         .sort((a, b) => a.sort_order - b.sort_order)
-        .map((i) => ({ publicId: i.cloudinary_public_id, alt: i.alt ?? card.name })),
+        .map((i) => ({ publicId: i.cloudinary_public_id, alt: i.alt ?? card.name }))
+        // The card cut-out and the first gallery photo can be the same image: show it once.
+        .filter((img, n, list) => list.findIndex((o) => o.publicId === img.publicId) === n),
       sizeGuide: g ? { name: g.name, unit: g.unit, columns: g.table_data.columns, rows: g.table_data.rows, notes: g.notes } : null,
       related: cards.filter((c) => c.department === card.department && !sameStyle.has(c.slug)).slice(0, 4),
     };

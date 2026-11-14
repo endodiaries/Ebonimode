@@ -10,9 +10,6 @@ export const BRAND_MISSION =
 
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-/** Placeholder until the real free-delivery threshold is set in admin. */
-export const FREE_DELIVERY_THRESHOLD_LABEL = "[₦ AMOUNT]";
-
 export type NavLink = { label: string; href: string };
 
 export const primaryNav: NavLink[] = [

@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { FREE_DELIVERY_THRESHOLD_LABEL } from "@/lib/site";
 
 export function AnnouncementBar() {
   return (
     <div className="gutter flex h-[var(--announcement-h)] items-center justify-center bg-ink text-ivory sm:justify-between">
       <p className="label truncate text-[0.625rem] tracking-[0.08em] sm:text-[0.6875rem] sm:tracking-[0.16em]">
-        Free delivery in Lagos over {FREE_DELIVERY_THRESHOLD_LABEL}
+        Women’s sizes below 8 or above 18 made to order in 5 to 7 days
         {/* Too long for phones: the installment teaser also lives on product and cart pages. */}
         <span className="hidden sm:inline">
           <span aria-hidden="true" className="mx-2">

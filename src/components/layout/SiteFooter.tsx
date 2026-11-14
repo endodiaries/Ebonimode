@@ -3,9 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { StrataDivider } from "@/components/brand/StrataDivider";
 import { BRAND_STORY, footerNav, paymentMethods, socialLinks } from "@/lib/site";
-import logo from "@/assets/ebonimode-logo.png";
+import logo from "@/assets/ebonimode-logo-light.png";
 
-/** Strata divider, then the footer. The logo lives only here, on an ivory card. */
+/** Strata divider, then the footer. The full logo sits here, straight on the green, with the name in ivory. */
 export function SiteFooter() {
   return (
     <footer className="mt-auto">
@@ -13,8 +13,8 @@ export function SiteFooter() {
       <div className="gutter bg-emerald-deep pt-16 pb-[calc(var(--tabbar-h)+2.5rem)] text-ivory md:pb-12">
         <div className="mx-auto grid max-w-[90rem] gap-12 lg:grid-cols-[minmax(0,22rem)_1fr]">
           <div>
-            <Link href="/" aria-label="Ebonímode home" className="inline-block bg-ivory p-6">
-              <Image src={logo} alt="Ebonímode logo" width={160} sizes="160px" className="h-auto w-40" />
+            <Link href="/" aria-label="Ebonímode home" className="inline-block">
+              <Image src={logo} alt="Ebonímode logo" width={104} sizes="104px" className="h-auto w-[6.5rem]" />
             </Link>
             <p className="mt-6 max-w-sm font-editorial text-lg leading-snug italic text-ivory/90">{BRAND_STORY}</p>
           </div>
