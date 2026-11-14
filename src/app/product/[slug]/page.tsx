@@ -6,6 +6,7 @@ import { BuyBox } from "@/components/product/BuyBox";
 import { Gallery } from "@/components/product/Gallery";
 import { RevealObserver } from "@/components/motion/RevealObserver";
 import { ProductCard } from "@/components/product/ProductCard";
+import { ReviewForm } from "@/components/product/ReviewForm";
 import { cldImage, cloudinaryEnabled } from "@/lib/cloudinary";
 import { getProduct, getProductSlugs } from "@/lib/data/product";
 import { formatPrice, PRICE_PLACEHOLDER } from "@/lib/price";
@@ -46,7 +47,7 @@ export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
   const product = await getProduct(slug);
   if (!product) notFound();
-  const { card, description, fabricCare, images, sizeGuide, related } = product;
+  const { card, description, fabricCare, images, sizeGuide, related, pairsWith, rating, reviews } = product;
   const dept = DEPARTMENT[card.department];
   const price = formatPrice(card.priceNgn, card.tags);
   const priced = price !== PRICE_PLACEHOLDER;
@@ -62,6 +63,7 @@ export default async function ProductPage({ params }: Props) {
       brand: { "@type": "Brand", name: BRAND_NAME },
       image: cloudinaryEnabled ? images.slice(0, 4).map((i) => cldImage(i.publicId, { width: 1200 })) : undefined,
       url: `${siteUrl}/product/${card.slug}`,
+      ...(rating.count > 0 && { aggregateRating: { "@type": "AggregateRating", ratingValue: rating.average, reviewCount: rating.count } }),
       ...(priced && {
         offers: {
           "@type": "Offer",
@@ -115,6 +117,16 @@ export default async function ProductPage({ params }: Props) {
             <div className="md:sticky md:top-28 md:self-start">
               <h1 className="font-display text-4xl leading-[0.98] text-balance md:text-5xl">{card.name}</h1>
               <p className="mt-4 text-2xl font-semibold">{price}</p>
+              {rating.count > 0 && (
+                <p className="mt-2">
+                  <a href="#reviews" className="text-link">
+                    <span className="text-gold" aria-hidden="true">
+                      {"★".repeat(Math.round(rating.average))}
+                    </span>{" "}
+                    {rating.average.toFixed(1)} from {rating.count} {rating.count === 1 ? "review" : "reviews"}
+                  </a>
+                </p>
+              )}
 
               {card.colourways.length > 1 && (
                 <div className="mt-8">
@@ -166,6 +178,48 @@ export default async function ProductPage({ params }: Props) {
               )}
             </div>
           </div>
+
+          {pairsWith.length > 0 && (
+            <section className="mt-20 md:mt-28">
+              <h2 className="font-display text-3xl md:text-4xl">Complete the look</h2>
+              <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-12 md:gap-x-6 lg:grid-cols-4">
+                {pairsWith.map((p, i) => (
+                  <li key={p.id}>
+                    <ProductCard product={p} index={i} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <section id="reviews" className="mt-20 scroll-mt-28 border-t border-ink/15 pt-12 md:mt-28">
+            <h2 className="font-display text-3xl md:text-4xl">Reviews</h2>
+            <div className="mt-8 grid gap-12 md:grid-cols-2">
+              <div>
+                {reviews.length === 0 ? (
+                  <p className="font-editorial text-xl italic">No reviews yet. Be the first to share how it wears.</p>
+                ) : (
+                  <ul className="space-y-8">
+                    {reviews.map((r) => (
+                      <li key={r.id} className="border-b border-ink/10 pb-8">
+                        <p className="text-gold" aria-label={`${r.rating} out of 5`}>
+                          {"★".repeat(r.rating)}
+                          <span className="text-ink/20">{"★".repeat(5 - r.rating)}</span>
+                        </p>
+                        {r.title && <h3 className="mt-2 font-semibold">{r.title}</h3>}
+                        {r.body && <p className="mt-2">{r.body}</p>}
+                        {r.reply && <p className="mt-3 border-l-2 border-emerald pl-4 text-ink-soft">Ebonímode: {r.reply}</p>}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div>
+                <h3 className="label mb-5">Write a review</h3>
+                <ReviewForm productId={card.id} productName={card.name} />
+              </div>
+            </div>
+          </section>
 
           {related.length > 0 && (
             <section className="mt-20 md:mt-28">

@@ -8,6 +8,7 @@ import { addToBag } from "@/lib/bag";
 import type { ProductCardData } from "@/lib/data/home";
 import type { SizeGuide } from "@/lib/data/product";
 import { toggleWishlist, useWishlist } from "@/lib/wishlist";
+import { FitFinder } from "./FitFinder";
 
 const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "");
 const LOW_STOCK = 3;
@@ -46,9 +47,19 @@ export function BuyBox({ product, price, sizeGuide }: { product: ProductCardData
           <div className="flex items-baseline justify-between gap-4">
             <legend className="label">Size{size ? `: ${size}` : ""}</legend>
             {sizeGuide && (
-              <button type="button" className="text-link label cursor-pointer" onClick={() => dialog.current?.showModal()}>
-                Size guide
-              </button>
+              <span className="flex gap-5">
+                <FitFinder
+                  guide={sizeGuide}
+                  sizes={product.sizes}
+                  onPick={(v) => {
+                    setSize(v);
+                    setMessage(null);
+                  }}
+                />
+                <button type="button" className="text-link label cursor-pointer" onClick={() => dialog.current?.showModal()}>
+                  Size guide
+                </button>
+              </span>
             )}
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
