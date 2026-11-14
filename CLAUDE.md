@@ -29,11 +29,11 @@ Feel: a clean, modern luxury storefront with a bold African identity. Spacious a
 - Minimal modern fashion homepages: a hero with the **brand name set huge behind a cut-out model who overlaps the lettering**, a tiny tagline top-left, actions bottom-left, a "new collection" note bottom-right; a department strip with small thumbnails and "Shop women →" links; a split promo banner with a big headline beside a model; a row of trust points (fast delivery, easy returns, quality, secure payment); a clean "Best of" product grid; a simple newsletter.
 - Ebonímode's own twist: the brand name is written in African print, scenes are built from colour fields, and every collection is a colour story.
 
-### 2.1 The brand name in African print (signature)
-- The name **EBONÍMODE** is set in an ultra-bold high-contrast serif (Abril Fatface), uppercase, with the letters **filled with real batik print** from `assets/prints/` (CSS `background-image` + `background-clip: text`, `color: transparent`) and a fine ink outline (`-webkit-text-stroke: 2 to 3px`) so it stays crisp.
-- **There is no logo in the header or the hero.** The logo appears only in the footer.
-- It appears (a) centred in the header at a bold medium size, and (b) giant behind the model on every hero slide.
-- Provide accessible text (`aria-label`) and a plain-colour fallback for browsers without `background-clip: text`.
+### 2.1 The brand name (updated by the owner, November 2026)
+- The brand name is **not** set in batik print anywhere, and there is **no giant name in the hero**. No batik print is used as decoration.
+- The header shows the **handwritten wordmark from the logo, in a very bold weight** (`src/assets/ebonimode-wordmark.png`), centred, in ink, with accessible text.
+- The full logo (mark plus wordmark) appears in the footer.
+- Do not invent colour-story names such as "Indigo" or "Leaf". Use the real collections and piece names.
 
 ### 2.2 Colour tokens (define once as CSS variables and Tailwind theme, never hardcode hex in components)
 - Paper ivory `#FAF6EF`, sand `#EFE6D8`, ink `#1A1718`.
@@ -45,38 +45,36 @@ Feel: a clean, modern luxury storefront with a bold African identity. Spacious a
 - Display: **Abril Fatface** (name, big headlines). Editorial: **Cormorant Garamond Italic** (decks, quotes, captions). UI and body: **Archivo** (small uppercase, 0.2em tracking for nav and labels; 16px body).
 - Square corners, 1px rules, no pill buttons, no card shadows. Generous white space.
 
-### 2.4 Hero: neat slideshow (the centrepiece)
-A full-width, landscape hero (about 1440 x 760 on desktop) with 4 to 5 slides, one per colour story or campaign. Each slide is composed like this:
-- A flat **colour field** background (ivory, sand, marigold, tangerine, sage, etc.).
-- The giant print-filled **EBONÍMODE** across the width, vertically centred.
-- A **transparent cut-out model** standing in front, overlapping the middle letters, with a soft ground shadow. All hero models are cut-out WebP/PNG (pre-cut, or use Cloudinary background removal if enabled on the account).
-- Top-left: a tiny tagline in uppercase with a short rule beneath (for example "Culture, worn with care."), different per slide.
-- Bottom-left: **exactly two buttons: "Shop Women" and "Shop Men"** (same on every slide).
-- Bottom-right: "New collection N°01" with the slide's colour-story name (Indigo, Leaf, Marigold) over a short rule.
-- Colour pairing so the name stays legible: green or cocoa print on marigold or ivory; blue print on sand, ivory or tangerine; multicolour print on ivory or sand.
+### 2.4 Hero: modern, chic slideshow (the centrepiece)
+A full-width, landscape hero (about 1440 x 760 on desktop) with 4 to 5 slides. Each slide is composed like this:
+- A flat **colour field** background (ivory, sand, marigold, tangerine, etc.) and nothing else behind the model.
+- Left, vertically centred: a small "New collection N°01" label, then the slide's tagline as a large Abril headline, then a short rule.
+- Right: a large **transparent cut-out model** with a soft ground shadow.
+- Bottom-left: **exactly two buttons: "Shop Women" and "Shop Men"** (same on every slide), with the progress lines above them.
+- Bottom-right: "Worn here" with the name of the piece in Cormorant italic.
+- On phones the copy sits at the top and the model is centred beneath it.
 
 **Transition (neat and calm):**
 - Autoplay about 6.5s per slide; transition 1.1s with `cubic-bezier(0.22, 1, 0.36, 1)`.
-- The colour field crossfades; the outgoing model slides 40px left and fades out while the incoming model slides in 40px from the right and fades up; taglines stagger in line by line (80ms apart); the print inside the lettering drifts slowly (background-position, very subtle) so it feels alive.
+- The colour field crossfades; the outgoing model slides 40px left and fades out while the incoming model slides in 40px from the right and fades up; headline lines stagger in (80ms apart).
 - Tiny thin progress lines with the numerals "01 / 05" (non-CTA indicators). Click to jump; swipe on touch; left and right arrow keys; pause on hover and focus; pause when the tab is hidden.
 - `prefers-reduced-motion`: no autoplay, simple crossfade only, no drift.
-- Performance: the first slide's model is a preloaded high-priority image (it is the LCP element); the other slides lazy-load; the name is live text; animate only `transform` and `opacity`; no layout shift.
+- Performance: the first slide's model is a preloaded high-priority image (it is the LCP element); the other slides lazy-load; animate only `transform` and `opacity`; no layout shift.
 - **Only two marketing call-to-action buttons exist on the whole homepage, both in the hero.** Everything else is an underlined text link or a clickable image. Functional controls (size chips, quick add, newsletter submit) are small and understated.
 
-### 2.5 Homepage sections, in order
+### 2.5 Homepage sections, in order (restructured by the owner, November 2026)
 1. Thin announcement bar: "Free delivery in Lagos over [₦ AMOUNT] · Pay in installments"; right side: Track order, Help.
-2. Header (no logo): left Women, Men, Collections; centre the print-filled name; right Search, Account, Wishlist, Bag (0), currency switcher (₦ default, then the enabled currencies). Hides on scroll down, returns on scroll up. Mega-menu with colour swatches and a featured image.
+2. Header: left Women, Men, Collections; centre the bold handwritten wordmark; right Search, Account, Wishlist, Bag (0), currency switcher. Hides on scroll down, returns on scroll up. Mega-menu with colour swatches and a featured image.
 3. Hero slideshow (2.4).
-4. **Department strip:** a deep colour band with three items (Women, Men, New in), each with a small thumbnail, one line of copy and an underlined "Shop women →" link.
-5. **Colour story banners:** one full-width split banner per story (Indigo, Leaf, Marigold): big headline in Abril, short text, an underlined link, and a model on the colour field. Alternate left and right.
-6. **Trust row:** fast delivery, easy returns, quality assured, secure payment (simple line icons).
-7. **Best of Ebonímode / New in:** product grid (4 columns desktop). Each card: image, wishlist heart, name with colour in capitals ("Batik Maxi Dress in GREEN"), price in the active currency, colour swatches linking to sibling colourways, and size chips with quick add.
-8. **Shop the Look:** a campaign photo with tappable hotspots opening a mini product card with quick add.
-9. **Our story:** the verbatim brand story with a link to Our Impact and Artisans.
-10. **Reviews:** "Let customers speak for us from [N] reviews" with review cards.
-11. **Journal:** three stories.
-12. Newsletter with one underlined email field and a consent line.
-13. Colour-band divider (strata from the logo), then the footer: **logo on an ivory card**, Shop, Explore, Policies, social links, payment methods.
+4. **Departments:** two large photo tiles, Women and Men, each with one line of copy and an underlined link.
+5. **New in / Best of Ebonímode:** product grid (4 columns desktop). Each card: image, wishlist heart, name with colour in capitals where a style has colours, price, colour swatches linking to sibling colourways, and size chips with quick add.
+6. **Collections:** one tall colour tile per real collection (Chronicles of Africa: Eko, Eid Luxe) with a cut-out model.
+7. **Shop the Look:** a campaign photo with tappable hotspots opening a mini product card.
+8. **Our story:** the verbatim brand story beside a photo, three craft notes from the product descriptions, links to Our Impact and Artisans.
+9. **Trust row:** fast delivery, easy returns, quality assured, secure payment.
+10. **Reviews** and **Journal:** shown only when real reviews or posts exist. No placeholders.
+11. Newsletter with one underlined email field and a consent line.
+12. Colour-band divider, then the footer: **logo on an ivory card**, Shop, Explore, Policies, social links, payment methods.
 
 ### 2.6 Motion (subtle and expensive-feeling)
 Motion tokens: 150ms micro, 250ms UI, 400ms page and sections, 700 to 1100ms hero. Entrance easing `cubic-bezier(0.22, 1, 0.36, 1)`. Soft route crossfade with a 12 to 16px upward slide (View Transitions API with a fallback), header persistent. Product card image morphs into the product page gallery. Scroll reveals (fade up 24px, 60ms stagger, once). Cart badge bump and fly-to-cart. Skeletons shimmer in the logo's strata colours. Only `transform` and `opacity`, lazy-loaded animation code, honour reduced motion, never hurt LCP, CLS or INP.
@@ -142,7 +140,7 @@ Delivery rates by location (shown in the active currency); emails with Resend (o
 - Security: RLS tested per role, no secrets client-side, rate limiting on public endpoints, webhook signatures verified, server-side validation. Error tracking and uptime monitoring before launch.
 
 ## 11. Build phases (stop and report after each)
-0. Setup: project, tokens, fonts, layout shell, header with the print-filled name, footer with the logo, `.env.example`, README.
+0. Setup: project, tokens, fonts, layout shell, header with the logo wordmark, footer with the logo, `.env.example`, README.
 1. Database and auth: apply migrations, seed about 24 products (half women, half men, a few unisex) in several colourways across 3 to 4 collections with theme colours, size guides, one sample lookbook.
 2. Hero slideshow and homepage (sections 2.4 and 2.5) with sample content, then the motion system (2.6).
 3. Storefront browsing: Women, Men, Collections, categories, filters, search, quick add, colour browsing.
@@ -154,7 +152,7 @@ Delivery rates by location (shown in the active currency); emails with Resend (o
 9. Polish and launch: analytics, WhatsApp, SEO, PWA, performance and accessibility audit, Playwright suite, security review, error tracking. Give me a before/after scorecard and a list of anything still imperfect.
 
 ## 12. Never
-No logo in the header or hero. No more than two marketing buttons on the homepage. No pill buttons, no card shadows, no generic template feel. No invented statistics or product claims. Never expose service-role or payment secrets to the client. Never disable RLS to make something work. Never mark an order paid from the browser.
+No batik-print brand name, no giant name in the hero, no print behind the hero model, no invented colour-story names. No more than two marketing buttons on the homepage. No pill buttons, no card shadows, no generic template feel. No invented statistics or product claims. Never expose service-role or payment secrets to the client. Never disable RLS to make something work. Never mark an order paid from the browser.
 
 
 ## Next.js version note

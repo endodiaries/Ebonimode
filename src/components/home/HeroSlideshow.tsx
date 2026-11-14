@@ -26,7 +26,7 @@ function Model({ slide, first }: { slide: HeroSlide; first: boolean }) {
       src={slide.model}
       alt={slide.modelAlt}
       fill
-      sizes="(min-width: 640px) 30rem, 78vw"
+      sizes="(min-width: 768px) 36rem, 80vw"
       className="object-contain object-bottom"
       loader={isLocal ? undefined : cloudinaryLoader}
       // The first slide's model is the LCP element; the rest load lazily.
@@ -38,7 +38,8 @@ function Model({ slide, first }: { slide: HeroSlide; first: boolean }) {
 }
 
 /**
- * The homepage hero: colour field, giant print-filled name, cut-out model in front.
+ * The homepage hero: a flat colour field, an editorial headline on the left, and a
+ * cut-out model standing on the right.
  * Autoplay is driven by the progress line's CSS animation, so pausing the animation
  * pauses the slideshow, and reduced-motion (animation: none) switches autoplay off.
  */
@@ -104,44 +105,46 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
             aria-label={`${i + 1} of ${count}${s.storyName ? `: ${s.storyName}` : ""}`}
             inert={i !== index}
           >
-            <div className="hero-backdrop" style={{ backgroundColor: s.bgHex }}>
-              <span aria-hidden="true" className="print-name hero-print block w-full" data-print={s.printKey}>
-                <span>EBONÍ</span>
-                <span>MODE</span>
-              </span>
+            <div className="hero-backdrop" style={{ backgroundColor: s.bgHex }} />
+
+            <div className="hero-stage">
+              <div className="hero-model">
+                <span className="hero-shadow" aria-hidden="true" />
+                <Model slide={s} first={i === 0} />
+              </div>
             </div>
 
-            <div className="hero-model">
-              <span className="hero-shadow" aria-hidden="true" />
-              <Model slide={s} first={i === 0} />
-            </div>
-
-            {lines.length > 0 && (
-              <p className="label gutter absolute top-6 left-0 max-w-[58%] leading-relaxed sm:max-w-[40%] md:top-10">
-                {lines.map((line, n) => (
-                  <span key={n} className="hero-line" style={{ "--i": n } as CSSProperties}>
-                    {line}
-                  </span>
-                ))}
-                <span
-                  className="hero-line mt-3 h-px w-10 bg-current"
-                  style={{ "--i": lines.length } as CSSProperties}
-                  aria-hidden="true"
-                />
+            <div className="hero-copy gutter">
+              <p className="hero-line label" style={{ "--i": 0 } as CSSProperties}>
+                New collection N°{pad(i + 1)}
+                
               </p>
-            )}
+              {lines.length > 0 && (
+                <p className="hero-headline font-display">
+                  {lines.map((line, n) => (
+                    <span key={n} className="hero-line" style={{ "--i": n + 1 } as CSSProperties}>
+                      {line}
+                    </span>
+                  ))}
+                </p>
+              )}
+              <span
+                className="hero-line mt-6 h-px w-12 bg-current md:mt-8"
+                style={{ "--i": lines.length + 1 } as CSSProperties}
+                aria-hidden="true"
+              />
+            </div>
 
-            <p className="gutter absolute top-6 right-0 text-right sm:top-auto sm:bottom-10">
-              <span className="hero-line label" style={{ "--i": 2 } as CSSProperties}>
-                <span className="max-sm:sr-only">New collection </span>N°{pad(i + 1)}
-              </span>
-              {s.storyName && (
-                <span className="hero-line mt-1 font-editorial text-2xl italic md:text-3xl" style={{ "--i": 3 } as CSSProperties}>
+            {s.storyName && (
+              <p className="gutter absolute right-0 bottom-10 text-right max-md:hidden">
+                <span className="hero-line label" style={{ "--i": 3 } as CSSProperties}>
+                  Worn here
+                </span>
+                <span className="hero-line mt-1 font-editorial text-3xl italic lg:text-4xl" style={{ "--i": 4 } as CSSProperties}>
                   {s.storyName}
                 </span>
-              )}
-              <span className="hero-line mt-3 ml-auto h-px w-10 bg-current" style={{ "--i": 4 } as CSSProperties} aria-hidden="true" />
-            </p>
+              </p>
+            )}
           </div>
         );
       })}

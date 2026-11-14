@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import { CldImage } from "@/components/brand/CldImage";
-import { PlaceholderFigure } from "@/components/brand/PlaceholderFigure";
 import { LockIcon, QualityIcon, ReturnIcon, TruckIcon } from "@/components/icons";
 import { ProductCard } from "@/components/product/ProductCard";
 import { cloudinaryEnabled } from "@/lib/cloudinary";
@@ -9,6 +8,13 @@ import { readableOn } from "@/lib/colour";
 import type { CollectionSummary, JournalCard, ProductCardData, ReviewCard } from "@/lib/data/home";
 import { HOME_MEDIA } from "@/lib/home-media";
 import { BRAND_STORY } from "@/lib/site";
+
+/** What the pieces are made of and how, taken from the brand's own product descriptions. */
+const CRAFT = [
+  { term: "Hand-dyed Adire", note: "Hand-drawn and hand-dyed, so no two pieces are quite the same." },
+  { term: "Handwoven Asooke", note: "Traditional Nigerian weaving, cut into contemporary shapes." },
+  { term: "Lagos in every print", note: "Skylines, waterways and landmarks, told in cloth." },
+];
 
 const stagger = (i: number) => ({ "--i": i }) as CSSProperties;
 
@@ -24,35 +30,33 @@ function SectionHeading({ eyebrow, title, action }: { eyebrow?: string; title: R
   );
 }
 
-/** 4. Deep colour band with Women, Men and New in. */
-export function DepartmentStrip() {
-  const { women, men, newIn } = HOME_MEDIA.departments;
+/** Two large department tiles: Women and Men, side by side. */
+export function Departments() {
+  const { women, men } = HOME_MEDIA.departments;
   const items = [
-    { label: "Women", copy: "Dresses, boubous, pant sets and more.", href: "/women", link: "Shop women", swatch: "bg-marigold", photo: women },
-    { label: "Men", copy: "Linen shirts, Adire and Asooke sets.", href: "/men", link: "Shop men", swatch: "bg-indigo", photo: men },
-    { label: "New in", copy: "The latest pieces, just landed.", href: "/shop?sort=new", link: "Shop new in", swatch: "bg-tangerine", photo: newIn },
+    { label: "Women", copy: "Dresses, boubous and pant sets.", href: "/women", link: "Shop women", photo: women },
+    { label: "Men", copy: "Linen shirts, Adire and Asooke sets.", href: "/men", link: "Shop men", photo: men },
   ];
   return (
-    <section aria-label="Departments" className="gutter bg-emerald-deep text-ivory">
-      <ul className="mx-auto grid max-w-[90rem] divide-y divide-ivory/15 md:grid-cols-3 md:divide-x md:divide-y-0">
+    <section aria-label="Departments" className="gutter py-4 md:py-6">
+      <ul className="mx-auto grid max-w-[90rem] gap-4 md:grid-cols-2 md:gap-6">
         {items.map((it, i) => (
-          <li key={it.href} className="md:px-8 md:first:pl-0 md:last:pr-0" data-reveal style={stagger(i)}>
-            <Link href={it.href} className="group flex items-center gap-5 py-6 md:py-10">
-              <span className={`${it.swatch} relative block h-24 w-20 shrink-0 overflow-hidden`}>
-                {cloudinaryEnabled && (
-                  <CldImage
-                    publicId={it.photo.publicId}
-                    alt={it.photo.alt}
-                    sizes="5rem"
-                    crop={{ ratio: 1.2, gravity: "face" }}
-                    className="object-cover transition-transform duration-700 ease-entrance group-hover:scale-[1.05]"
-                  />
-                )}
-              </span>
-              <span>
-                <span className="block font-display text-2xl">{it.label}</span>
-                <span className="mt-0.5 block text-sm text-ivory/80">{it.copy}</span>
-                <span className="text-link label mt-2 inline-block group-hover:text-marigold">{it.link} →</span>
+          <li key={it.href} data-reveal style={stagger(i)}>
+            <Link href={it.href} className="group relative block aspect-[4/5] overflow-hidden bg-sand text-ivory md:aspect-[5/6]">
+              {cloudinaryEnabled && (
+                <CldImage
+                  publicId={it.photo.publicId}
+                  alt={it.photo.alt}
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  crop={{ ratio: 1.25, gravity: "auto" }}
+                  className="object-cover transition-transform duration-700 ease-entrance group-hover:scale-[1.03]"
+                />
+              )}
+              <span className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink/70 to-transparent" aria-hidden="true" />
+              <span className="absolute inset-x-0 bottom-0 block p-6 md:p-10">
+                <span className="block font-display text-5xl leading-none md:text-7xl">{it.label}</span>
+                <span className="mt-3 block font-editorial text-xl italic">{it.copy}</span>
+                <span className="text-link label mt-5 inline-block">{it.link} →</span>
               </span>
             </Link>
           </li>
@@ -62,51 +66,55 @@ export function DepartmentStrip() {
   );
 }
 
-/** 5. One full-width split banner per colour story, alternating sides. */
-export function StoryBanners({ collections }: { collections: CollectionSummary[] }) {
+/** Collections: one tall colour tile per collection, with a cut-out model on its colour. */
+export function Collections({ collections }: { collections: CollectionSummary[] }) {
+  if (collections.length === 0) return null;
   return (
-    <section aria-label="Colour stories">
-      {collections.slice(0, 3).map((c, i) => {
-        const tone = readableOn(c.themeHex) === "ink" ? "text-ink" : "text-ivory";
-        return (
-          <article key={c.id} className={`${tone} grid md:grid-cols-2`} style={{ backgroundColor: c.themeHex }}>
-            <div className={`gutter flex flex-col justify-center py-14 md:py-24 ${i % 2 ? "md:order-2" : ""}`} data-reveal>
-              <p className="label opacity-80">
-                Colour story N°{String(i + 1).padStart(2, "0")}
-                {c.productCount > 0 && ` · ${c.productCount} pieces`}
-              </p>
-              <h2 className="mt-4 font-display text-5xl leading-[0.95] text-balance md:text-7xl">{c.name}</h2>
-              {c.description && <p className="mt-6 max-w-md font-editorial text-xl italic md:text-2xl">{c.description}</p>}
-              <p className="mt-8">
-                <Link href={`/collections/${c.slug}`} className="text-link label hover:!text-current hover:opacity-70">
-                  Explore the collection →
-                </Link>
-              </p>
-            </div>
-            <Link
-              href={`/collections/${c.slug}`}
-              tabIndex={-1}
-              aria-hidden="true"
-              className="relative flex h-80 items-end justify-center overflow-hidden md:h-[34rem]"
-            >
-              {/* A transparent cut-out standing on the collection's colour field. */}
-              <span className="absolute inset-x-[20%] bottom-0 h-8 bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--color-ink)_30%,transparent),transparent)]" />
-              {c.bannerPublicId && cloudinaryEnabled ? (
-                <span className="absolute inset-x-0 top-[6%] bottom-0">
-                  <CldImage
-                    publicId={c.bannerPublicId}
-                    alt=""
-                    sizes="(min-width: 768px) 30rem, 80vw"
-                    className="object-contain object-bottom"
-                  />
-                </span>
-              ) : (
-                <PlaceholderFigure className="relative h-[92%] w-auto opacity-85" />
-              )}
+    <section className="gutter py-16 md:py-24">
+      <div className="mx-auto max-w-[90rem]">
+        <SectionHeading
+          eyebrow="Collections"
+          title="The collections"
+          action={
+            <Link href="/collections" className="text-link label">
+              See all collections →
             </Link>
-          </article>
-        );
-      })}
+          }
+        />
+        <ul className="grid gap-4 md:grid-cols-2 md:gap-6">
+          {collections.slice(0, 2).map((c, i) => {
+            const tone = readableOn(c.themeHex) === "ink" ? "text-ink" : "text-ivory";
+            return (
+              <li key={c.id} data-reveal style={stagger(i)}>
+                <Link
+                  href={`/collections/${c.slug}`}
+                  className={`${tone} group relative block h-[30rem] overflow-hidden md:h-[40rem]`}
+                  style={{ backgroundColor: c.themeHex }}
+                >
+                  {c.bannerPublicId && cloudinaryEnabled && (
+                    <span className="absolute top-[22%] right-0 bottom-0 w-[62%] transition-transform duration-700 ease-entrance group-hover:scale-[1.03] md:top-[10%] md:w-[58%]">
+                      <CldImage
+                        publicId={c.bannerPublicId}
+                        alt=""
+                        sizes="(min-width: 768px) 28rem, 60vw"
+                        className="object-contain object-bottom"
+                      />
+                    </span>
+                  )}
+                  <span className="relative block max-w-[62%] p-6 md:max-w-[52%] md:p-10">
+                    <span className="label block opacity-80">
+                      {c.productCount > 0 ? `${c.productCount} pieces` : "Collection"}
+                    </span>
+                    <span className="mt-4 block font-display text-4xl leading-[0.95] text-balance md:text-6xl">{c.name}</span>
+                    {c.description && <span className="mt-5 block font-editorial text-lg italic md:text-xl">{c.description}</span>}
+                    <span className="text-link label mt-6 inline-block">Explore →</span>
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </section>
   );
 }
@@ -141,8 +149,8 @@ export function BestOf({ products }: { products: ProductCardData[] }) {
     <section className="gutter py-16 md:py-24">
       <div className="mx-auto max-w-[90rem]">
         <SectionHeading
-          eyebrow="New in"
-          title="Best of Ebonímode"
+          eyebrow="Best of Ebonímode"
+          title="New in"
           action={
             <Link href="/shop" className="text-link label">
               Shop all →
@@ -181,7 +189,7 @@ export function LookSection({ children }: { children: ReactNode }) {
   );
 }
 
-/** 9. Our story: the brand story, verbatim. */
+/** Our story: the brand story, verbatim, with three craft notes. */
 export function OurStory() {
   const { story } = HOME_MEDIA;
   return (
@@ -201,6 +209,14 @@ export function OurStory() {
           <p className="label text-ink-soft">Our story</p>
           <h2 className="sr-only">Our story</h2>
           <p className="mt-6 font-editorial text-2xl leading-snug italic md:text-3xl md:leading-snug">{BRAND_STORY}</p>
+          <dl className="mt-10 grid gap-6 border-t border-ink/15 pt-8 text-left sm:grid-cols-3">
+            {CRAFT.map((c) => (
+              <div key={c.term}>
+                <dt className="label">{c.term}</dt>
+                <dd className="mt-2 text-sm text-ink-soft">{c.note}</dd>
+              </div>
+            ))}
+          </dl>
           <p className={`mt-10 flex flex-wrap gap-x-10 gap-y-4 ${cloudinaryEnabled ? "" : "justify-center"}`}>
             <Link href="/impact" className="text-link label">
               Our impact →
@@ -218,6 +234,7 @@ export function OurStory() {
 /** 10. Reviews. Until real approved reviews exist, the count and cards are marked placeholders. */
 export function Reviews({ count, latest }: { count: number; latest: ReviewCard[] }) {
   const hasReal = latest.length > 0;
+  if (!hasReal) return null; // no placeholder reviews on the live page
   return (
     <section className="gutter bg-sand py-16 md:py-24">
       <div className="mx-auto max-w-[90rem]">
@@ -252,6 +269,7 @@ export function Reviews({ count, latest }: { count: number; latest: ReviewCard[]
 
 /** 11. Journal: three stories (placeholders until posts are published). */
 export function Journal({ posts }: { posts: JournalCard[] }) {
+  if (posts.length === 0) return null; // no placeholder stories on the live page
   const cards: (JournalCard | null)[] = posts.length > 0 ? posts : [null, null, null];
   const fields = ["bg-sage", "bg-tangerine", "bg-aubergine"];
   return (

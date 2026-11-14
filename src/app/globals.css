@@ -62,12 +62,6 @@
   --tabbar-h: 3.75rem;
   --gutter: clamp(1rem, 4vw, 3rem);
 
-  /* Real Ebonímode batik prints for the brand name, keyed like hero_slides.print_key.
-     Each file is a mirrored tile, so it repeats without a seam. */
-  --print-a: url("/prints/leaf-green.webp");
-  --print-b: url("/prints/indigo.webp");
-  --print-c: url("/prints/aubergine.webp");
-
   color-scheme: light;
 }
 
@@ -182,48 +176,6 @@ body {
   .field:focus {
     border-color: var(--color-emerald);
   }
-
-  /* ── Signature: the brand name filled with batik print ──
-     The print layer sits over a solid ink layer, so if the image is slow
-     or missing the letters render solid ink instead of disappearing. */
-  .print-name {
-    --print: var(--print-a);
-    --print-stroke: 1.5px;
-    --print-size: 22rem;
-    font-family: var(--font-display);
-    font-weight: 400;
-    text-transform: uppercase;
-    line-height: 0.9;
-    letter-spacing: 0.01em;
-    white-space: nowrap;
-    color: var(--color-ink); /* fallback when background-clip:text is unsupported */
-  }
-  .print-name[data-print="b"] {
-    --print: var(--print-b);
-  }
-  .print-name[data-print="c"] {
-    --print: var(--print-c);
-  }
-
-  @supports ((background-clip: text) or (-webkit-background-clip: text)) {
-    .print-name {
-      background-image: var(--print), linear-gradient(var(--color-ink), var(--color-ink));
-      background-size: var(--print-size) auto, cover;
-      background-repeat: repeat, no-repeat;
-      background-position: 0 50%, 0 0;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      -webkit-text-fill-color: transparent;
-      -webkit-text-stroke: var(--print-stroke) var(--color-ink);
-    }
-  }
-
-  @media (min-width: 768px) {
-    .print-name {
-      --print-stroke: 2px;
-    }
-  }
 }
 
 @layer utilities {
@@ -247,8 +199,7 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────
-   HERO SLIDESHOW (section 2.4). Only transform and opacity animate,
-   plus the slow print drift inside the lettering.
+   HERO SLIDESHOW (section 2.4). Only transform and opacity animate.
    ────────────────────────────────────────────────────────────── */
 .hero {
   --hero-fg: var(--color-ink);
@@ -276,8 +227,6 @@ body {
 .hero-backdrop {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
   opacity: 0;
 }
 .hero-slide[data-state="active"] .hero-backdrop {
@@ -287,44 +236,20 @@ body {
 .hero-slide[data-state="prev"] .hero-backdrop {
   opacity: 1;
 }
-.hero-print {
-  --print-size: clamp(11rem, 30vw, 26rem);
-  --print-stroke: 2px;
-  font-size: 30vw;
-  line-height: 0.86;
-  text-align: center;
-  padding-bottom: 12%;
-}
-.hero-print > span {
-  display: block;
-}
-@media (min-width: 640px) {
-  .hero-print {
-    --print-stroke: 3px;
-    font-size: 15.2vw;
-    padding-bottom: 0;
-  }
-  .hero-print > span {
-    display: inline;
-  }
-}
-.hero-slide[data-state="active"] .hero-print {
-  animation: print-drift 80s linear infinite;
-}
-@keyframes print-drift {
-  to {
-    background-position: var(--print-size) 50%, 0 0;
-  }
-}
 
-/* Cut-out model: in from the right, out to the left */
-.hero-model {
+/* Stage: the cut-out model on the colour field. Centred on phones, right on desktop. */
+.hero-stage {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: min(78vw, 30rem);
-  height: 90%;
-  margin-left: calc(min(78vw, 30rem) / -2);
+  width: min(80vw, 22rem);
+  height: 66%;
+  margin-left: calc(min(80vw, 22rem) / -2);
+}
+/* Cut-out model: in from the right, out to the left */
+.hero-model {
+  position: absolute;
+  inset: 0;
   opacity: 0;
   transform: translate3d(40px, 0, 0);
 }
@@ -346,6 +271,49 @@ body {
   height: 2.25rem;
   background: radial-gradient(closest-side, color-mix(in srgb, var(--color-ink) 28%, transparent), transparent);
   z-index: -1;
+}
+
+/* Editorial copy: top on phones, vertically centred on the left on desktop */
+.hero-copy {
+  position: absolute;
+  top: 1.75rem;
+  left: 0;
+  right: 0;
+}
+.hero-headline {
+  margin-top: 0.75rem;
+  font-size: clamp(2.25rem, 9.5vw, 3rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+/* Phones: a taller hero, with the stage ending above the counter and buttons */
+@media (max-width: 767px) {
+  .hero {
+    height: 39rem;
+  }
+  .hero-stage {
+    bottom: 7.75rem;
+    height: 50%;
+  }
+}
+@media (min-width: 768px) {
+  .hero-stage {
+    left: 68%;
+    width: min(40vw, 36rem);
+    height: 95%;
+    margin-left: calc(min(40vw, 36rem) / -2);
+  }
+  .hero-copy {
+    top: 50%;
+    right: auto;
+    width: 46%;
+    transform: translateY(-58%);
+  }
+  .hero-headline {
+    margin-top: 1.5rem;
+    font-size: clamp(3rem, 5.6vw, 5.5rem);
+  }
 }
 
 /* Tagline lines stagger in 80ms apart; the note follows */
@@ -515,7 +483,6 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   /* Hero: no autoplay, no drift, no slide. A simple crossfade only. */
-  .hero-print,
   .hero-progress-fill {
     animation: none !important;
   }

@@ -5,9 +5,8 @@
  */
 export const HOME_MEDIA = {
   departments: {
-    women: { publicId: "8AADCA0E-44F7-4414-A438-1B78842C3D0E", alt: "Model in a brown and peach Adire set" },
-    men: { publicId: "IMG_9865", alt: "Man in a peach tunic with striped panels" },
-    newIn: { publicId: "IMG_9810", alt: "Model in a blue silk pant set" },
+    women: { publicId: "IMG_9809", alt: "Model mid-step in the blue Omi Eko Silk Pant Set" },
+    men: { publicId: "IMG_9864", alt: "Man in the Dele Linen Set on a balcony" },
   },
   story: {
     publicId: "IMG_9824",

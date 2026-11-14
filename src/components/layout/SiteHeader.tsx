@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { PrintName } from "@/components/brand/PrintName";
+import wordmark from "@/assets/ebonimode-wordmark.png";
 import { AccountIcon, BagIcon, CloseIcon, HeartIcon, MenuIcon, SearchIcon } from "@/components/icons";
 import { colourFamilyToken } from "@/lib/colour";
 import type { MenuData } from "@/lib/data/home";
@@ -100,9 +101,9 @@ export function SiteHeader({ menu }: { menu: MenuData }) {
           </nav>
         </div>
 
-        {/* Centre: the print-filled name */}
-        <Link href="/" aria-label="Ebonímode home" className="block">
-          <PrintName className="text-[1.75rem] sm:text-[2.25rem] lg:text-[2.75rem] [&_.print-name]:[--print-size:7rem]" />
+        {/* Centre: the handwritten wordmark from the logo */}
+        <Link href="/" aria-label="Ebonímode home" className="block transition-opacity duration-[var(--dur-ui)] hover:opacity-70">
+          <Image src={wordmark} alt="" priority className="h-8 w-auto sm:h-10 lg:h-11" sizes="15rem" />
         </Link>
 
         {/* Right: utilities */}
