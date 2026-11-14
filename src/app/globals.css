@@ -37,9 +37,9 @@
   --color-ink-soft: #4a4446;
 
   /* Typography (variables injected by next/font in layout.tsx) */
-  --font-display: var(--font-abril), "Didot", "Bodoni 72", Georgia, serif;
-  --font-editorial: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
-  --font-sans: var(--font-archivo), "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-bricolage), "Helvetica Neue", Arial, sans-serif;
+  --font-editorial: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-instrument-sans), "Helvetica Neue", Arial, sans-serif;
 
   /* Motion easing */
   --ease-entrance: cubic-bezier(0.22, 1, 0.36, 1);
@@ -80,8 +80,9 @@ body {
   background-color: var(--color-ivory);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 1.0625rem;
+  font-weight: 450;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -101,9 +102,9 @@ body {
   /* Small uppercase UI label: nav, buttons, eyebrows */
   .label {
     font-family: var(--font-sans);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.2em;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     line-height: 1.2;
   }
@@ -131,9 +132,9 @@ body {
     border: 1px solid var(--color-emerald);
     background: var(--color-emerald);
     color: var(--color-ivory);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.2em;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     line-height: 1.2;
     cursor: pointer;
@@ -283,8 +284,7 @@ body {
 .hero-headline {
   margin-top: 0.75rem;
   font-size: clamp(2.25rem, 9.5vw, 3rem);
-  line-height: 0.98;
-  letter-spacing: -0.01em;
+  line-height: 0.95;
   text-wrap: balance;
 }
 /* Phones: a taller hero, with the stage ending above the counter and buttons */
@@ -504,4 +504,11 @@ body {
   ::view-transition-group(*) {
     animation: none !important;
   }
+}
+
+/* Display type: Bricolage Grotesque, set heavy and tight wherever .font-display is used */
+.font-display {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-stretch: 92%;
 }

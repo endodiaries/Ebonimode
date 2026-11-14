@@ -26,7 +26,7 @@ export function SiteFooter() {
                 <ul className="space-y-1">
                   {group.links.map((l) => (
                     <li key={l.href}>
-                      <Link href={l.href} className="inline-block py-1.5 text-sm text-ivory/85 hover:text-ivory hover:underline">
+                      <Link href={l.href} className="inline-block py-1.5 text-base text-ivory/85 hover:text-ivory hover:underline">
                         {l.label}
                       </Link>
                     </li>
@@ -37,7 +37,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mx-auto mt-14 flex max-w-[90rem] flex-col gap-6 border-t border-gold/40 pt-6 text-sm text-ivory/75 md:flex-row md:items-center md:justify-between">
+        <div className="mx-auto mt-14 flex max-w-[90rem] flex-col gap-6 border-t border-gold/40 pt-6 text-base text-ivory/75 md:flex-row md:items-center md:justify-between">
           <p>
             © <CopyrightYear /> Ebonímode
           </p>

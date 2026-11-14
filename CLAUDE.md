@@ -41,8 +41,9 @@ Feel: a clean, modern luxury storefront with a bold African identity. Spacious a
 - Colour-story palette from the logo and fabrics: forest `#1D3714`, sage `#648B53`, aubergine `#591D2E`, crimson `#8E161F`, vermilion `#C23302`, tangerine `#EE8720`, marigold `#F2C21B`, chestnut `#782503`, indigo `#243B8F`, cobalt `#2F6FD0`, blush `#E9808F`.
 - Each collection has an admin-set `theme_hex`. Check WCAG AA contrast for any text on colour.
 
-### 2.3 Typography
-- Display: **Abril Fatface** (name, big headlines). Editorial: **Cormorant Garamond Italic** (decks, quotes, captions). UI and body: **Archivo** (small uppercase, 0.2em tracking for nav and labels; 16px body).
+### 2.3 Typography (changed by the owner, November 2026: bigger and bolder)
+- Display: **Bricolage Grotesque**, weight 800, tight tracking (big headlines). Editorial: **Instrument Serif Italic** (decks, quotes, captions). UI and body: **Instrument Sans** (labels are 13px uppercase, weight 700, 0.14em tracking; body is 17px, weight 450).
+- Nothing smaller than 14px. Product names and prices are 16 to 17px and semibold.
 - Square corners, 1px rules, no pill buttons, no card shadows. Generous white space.
 
 ### 2.4 Hero: modern, chic slideshow (the centrepiece)

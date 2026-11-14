@@ -213,7 +213,7 @@ export function OurStory() {
             {CRAFT.map((c) => (
               <div key={c.term}>
                 <dt className="label">{c.term}</dt>
-                <dd className="mt-2 text-sm text-ink-soft">{c.note}</dd>
+                <dd className="mt-2 text-base text-ink-soft">{c.note}</dd>
               </div>
             ))}
           </dl>

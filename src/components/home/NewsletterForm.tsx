@@ -38,10 +38,10 @@ export function NewsletterForm() {
           {pending ? "Joining…" : "Join →"}
         </button>
       </div>
-      <p id="newsletter-error" role="alert" className="mt-3 min-h-5 text-sm text-crimson">
+      <p id="newsletter-error" role="alert" className="mt-3 min-h-5 text-base text-crimson">
         {state.error}
       </p>
-      <p id="newsletter-consent" className="text-sm text-ink-soft">
+      <p id="newsletter-consent" className="text-base text-ink-soft">
         By joining you agree to receive emails from Ebonímode. Unsubscribe at any time. See our{" "}
         <Link href="/privacy" className="text-link">
           privacy policy

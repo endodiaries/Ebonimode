@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Abril_Fatface, Archivo, Cormorant_Garamond } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Sans, Instrument_Serif } from "next/font/google";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -8,24 +8,23 @@ import { getMenuData } from "@/lib/data/home";
 import { BRAND_NAME, BRAND_STORY, siteUrl } from "@/lib/site";
 import "./globals.css";
 
-const abril = Abril_Fatface({
-  weight: "400",
+const display = Bricolage_Grotesque({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-abril",
+  variable: "--font-bricolage",
   display: "swap",
 });
 
-const cormorant = Cormorant_Garamond({
-  weight: ["400", "500"],
+const editorial = Instrument_Serif({
+  weight: "400",
   style: ["italic"],
   subsets: ["latin", "latin-ext"],
-  variable: "--font-cormorant",
+  variable: "--font-instrument-serif",
   display: "swap",
 });
 
-const archivo = Archivo({
+const sans = Instrument_Sans({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-archivo",
+  variable: "--font-instrument-sans",
   display: "swap",
 });
 
@@ -56,7 +55,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const menu = await getMenuData();
   return (
-    <html lang="en-NG" className={`${abril.variable} ${cormorant.variable} ${archivo.variable}`}>
+    <html lang="en-NG" className={`${display.variable} ${editorial.variable} ${sans.variable}`}>
       <body className="flex min-h-dvh flex-col">
         <a
           href="#main"

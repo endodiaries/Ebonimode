@@ -38,7 +38,7 @@ function Field({
       </label>
       <input id={id} aria-describedby={hint ? `${id}-hint` : undefined} className="field" {...input} />
       {hint && (
-        <p id={`${id}-hint`} className="mt-2 text-sm text-ink-soft">
+        <p id={`${id}-hint`} className="mt-2 text-base text-ink-soft">
           {hint}
         </p>
       )}

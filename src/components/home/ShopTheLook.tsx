@@ -48,7 +48,7 @@ export function ShopTheLook({ look }: { look: LookData }) {
             className="group absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center"
             style={{ left: `${h.x}%`, top: `${h.y}%` }}
           >
-            <span className="flex h-7 w-7 items-center justify-center border border-ink bg-ivory text-xs text-ink transition-transform duration-[var(--dur-ui)] ease-entrance group-hover:scale-110 group-aria-pressed:bg-ink group-aria-pressed:text-ivory">
+            <span className="flex h-7 w-7 items-center justify-center border border-ink bg-ivory text-sm text-ink transition-transform duration-[var(--dur-ui)] ease-entrance group-hover:scale-110 group-aria-pressed:bg-ink group-aria-pressed:text-ivory">
               {i + 1}
             </span>
           </button>

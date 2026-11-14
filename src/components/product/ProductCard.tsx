@@ -43,14 +43,14 @@ export function SizeChips({ product }: { product: ProductCardData }) {
             <Link
               href={`/product/${product.slug}?size=${encodeURIComponent(s.size)}`}
               aria-label={`${product.name}, size ${s.size}`}
-              className="flex h-9 min-w-9 items-center justify-center border border-ink/25 px-2 text-xs transition-colors duration-[var(--dur-micro)] hover:border-ink hover:bg-ink hover:text-ivory"
+              className="flex h-9 min-w-9 items-center justify-center border border-ink/25 px-2 text-sm transition-colors duration-[var(--dur-micro)] hover:border-ink hover:bg-ink hover:text-ivory"
             >
               {s.size}
             </Link>
           </li>
         ) : (
           <li key={s.size}>
-            <span className="flex h-9 min-w-9 items-center justify-center border border-ink/10 px-2 text-xs text-ink-soft line-through">
+            <span className="flex h-9 min-w-9 items-center justify-center border border-ink/10 px-2 text-sm text-ink-soft line-through">
               {s.size}
               <span className="sr-only"> sold out</span>
             </span>
@@ -70,12 +70,12 @@ export function ProductCard({ product, index = 0 }: { product: ProductCardData; 
       </Link>
       <WishlistButton productId={product.id} productName={product.name} />
 
-      <h3 className="mt-4 text-[0.9375rem] leading-snug">
+      <h3 className="mt-4 text-[1.0625rem] leading-snug font-semibold">
         <Link href={href} className="hover:underline">
           {product.name}
         </Link>
       </h3>
-      <p className="mt-1 text-sm text-ink-soft">{formatPrice(product.priceNgn, product.tags)}</p>
+      <p className="mt-1 text-base text-ink-soft">{formatPrice(product.priceNgn, product.tags)}</p>
 
       {product.colourways.length > 1 && (
         <ul aria-label="Colours" className="mt-3 flex gap-1.5">
