@@ -1,7 +1,0 @@
-<!-- PLACEHOLDER batik tile (indigo/blue). Replace with a real print from assets/prints. -->
-<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
-  <rect width="160" height="160" fill="#243B8F"/>
-  <g fill="none" stroke="#2F6FD0" stroke-width="8"><circle cx="80" cy="80" r="44"/><circle cx="0" cy="0" r="44"/><circle cx="160" cy="0" r="44"/><circle cx="0" cy="160" r="44"/><circle cx="160" cy="160" r="44"/></g>
-  <g fill="#FAF6EF"><circle cx="80" cy="80" r="10"/><circle cx="80" cy="0" r="5"/><circle cx="0" cy="80" r="5"/><circle cx="160" cy="80" r="5"/><circle cx="80" cy="160" r="5"/></g>
-  <path d="M60 20l20 12 20-12M60 140l20-12 20 12" fill="none" stroke="#FAF6EF" stroke-width="4"/>
-</svg>

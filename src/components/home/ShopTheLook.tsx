@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { CldImage } from "@/components/brand/CldImage";
 import { PlaceholderFigure } from "@/components/brand/PlaceholderFigure";
 import { ProductMedia, SizeChips } from "@/components/product/ProductCard";
+import { cloudinaryEnabled } from "@/lib/cloudinary";
 import { readableOn } from "@/lib/colour";
 import type { LookData } from "@/lib/data/home";
 import { formatPrice } from "@/lib/price";
@@ -14,15 +16,28 @@ export function ShopTheLook({ look }: { look: LookData }) {
   const current = look.hotspots[selected];
   const field = look.themeHex ?? "#EFE6D8";
   const tone = readableOn(field) === "ink" ? "text-ink" : "text-ivory";
+  const hasPhoto = cloudinaryEnabled && !look.image.startsWith("placeholder/");
 
   return (
-    <div className="grid gap-8 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:gap-12">
-      <div className={`relative aspect-[4/5] overflow-hidden md:aspect-[5/4] ${tone}`} style={{ backgroundColor: field }}>
-        {/* PLACEHOLDER scene until a campaign photo is uploaded for this look. */}
-        <div className="absolute inset-0 flex items-end justify-center gap-[8%] opacity-30" aria-hidden="true">
-          <PlaceholderFigure className="h-[88%] w-auto" />
-          <PlaceholderFigure className="h-[92%] w-auto" />
-        </div>
+    <div className="grid gap-8 md:grid-cols-2 md:items-center md:gap-12">
+      <div
+        className={`relative aspect-[4/5] w-full overflow-hidden md:max-w-[34rem] md:justify-self-end ${tone}`}
+        style={{ backgroundColor: field }}
+      >
+        {hasPhoto ? (
+          <CldImage
+            publicId={look.image}
+            alt={look.title}
+            sizes="(min-width: 768px) 34rem, 100vw"
+            crop={{ ratio: 5 / 4, gravity: "auto" }}
+            className="object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-end justify-center gap-[8%] opacity-30" aria-hidden="true">
+            <PlaceholderFigure className="h-[88%] w-auto" />
+            <PlaceholderFigure className="h-[92%] w-auto" />
+          </div>
+        )}
         {look.hotspots.map((h, i) => (
           <button
             key={h.id}

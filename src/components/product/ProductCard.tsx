@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
+import { CldImage } from "@/components/brand/CldImage";
 import { PlaceholderFigure } from "@/components/brand/PlaceholderFigure";
-import { cloudinaryEnabled, cloudinaryLoader } from "@/lib/cloudinary";
+import { cloudinaryEnabled } from "@/lib/cloudinary";
 import { readableOn } from "@/lib/colour";
 import type { ProductCardData } from "@/lib/data/home";
 import { formatPrice } from "@/lib/price";
@@ -11,12 +11,11 @@ import { WishlistButton } from "./WishlistButton";
 export function ProductMedia({ product, sizes }: { product: ProductCardData; sizes: string }) {
   if (product.image && cloudinaryEnabled) {
     return (
-      <Image
-        src={product.image.publicId}
+      <CldImage
+        publicId={product.image.publicId}
         alt={product.image.alt}
-        loader={cloudinaryLoader}
-        fill
         sizes={sizes}
+        crop={{ ratio: 4 / 3, gravity: "auto" }}
         className="object-cover transition-transform duration-700 ease-entrance group-hover:scale-[1.03]"
       />
     );

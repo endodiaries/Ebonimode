@@ -155,7 +155,7 @@ export async function getCollections(): Promise<CollectionSummary[]> {
   try {
     const { data, error } = await createPublicClient()
       .from("collections")
-      .select("id,name,slug,description,theme_hex,banner_public_id,product_collections(count)")
+      .select("id,name,slug,description,theme_hex,banner_public_id,product_collections(products(status))")
       .eq("is_published", true)
       .order("sort_order");
     if (error) throw error;
@@ -166,7 +166,7 @@ export async function getCollections(): Promise<CollectionSummary[]> {
       description: string | null;
       theme_hex: string | null;
       banner_public_id: string | null;
-      product_collections: { count: number }[];
+      product_collections: { products: { status: string } | null }[];
     };
     return ((data ?? []) as unknown as Row[]).map((r) => ({
       id: r.id,
@@ -175,7 +175,8 @@ export async function getCollections(): Promise<CollectionSummary[]> {
       description: r.description,
       themeHex: r.theme_hex ?? "#EFE6D8",
       bannerPublicId: r.banner_public_id,
-      productCount: r.product_collections[0]?.count ?? 0,
+      // Only published pieces count; drafts stay hidden from shoppers.
+      productCount: r.product_collections.filter((l) => l.products?.status === "published").length,
     }));
   } catch (e) {
     console.error("getCollections failed", e);

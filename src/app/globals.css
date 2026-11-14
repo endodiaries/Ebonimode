@@ -62,11 +62,11 @@
   --tabbar-h: 3.75rem;
   --gutter: clamp(1rem, 4vw, 3rem);
 
-  /* Batik print fills for the brand name, keyed like hero_slides.print_key.
-     PLACEHOLDER textures until the real prints from assets/prints are added. */
-  --print-a: url("/prints/placeholder-print-a.svg");
-  --print-b: url("/prints/placeholder-print-b.svg");
-  --print-c: url("/prints/placeholder-print-c.svg");
+  /* Real Ebonímode batik prints for the brand name, keyed like hero_slides.print_key.
+     Each file is a mirrored tile, so it repeats without a seam. */
+  --print-a: url("/prints/leaf-green.webp");
+  --print-b: url("/prints/indigo.webp");
+  --print-c: url("/prints/aubergine.webp");
 
   color-scheme: light;
 }
