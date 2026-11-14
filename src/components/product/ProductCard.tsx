@@ -7,17 +7,31 @@ import type { ProductCardData } from "@/lib/data/home";
 import { formatPrice } from "@/lib/price";
 import { WishlistButton } from "./WishlistButton";
 
+const isCutout = (publicId: string) => publicId.startsWith("site/product-cutouts/");
+
 /** Product photo, or a colour field in the product's own colour until photos are uploaded. */
 export function ProductMedia({ product, sizes }: { product: ProductCardData; sizes: string }) {
   if (product.image && cloudinaryEnabled) {
     return (
-      <CldImage
-        publicId={product.image.publicId}
-        alt={product.image.alt}
-        sizes={sizes}
-        crop={{ ratio: 4 / 3, gravity: "auto" }}
-        className="object-cover transition-transform duration-700 ease-entrance group-hover:scale-[1.03]"
-      />
+      // Cut-outs (background removed) stand on the sand tile; ordinary photos fill it.
+      isCutout(product.image.publicId) ? (
+        <span className="absolute inset-x-[6%] top-[5%] bottom-0">
+          <CldImage
+            publicId={product.image.publicId}
+            alt={product.image.alt}
+            sizes={sizes}
+            className="object-contain object-bottom transition-transform duration-700 ease-entrance group-hover:scale-[1.03]"
+          />
+        </span>
+      ) : (
+        <CldImage
+          publicId={product.image.publicId}
+          alt={product.image.alt}
+          sizes={sizes}
+          crop={{ ratio: 4 / 3, gravity: "auto" }}
+          className="object-cover transition-transform duration-700 ease-entrance group-hover:scale-[1.03]"
+        />
+      )
     );
   }
   const hex = product.colourHex ?? "#EFE6D8";
@@ -32,7 +46,7 @@ export function ProductMedia({ product, sizes }: { product: ProductCardData; siz
   );
 }
 
-/** Size chips. Each links to the product with that size chosen; sold-out sizes are struck through. */
+/** Size chips, for the product page and quick views (not shown on cards). Each links to the product with that size chosen; sold-out sizes are struck through. */
 export function SizeChips({ product }: { product: ProductCardData }) {
   if (product.sizes.length === 0) return null;
   return (
@@ -93,7 +107,6 @@ export function ProductCard({ product, index = 0 }: { product: ProductCardData; 
           ))}
         </ul>
       )}
-      <SizeChips product={product} />
     </article>
   );
 }

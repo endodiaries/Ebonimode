@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { CldImage } from "@/components/brand/CldImage";
 import { PlaceholderFigure } from "@/components/brand/PlaceholderFigure";
-import { ProductMedia, SizeChips } from "@/components/product/ProductCard";
+import { ProductMedia } from "@/components/product/ProductCard";
 import { cloudinaryEnabled } from "@/lib/cloudinary";
 import { readableOn } from "@/lib/colour";
 import type { LookData } from "@/lib/data/home";
@@ -71,7 +71,6 @@ export function ShopTheLook({ look }: { look: LookData }) {
             </p>
             <h3 className="mt-2 font-display text-2xl leading-tight md:text-3xl">{current.product.name}</h3>
             <p className="mt-2 text-ink-soft">{formatPrice(current.product.priceNgn, current.product.tags)}</p>
-            <SizeChips product={current.product} />
             <p className="mt-5">
               <Link href={`/product/${current.product.slug}`} className="text-link label">
                 View piece →
