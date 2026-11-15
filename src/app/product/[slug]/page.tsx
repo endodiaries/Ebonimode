@@ -6,6 +6,7 @@ import { BuyBox } from "@/components/product/BuyBox";
 import { Gallery } from "@/components/product/Gallery";
 import { RevealObserver } from "@/components/motion/RevealObserver";
 import { ProductCard } from "@/components/product/ProductCard";
+import { ProductTabs } from "@/components/product/ProductTabs";
 import { ReviewForm } from "@/components/product/ReviewForm";
 import { cldImage, cloudinaryEnabled } from "@/lib/cloudinary";
 import { Price } from "@/lib/currency";
@@ -49,6 +50,7 @@ export default async function ProductPage({ params }: Props) {
   const product = await getProduct(slug);
   if (!product) notFound();
   const { card, description, fabricCare, images, sizeGuide, related, pairsWith, rating, reviews } = product;
+  const { details, occasions, fabric, fabricWeight, lining, care } = product;
   const dept = DEPARTMENT[card.department];
   const price = formatPrice(card.priceNgn, card.tags);
   const priced = price !== PRICE_PLACEHOLDER;
@@ -158,27 +160,25 @@ export default async function ProductPage({ params }: Props) {
               </div>
 
               {paragraphs.length > 0 && (
-                <div className="mt-10 space-y-4 border-t border-ink/15 pt-8">
+                <div className="mt-10 space-y-4 border-t border-ink/15 pt-8 text-center font-editorial text-xl leading-relaxed italic">
                   {paragraphs.map((p, i) => (
                     <p key={i}>{p}</p>
                   ))}
                 </div>
               )}
 
-              {fabricCare && (
-                <details className="group mt-8 border-y border-ink/15">
-                  <summary className="label flex cursor-pointer list-none items-center justify-between py-5">
-                    Fabric and care
-                    <span aria-hidden="true" className="text-xl leading-none group-open:hidden">
-                      +
-                    </span>
-                    <span aria-hidden="true" className="hidden text-xl leading-none group-open:inline">
-                      −
-                    </span>
-                  </summary>
-                  <p className="pb-6">{fabricCare}</p>
-                </details>
-              )}
+              <div className="mt-10">
+                <ProductTabs
+                  details={details}
+                  occasions={occasions}
+                  sizeGuide={sizeGuide}
+                  fabric={fabric}
+                  weight={fabricWeight}
+                  lining={lining}
+                  care={care}
+                  careNote={fabricCare}
+                />
+              </div>
             </div>
           </div>
 

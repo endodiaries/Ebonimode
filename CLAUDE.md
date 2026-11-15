@@ -128,7 +128,7 @@ Delivery rates by location (shown in the active currency); emails with Resend (o
 
 ## 9. Tech stack
 - Next.js (App Router) + TypeScript (strict) + Tailwind CSS. Server rendering for SEO. Installable PWA with an offline fallback page.
-- Supabase: Postgres, Auth (email and Google), RLS on every table, Edge Functions. Apply migrations in order: `0001_ebonimode_schema.sql`, `0002_payments.sql`, `0003_inventory.sql`, `0004_looks.sql`, `0005_currencies.sql`.
+- Supabase: Postgres, Auth (email and Google), RLS on every table, Edge Functions. Apply migrations in order: `0001_ebonimode_schema.sql`, `0002_payments.sql`, `0003_inventory.sql`, `0004_looks.sql`, `0005_currencies.sql`, then `0006` to `0009` (hero slides, hardening, hero copy, product details).
 - **Cloudinary** for all images and video: the Upload Widget (via `next-cloudinary`) in the admin using an unsigned, narrowly restricted upload preset (or signed uploads for stricter control), store `public_id` in the database, deliver with `f_auto,q_auto` and responsive widths. API secret stays server-side.
 - Resend, Genlook, Paystack and the installment provider. All secrets in environment variables; keep `.env.example` current.
 

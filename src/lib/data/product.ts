@@ -9,6 +9,12 @@ export type ProductDetail = {
   card: ProductCardData;
   description: string | null;
   fabricCare: string | null;
+  details: string[];
+  occasions: string[];
+  fabric: string | null;
+  fabricWeight: string | null;
+  lining: string | null;
+  care: string[];
   images: { publicId: string; alt: string }[];
   sizeGuide: SizeGuide | null;
   related: ProductCardData[];
@@ -37,7 +43,7 @@ export async function getProduct(slug: string): Promise<ProductDetail | null> {
     const [detail, guide] = await Promise.all([
       db
         .from("products")
-        .select("description,fabric_care,avg_rating,review_count,product_images(cloudinary_public_id,alt,sort_order)")
+        .select("description,fabric_care,details,occasions,fabric,fabric_weight,lining,care,avg_rating,review_count,product_images(cloudinary_public_id,alt,sort_order)")
         .eq("id", card.id)
         .single(),
       // Unisex pieces have no chart of their own yet.
@@ -47,6 +53,12 @@ export async function getProduct(slug: string): Promise<ProductDetail | null> {
     type Row = {
       description: string | null;
       fabric_care: string | null;
+      details: string[] | null;
+      occasions: string[] | null;
+      fabric: string | null;
+      fabric_weight: string | null;
+      lining: string | null;
+      care: string[] | null;
       avg_rating: number;
       review_count: number;
       product_images: { cloudinary_public_id: string; alt: string | null; sort_order: number }[];
@@ -72,6 +84,12 @@ export async function getProduct(slug: string): Promise<ProductDetail | null> {
       card,
       description: row.description,
       fabricCare: row.fabric_care,
+      details: row.details ?? [],
+      occasions: row.occasions ?? [],
+      fabric: row.fabric,
+      fabricWeight: row.fabric_weight,
+      lining: row.lining,
+      care: row.care ?? [],
       images: [...row.product_images]
         .sort((a, b) => a.sort_order - b.sort_order)
         .map((i) => ({ publicId: i.cloudinary_public_id, alt: i.alt ?? card.name }))
