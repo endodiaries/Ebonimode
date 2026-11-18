@@ -49,10 +49,10 @@ Feel: a clean, modern luxury storefront with a bold African identity. Spacious a
 ### 2.4 Hero: modern, chic slideshow (the centrepiece)
 A full-width, landscape hero (about 1440 x 760 on desktop) with 4 to 5 slides. Each slide is composed like this:
 - A flat **colour field** background (ivory, sand, marigold, tangerine, etc.) and nothing else behind the model.
-- Left, vertically centred: a small "New collection N°01" label, then the slide's tagline as a large Abril headline, then a short rule.
+- Left, vertically centred: a small label with the slide's real collection name (or "Women"/"Men"; never invented numbering), then the slide's tagline as a large display headline, then a short rule.
 - Right: a large **transparent cut-out model** with a soft ground shadow.
 - Bottom-left: **exactly two buttons: "Shop Women" and "Shop Men"** (same on every slide), with the progress lines above them.
-- Bottom-right: "Worn here" with the name of the piece in Cormorant italic.
+- Bottom-right: "Worn here" with the name of the piece in Instrument Serif italic, as an underlined link to that product (on phones it sits under the headline). Open on a colour field; at most one neutral slide.
 - On phones the copy sits at the top and the model is centred beneath it.
 
 **Transition (neat and calm):**
@@ -72,7 +72,7 @@ A full-width, landscape hero (about 1440 x 760 on desktop) with 4 to 5 slides. E
 6. **Collections:** one tall colour tile per real collection (Chronicles of Africa: Eko, Eid Luxe) with a cut-out model.
 7. **Shop the Look:** a campaign photo with tappable hotspots opening a mini product card.
 8. **Our story:** the verbatim brand story beside a photo, three craft notes from the product descriptions, links to Our Impact and Artisans.
-9. **Trust row:** fast delivery, easy returns, quality assured, secure payment.
+9. **Trust row:** confirmed facts only, each with one line (sizes and made-to-order, made by hand, delivery across Nigeria and by DHL abroad, secure payment). Add easy returns only once the returns policy exists.
 10. **Reviews** and **Journal:** shown only when real reviews or posts exist. No placeholders.
 11. Newsletter with one underlined email field and a consent line.
 12. Colour-band divider, then the footer: a small logo straight on the green (no card behind it), Shop, Explore, Policies, social links, payment methods.
