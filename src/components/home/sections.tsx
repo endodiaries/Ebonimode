@@ -27,7 +27,7 @@ function SectionHeading({ title, action }: { title: ReactNode; action?: ReactNod
   );
 }
 
-/** Two large department tiles: Women and Men, side by side. */
+/** Two large department tiles, Women and Men: a cut-out model on a flat colour field. */
 export function Departments() {
   const { women, men } = HOME_MEDIA.departments;
   const items = [
@@ -37,27 +37,34 @@ export function Departments() {
   return (
     <section aria-label="Departments" className="gutter py-4 md:py-6">
       <ul className="mx-auto grid max-w-[90rem] grid-cols-2 gap-3 md:gap-6">
-        {items.map((it, i) => (
-          <li key={it.href} data-reveal style={stagger(i)}>
-            <Link href={it.href} className="group relative block aspect-[3/4] overflow-hidden bg-sand text-ivory md:aspect-[5/6]">
-              {cloudinaryEnabled && (
-                <CldImage
-                  publicId={it.photo.publicId}
-                  alt={it.photo.alt}
-                  sizes="(min-width: 768px) 50vw, 100vw"
-                  crop={{ ratio: 1.25, gravity: "auto" }}
-                  className="object-cover transition-transform duration-700 ease-entrance group-hover:scale-[1.03]"
-                />
-              )}
-              <span className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink/70 to-transparent" aria-hidden="true" />
-              <span className="absolute inset-x-0 bottom-0 block p-4 md:p-10">
-                <span className="block font-display text-4xl leading-none md:text-7xl">{it.label}</span>
-                <span className="mt-3 block font-editorial text-xl italic max-md:hidden">{it.copy}</span>
-                <span className="text-link label mt-3 inline-block md:mt-5">{it.link} →</span>
-              </span>
-            </Link>
-          </li>
-        ))}
+        {items.map((it, i) => {
+          const tone = readableOn(it.photo.field) === "ink" ? "text-ink" : "text-ivory";
+          return (
+            <li key={it.href} data-reveal style={stagger(i)}>
+              <Link
+                href={it.href}
+                className={`${tone} group relative block aspect-[3/4] overflow-hidden md:aspect-[5/6]`}
+                style={{ backgroundColor: it.photo.field }}
+              >
+                {cloudinaryEnabled && (
+                  <span className="absolute inset-x-[4%] top-[24%] bottom-0 transition-transform duration-700 ease-entrance group-hover:scale-[1.03] md:top-[8%] md:left-[34%]">
+                    <CldImage
+                      publicId={it.photo.publicId}
+                      alt={it.photo.alt}
+                      sizes="(min-width: 768px) 40vw, 50vw"
+                      className="object-contain object-bottom"
+                    />
+                  </span>
+                )}
+                <span className="relative block p-4 md:p-10">
+                  <span className="block font-display text-4xl leading-none md:text-7xl">{it.label}</span>
+                  <span className="mt-3 block max-w-[14rem] font-editorial text-xl italic max-md:hidden">{it.copy}</span>
+                  <span className="text-link label mt-3 inline-block md:mt-5">{it.link} →</span>
+                </span>
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );
@@ -192,12 +199,15 @@ export function OurStory() {
       <div className="mx-auto grid max-w-[90rem] items-center gap-10 md:grid-cols-2 md:gap-16">
         {cloudinaryEnabled && (
           <div className="relative aspect-[4/5] w-full overflow-hidden bg-sand md:max-w-[36rem]" data-reveal>
-            <CldImage
-              publicId={story.publicId}
-              alt={story.alt}
-              sizes="(min-width: 768px) 34rem, 100vw"
-              className="object-cover object-top"
-            />
+            <span className="absolute inset-x-[6%] top-0 bottom-0">
+              <CldImage
+                publicId={story.publicId}
+                alt={story.alt}
+                sizes="(min-width: 768px) 34rem, 100vw"
+                // The photo is cropped at the top, so its top edge sits flush with the tile.
+                className="object-contain object-top"
+              />
+            </span>
           </div>
         )}
         <div className={cloudinaryEnabled ? "max-w-xl" : "mx-auto max-w-3xl text-center md:col-span-2"} data-reveal>
