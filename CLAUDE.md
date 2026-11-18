@@ -29,6 +29,14 @@ Feel: a clean, modern luxury storefront with a bold African identity. Spacious a
 - Minimal modern fashion homepages: a hero with the **brand name set huge behind a cut-out model who overlaps the lettering**, a tiny tagline top-left, actions bottom-left, a "new collection" note bottom-right; a department strip with small thumbnails and "Shop women →" links; a split promo banner with a big headline beside a model; a row of trust points (fast delivery, easy returns, quality, secure payment); a clean "Best of" product grid; a simple newsletter.
 - Ebonímode's own twist: the brand name is written in African print, scenes are built from colour fields, and every collection is a colour story.
 
+## 2.0 Current design direction (owner, 18 November 2026: overrides the details in 2.1 to 2.6 where they conflict)
+The owner found the first build bland and asked for a full redesign, "ignore CLAUDE.md". The site is now set like a fashion magazine: "the cloth is the cover".
+- Type: **Bodoni Moda** (display and editorial italics, bold, tight) and **Hanken Grotesk** (text and UI). Labels and buttons are sentence case, not uppercase. No "→" on links.
+- Colour: gallery-white pages, stone tiles (`sand`) behind cut-outs, ink text; the accent is **Adire indigo** (the `emerald` tokens now hold indigo). Big flat colour fields from the collection palette carry the colour.
+- Homepage: full-screen hero (huge Bodoni line behind the cut-out model, colour wipe, masked line reveals), a marquee of craft words, two full-height department panels, the brand statement lit word by word on scroll, a sliding "New in" rail, full-height collection panels that stack on scroll, Shop the Look, craft section, trust row, indigo newsletter, footer with the full-width wordmark.
+- Motion: strong ease-out `cubic-bezier(0.23,1,0.32,1)`, in-out `cubic-bezier(0.77,0,0.175,1)` for wipes; media unveils with clip-path; product cards swap to a second view on hover. Reduced motion turns it all off.
+- Copy: short brand lines may be written in the brand voice as placeholders, but never facts (prices, counts, policies, claims) the owner has not confirmed.
+
 ### 2.1 The brand name (updated by the owner, November 2026)
 - The brand name is **not** set in batik print anywhere, and there is **no giant name in the hero**. No batik print is used as decoration.
 - The header shows the **handwritten wordmark from the logo, in a very bold weight** (`src/assets/ebonimode-wordmark.png`), centred, in ink, with accessible text.

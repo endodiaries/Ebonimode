@@ -12,29 +12,43 @@ const MAX_SWATCHES = 4;
 
 const isCutout = (publicId: string) => publicId.startsWith("site/product-cutouts/");
 
-/** Product photo, or a colour field in the product's own colour until photos are uploaded. */
-export function ProductMedia({ product, sizes }: { product: ProductCardData; sizes: string }) {
+/**
+ * Product photo, or a colour field in the product's own colour until photos are uploaded.
+ * With `hoverSwap`, a second cut-out fades in when the card is hovered (hover devices only).
+ */
+export function ProductMedia({ product, sizes, hoverSwap = false }: { product: ProductCardData; sizes: string; hoverSwap?: boolean }) {
   if (product.image && cloudinaryEnabled) {
+    const swap = hoverSwap && product.altImage && isCutout(product.image.publicId);
+    if (isCutout(product.image.publicId)) {
+      // Cut-outs (background removed) stand on the stone tile.
+      return (
+        <>
+          <span
+            className={`absolute inset-x-[6%] top-[5%] bottom-0 transition-[opacity,transform] duration-700 ease-entrance group-hover:scale-[1.03] ${
+              swap ? "group-hover:opacity-0" : ""
+            }`}
+          >
+            <CldImage publicId={product.image.publicId} alt={product.image.alt} sizes={sizes} className="object-contain object-bottom" />
+          </span>
+          {swap && product.altImage && (
+            <span
+              className="absolute inset-x-[6%] top-[5%] bottom-0 scale-[0.98] opacity-0 transition-[opacity,transform] duration-700 ease-entrance group-hover:scale-100 group-hover:opacity-100"
+              aria-hidden="true"
+            >
+              <CldImage publicId={product.altImage.publicId} alt="" sizes={sizes} className="object-contain object-bottom" />
+            </span>
+          )}
+        </>
+      );
+    }
     return (
-      // Cut-outs (background removed) stand on the sand tile; ordinary photos fill it.
-      isCutout(product.image.publicId) ? (
-        <span className="absolute inset-x-[6%] top-[5%] bottom-0">
-          <CldImage
-            publicId={product.image.publicId}
-            alt={product.image.alt}
-            sizes={sizes}
-            className="object-contain object-bottom transition-transform duration-700 ease-entrance group-hover:scale-[1.03]"
-          />
-        </span>
-      ) : (
-        <CldImage
-          publicId={product.image.publicId}
-          alt={product.image.alt}
-          sizes={sizes}
-          crop={{ ratio: 4 / 3, gravity: "auto" }}
-          className="object-cover transition-transform duration-700 ease-entrance group-hover:scale-[1.03]"
-        />
-      )
+      <CldImage
+        publicId={product.image.publicId}
+        alt={product.image.alt}
+        sizes={sizes}
+        crop={{ ratio: 4 / 3, gravity: "auto" }}
+        className="object-cover transition-transform duration-700 ease-entrance group-hover:scale-[1.03]"
+      />
     );
   }
   const hex = product.colourHex ?? "#EFE6D8";
@@ -95,11 +109,11 @@ export function ProductCard({
   return (
     <article className="group relative" data-reveal={reveal ? "" : undefined} style={{ "--i": index % 4 } as React.CSSProperties}>
       <Link href={href} className="relative block aspect-[3/4] overflow-hidden bg-sand" tabIndex={-1} aria-hidden="true">
-        <ProductMedia product={product} sizes="(min-width: 1024px) 25vw, 50vw" />
+        <ProductMedia product={product} sizes="(min-width: 1024px) 25vw, 50vw" hoverSwap />
       </Link>
       <WishlistButton productId={product.id} productName={product.name} />
 
-      <h3 className="mt-4 text-[1.0625rem] leading-snug font-semibold">
+      <h3 className="mt-4 text-base leading-snug font-medium">
         <Link href={href} className="hover:underline">
           {product.name}
         </Link>

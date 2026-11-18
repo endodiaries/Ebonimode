@@ -76,7 +76,7 @@ export function ShopTheLook({ look }: { look: LookData }) {
                 <span className="min-w-0">
                   <span className="block text-[1.0625rem] leading-snug font-semibold">{h.product.name}</span>
                   <Link href={href} className="text-link label mt-2 inline-block">
-                    View piece →
+                    View piece
                   </Link>
                 </span>
               </li>

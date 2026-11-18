@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Instrument_Sans, Instrument_Serif } from "next/font/google";
+import { Bodoni_Moda, Hanken_Grotesk } from "next/font/google";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -10,23 +10,19 @@ import { getDisplayCurrencies, getMenuData } from "@/lib/data/home";
 import { BRAND_NAME, BRAND_STORY, siteUrl } from "@/lib/site";
 import "./globals.css";
 
-const display = Bricolage_Grotesque({
+/* Display and editorial: Bodoni Moda, the fashion-masthead face (variable weight and optical size). */
+const display = Bodoni_Moda({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-bricolage",
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  variable: "--font-bodoni",
   display: "swap",
 });
 
-const editorial = Instrument_Serif({
-  weight: "400",
-  style: ["italic"],
+/* Text and interface: Hanken Grotesk, a clean grotesk that stays out of the clothes' way. */
+const sans = Hanken_Grotesk({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-instrument-serif",
-  display: "swap",
-});
-
-const sans = Instrument_Sans({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-instrument-sans",
+  variable: "--font-hanken",
   display: "swap",
 });
 
@@ -48,7 +44,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FAF6EF",
+  themeColor: "#FFFFFF",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -57,7 +53,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [menu, currencies] = await Promise.all([getMenuData(), getDisplayCurrencies()]);
   return (
-    <html lang="en-NG" className={`${display.variable} ${editorial.variable} ${sans.variable}`}>
+    <html lang="en-NG" className={`${display.variable} ${sans.variable}`}>
       <body className="flex min-h-dvh flex-col">
         <a
           href="#main"

@@ -39,6 +39,8 @@ export type ProductCardData = {
   tags: string[];
   colourHex: string | null;
   image: { publicId: string; alt: string } | null;
+  /** A second view, shown when a card is hovered. */
+  altImage: { publicId: string; alt: string } | null;
   sizes: { size: string; stock: number }[];
   category: { name: string; slug: string } | null;
   colourFamily: string | null;
@@ -105,7 +107,12 @@ async function fetchProducts(): Promise<ProductRow[]> {
 }
 
 function toCard(p: ProductRow, all: ProductRow[]): ProductCardData {
-  const image = [...p.product_images].sort((a, b) => a.sort_order - b.sort_order)[0];
+  const sorted = [...p.product_images].sort((a, b) => a.sort_order - b.sort_order);
+  const image = sorted[0];
+  // The next different cut-out, for the hover view (close-up photos with backgrounds are skipped).
+  const alt = sorted.find(
+    (i) => i.cloudinary_public_id !== image?.cloudinary_public_id && i.cloudinary_public_id.startsWith("site/product-cutouts/"),
+  );
   const group = p.colourway_group_id ? all.filter((o) => o.colourway_group_id === p.colourway_group_id) : [p];
   return {
     id: p.id,
@@ -121,6 +128,7 @@ function toCard(p: ProductRow, all: ProductRow[]): ProductCardData {
     collections: p.product_collections.flatMap((l) => (l.collections ? [l.collections.slug] : [])),
     createdAt: p.created_at,
     image: image ? { publicId: image.cloudinary_public_id, alt: image.alt ?? p.name } : null,
+    altImage: alt ? { publicId: alt.cloudinary_public_id, alt: alt.alt ?? p.name } : null,
     sizes: p.product_variants
       .filter((v): v is VariantRow & { size: string } => Boolean(v.size))
       .map((v) => ({ size: v.size, stock: v.stock }))

@@ -8,15 +8,16 @@
    ────────────────────────────────────────────────────────────── */
 
 @theme {
-  /* Chrome */
-  --color-ivory: #faf6ef;
-  --color-sand: #efe6d8;
-  --color-ink: #1a1718;
+  /* Chrome: a bright gallery white, so the cloth and the colour fields carry the colour */
+  --color-ivory: #ffffff;
+  --color-sand: #eeeae3; /* stone: the tile behind cut-out photos */
+  --color-ink: #141113;
   --color-white: #ffffff;
 
-  /* Brand */
-  --color-emerald: #0b6b4f;
-  --color-emerald-deep: #064734;
+  /* Brand accent: Adire indigo, the dye behind the cloth.
+     (Token names kept from the first build so every component picks it up.) */
+  --color-emerald: #26337a;
+  --color-emerald-deep: #131b45;
   --color-burnt-orange: #c2571a;
   --color-gold: #b8923a; /* hairlines only */
 
@@ -34,16 +35,17 @@
   --color-blush: #e9808f;
 
   /* Ink tints for secondary text (AA on ivory and sand) */
-  --color-ink-soft: #4a4446;
+  --color-ink-soft: #57514f;
 
   /* Typography (variables injected by next/font in layout.tsx) */
-  --font-display: var(--font-bricolage), "Helvetica Neue", Arial, sans-serif;
-  --font-editorial: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
-  --font-sans: var(--font-instrument-sans), "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-bodoni), "Didot", "Bodoni 72", Georgia, serif;
+  --font-editorial: var(--font-bodoni), "Didot", "Bodoni 72", Georgia, serif;
+  --font-sans: var(--font-hanken), "Helvetica Neue", Arial, sans-serif;
 
   /* Motion easing */
-  --ease-entrance: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-entrance: cubic-bezier(0.23, 1, 0.32, 1); /* strong ease-out */
   --ease-exit: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); /* on-screen movement: slides, wipes */
 
   /* Square corners everywhere */
   --radius-none: 0;
@@ -81,8 +83,8 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 1.0625rem;
-  font-weight: 450;
-  line-height: 1.55;
+  font-weight: 400;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -99,26 +101,30 @@ body {
 }
 
 @layer components {
-  /* Small uppercase UI label: nav, buttons, eyebrows */
+  /* Small UI label: nav, links, meta. Sentence case, set firm. */
   .label {
     font-family: var(--font-sans);
-    font-size: 0.8125rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    line-height: 1.2;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    line-height: 1.25;
   }
 
   /* Underlined text link: the default action style outside the hero */
+  /* The underline draws away and back in from the left on hover. */
   .text-link {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.35em;
-    transition: text-decoration-color var(--dur-ui) var(--ease-entrance),
-      color var(--dur-ui) var(--ease-entrance);
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 100% 1px;
+    padding-bottom: 0.2em;
+    transition: background-size 450ms var(--ease-in-out), color var(--dur-ui) var(--ease-entrance);
   }
-  .text-link:hover {
-    color: var(--color-emerald);
+  @media (hover: hover) {
+    .text-link:hover {
+      animation: link-redraw 650ms var(--ease-in-out);
+    }
   }
 
   /* Functional buttons (forms, Add to Bag). Square, flat, no shadow.
@@ -132,14 +138,17 @@ body {
     border: 1px solid var(--color-emerald);
     background: var(--color-emerald);
     color: var(--color-ivory);
-    font-size: 0.8125rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
     line-height: 1.2;
     cursor: pointer;
     transition: background-color var(--dur-ui) var(--ease-entrance),
-      border-color var(--dur-ui) var(--ease-entrance), color var(--dur-ui) var(--ease-entrance);
+      border-color var(--dur-ui) var(--ease-entrance), color var(--dur-ui) var(--ease-entrance),
+      transform 160ms var(--ease-entrance);
+  }
+  .btn:active {
+    transform: scale(0.97);
   }
   .btn:hover {
     background: var(--color-emerald-deep);
@@ -200,142 +209,171 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────
-   HERO SLIDESHOW (section 2.4). Only transform and opacity animate.
+   HERO: a magazine cover. Colour field, huge Bodoni line, cut-out model in front.
+   Only transform, opacity and clip-path animate.
    ────────────────────────────────────────────────────────────── */
 .hero {
   --hero-fg: var(--color-ink);
   --hero-bg: var(--color-ivory);
   position: relative;
   overflow: hidden;
-  height: clamp(34rem, 52.8vw, 47.5rem); /* 1440 x 760 on desktop */
+  /* The first screen, below the bars (and above the phone tab bar). */
+  height: calc(100svh - var(--announcement-h) - var(--header-h) - var(--tabbar-h));
+  min-height: 36rem;
+  max-height: 60rem;
   color: var(--hero-fg);
   background: var(--color-sand);
   isolation: isolate;
 }
+@media (min-width: 768px) {
+  .hero {
+    height: calc(100svh - var(--announcement-h) - var(--header-h));
+    min-height: 40rem;
+  }
+}
 .hero-slide {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  visibility: hidden;
 }
 .hero-slide[data-state="prev"] {
+  visibility: visible;
   z-index: 1;
 }
 .hero-slide[data-state="active"] {
+  visibility: visible;
   z-index: 2;
 }
-
-/* The colour field crossfades between slides */
 .hero-backdrop {
   position: absolute;
   inset: 0;
-  opacity: 0;
 }
+/* The new colour wipes across the old slide */
 .hero-slide[data-state="active"] .hero-backdrop {
-  opacity: 1;
-  transition: opacity var(--dur-hero) var(--ease-entrance);
+  animation: hero-wipe 1000ms var(--ease-in-out) both;
 }
-.hero-slide[data-state="prev"] .hero-backdrop {
-  opacity: 1;
+.hero-slide[data-first] .hero-backdrop {
+  animation: none;
 }
 
-/* Stage: the cut-out model on the colour field. Centred on phones, right on desktop. */
+/* The headline: set huge, behind the model */
+.hero-headline {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  top: 3.75rem;
+  font-size: clamp(3.25rem, 15vw, 6rem);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+.hero-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+.hero-rise {
+  display: block;
+}
+.hero-slide[data-state="active"] .hero-rise {
+  animation: hero-rise 1000ms var(--ease-entrance) both;
+  animation-delay: calc(280ms + var(--i, 0) * 90ms);
+}
+
+/* The model stands in front of the type */
 .hero-stage {
   position: absolute;
-  bottom: 0;
+  z-index: 2;
+  bottom: 9.25rem;
   left: 50%;
-  width: min(80vw, 22rem);
-  height: 66%;
-  margin-left: calc(min(80vw, 22rem) / -2);
+  width: 86vw;
+  height: 56%;
+  transform: translateX(-50%);
 }
-/* Cut-out model: in from the right, out to the left */
 .hero-model {
   position: absolute;
   inset: 0;
-  opacity: 0;
-  transform: translate3d(40px, 0, 0);
 }
 .hero-slide[data-state="active"] .hero-model {
-  opacity: 1;
-  transform: none;
-  transition: transform var(--dur-hero) var(--ease-entrance), opacity var(--dur-hero) var(--ease-entrance);
+  animation: hero-model-in 1300ms var(--ease-entrance) both 140ms;
+}
+.hero-slide[data-first] .hero-model {
+  animation-name: hero-settle;
+  animation-delay: 0ms;
 }
 .hero-slide[data-state="prev"] .hero-model {
-  opacity: 0;
-  transform: translate3d(-40px, 0, 0);
-  transition: transform var(--dur-hero) var(--ease-entrance), opacity 700ms var(--ease-entrance);
-}
-.hero-shadow {
-  position: absolute;
-  left: 12%;
-  right: 12%;
-  bottom: -0.5rem;
-  height: 2.25rem;
-  background: radial-gradient(closest-side, color-mix(in srgb, var(--color-ink) 28%, transparent), transparent);
-  z-index: -1;
+  animation: hero-model-out 700ms var(--ease-in-out) both;
 }
 
-/* Editorial copy: top on phones, vertically centred on the left on desktop */
-.hero-copy {
+/* Small labels: collection top-left, the piece top-right */
+.hero-top {
   position: absolute;
-  top: 1.75rem;
+  z-index: 3;
+  top: 1.25rem;
   left: 0;
   right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
 }
-.hero-headline {
-  margin-top: 0.75rem;
-  font-size: clamp(2.5rem, 11vw, 3.25rem);
-  line-height: 0.95;
-  text-wrap: balance;
+.hero-slide[data-state="active"] .hero-fade {
+  animation: hero-fade 800ms var(--ease-entrance) both;
+  animation-delay: calc(600ms + var(--i, 0) * 120ms);
 }
-/* Phones: a taller hero, with the stage ending above the counter and buttons */
-@media (max-width: 767px) {
-  .hero {
-    height: 39rem;
-  }
-  .hero-stage {
-    bottom: 7.75rem;
-    height: 50%;
-  }
+
+.hero-actions {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  bottom: 1.25rem;
+  display: flex;
+  gap: 0.75rem;
 }
+.hero-progress {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  bottom: 5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 @media (min-width: 768px) {
-  .hero-stage {
-    left: 68%;
-    width: min(40vw, 36rem);
-    height: 95%;
-    margin-left: calc(min(40vw, 36rem) / -2);
-  }
-  .hero-copy {
+  /* The line wraps in the left two-thirds; the model overlaps only its right edge. */
+  .hero-headline {
     top: 50%;
     right: auto;
-    width: 46%;
-    transform: translateY(-58%);
+    width: 62%;
+    transform: translateY(-56%);
+    font-size: clamp(4.25rem, 7.8vw, 8.75rem);
+    line-height: 0.9;
   }
-  .hero-headline {
-    margin-top: 1.5rem;
-    font-size: clamp(3rem, 5.6vw, 5.5rem);
+  .hero-stage {
+    bottom: 0;
+    left: 71%;
+    width: min(44vw, 44rem);
+    height: 94%;
+  }
+  .hero-top {
+    top: 2rem;
+  }
+  .hero-actions {
+    right: auto;
+    bottom: 2.5rem;
+  }
+  .hero-progress {
+    left: auto;
+    right: 0;
+    bottom: 2.5rem;
   }
 }
 
-/* Links on the colour field keep the field's text colour: emerald would vanish on some fields */
+/* Links on the colour field keep the field's text colour */
 .hero .text-link:hover {
   color: inherit;
-  text-decoration-thickness: 2px;
-}
-
-/* Tagline lines stagger in 80ms apart; the note follows */
-.hero-line {
-  display: block;
-  opacity: 0;
-  transform: translate3d(0, 10px, 0);
-}
-.hero-slide[data-state="active"] .hero-line {
-  opacity: 1;
-  transform: none;
-  transition: transform 700ms var(--ease-entrance), opacity 700ms var(--ease-entrance);
-  transition-delay: calc(300ms + var(--i, 0) * 80ms);
-}
-.hero-slide[data-state="prev"] .hero-line {
-  transition: opacity var(--dur-ui) var(--ease-exit);
 }
 
 /* The only two marketing buttons on the homepage */
@@ -343,12 +381,18 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 3rem;
-  padding: 0.5rem 1.5rem;
+  min-height: 3.25rem;
+  padding: 0.5rem 1.75rem;
   border: 1px solid var(--hero-fg);
   background: var(--hero-bg); /* stays readable where the model passes behind */
   color: var(--hero-fg);
-  transition: background-color var(--dur-ui) var(--ease-entrance), color var(--dur-ui) var(--ease-entrance);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  transition: background-color var(--dur-ui) var(--ease-entrance), color var(--dur-ui) var(--ease-entrance),
+    transform 160ms var(--ease-entrance);
+}
+.hero-btn:active {
+  transform: scale(0.97);
 }
 .hero-btn-solid,
 .hero-btn:hover {
@@ -368,7 +412,7 @@ body {
   display: block;
   position: relative;
   width: 2.5rem;
-  height: 1px;
+  height: 2px;
   background: color-mix(in srgb, var(--hero-fg) 30%, transparent);
   overflow: hidden;
 }
@@ -393,24 +437,217 @@ body {
     transform: scaleX(1);
   }
 }
+@keyframes hero-wipe {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes hero-rise {
+  from {
+    transform: translate3d(0, 108%, 0);
+  }
+}
+@keyframes hero-model-in {
+  from {
+    opacity: 0;
+    transform: translate3d(5%, 3%, 0) scale(1.05);
+  }
+}
+@keyframes hero-settle {
+  from {
+    transform: scale(1.04);
+  }
+}
+@keyframes hero-model-out {
+  to {
+    opacity: 0;
+    transform: translate3d(-6%, 0, 0);
+  }
+}
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+}
 
 /* ──────────────────────────────────────────────────────────────
    MOTION SYSTEM (section 2.6)
    ────────────────────────────────────────────────────────────── */
 
-/* Scroll reveal: fade up 24px, 60ms stagger, once. Only hides content when
-   scripting is on, so nothing is ever lost without JavaScript. */
+/* Scroll reveal, once. Text fades up 16px; media unveils from the bottom with its image
+   settling from a slight zoom. Content is only hidden when scripting is on, so nothing
+   is ever lost without JavaScript. */
 @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
   [data-reveal] {
     opacity: 0;
-    transform: translate3d(0, 24px, 0);
-    transition: opacity var(--dur-section) var(--ease-entrance), transform 700ms var(--ease-entrance);
-    transition-delay: calc(var(--i, 0) * 60ms);
+    transform: translate3d(0, 16px, 0);
+    transition: opacity 700ms var(--ease-entrance), transform 900ms var(--ease-entrance);
+    transition-delay: calc(var(--i, 0) * 70ms);
   }
   [data-reveal][data-revealed] {
     opacity: 1;
     transform: none;
   }
+  [data-reveal="media"] {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path 1200ms var(--ease-in-out);
+  }
+  [data-reveal="media"][data-revealed] {
+    clip-path: inset(0 0 0 0);
+  }
+  [data-reveal="media"] .reveal-zoom {
+    transform: scale(1.12);
+    transition: transform 1600ms var(--ease-entrance);
+  }
+  [data-reveal="media"][data-revealed] .reveal-zoom {
+    transform: none;
+  }
+  [data-reveal="media"] .dept-name {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0);
+    transition: opacity 900ms var(--ease-entrance) 500ms, transform 1100ms var(--ease-entrance) 450ms;
+  }
+  [data-reveal="media"][data-revealed] .dept-name {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Marquee: a slow band of words */
+.marquee {
+  overflow: hidden;
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 48s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Product rail: native horizontal scroll with snap points */
+.rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 72%;
+  gap: 1rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: none;
+}
+.rail::-webkit-scrollbar {
+  display: none;
+}
+.rail-item {
+  scroll-snap-align: start;
+}
+@media (min-width: 640px) {
+  .rail {
+    grid-auto-columns: 42%;
+  }
+}
+@media (min-width: 1024px) {
+  .rail {
+    grid-auto-columns: calc((100% - 2 * var(--gutter) - 3 * 1.5rem) / 3.4);
+    gap: 1.5rem;
+  }
+}
+.rail-btn {
+  display: flex;
+  height: 3rem;
+  width: 3rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-ink);
+  cursor: pointer;
+  transition: background-color var(--dur-ui) var(--ease-entrance), color var(--dur-ui) var(--ease-entrance),
+    opacity var(--dur-ui) var(--ease-entrance), transform 160ms var(--ease-entrance);
+}
+.rail-btn:hover:not(:disabled) {
+  background: var(--color-ink);
+  color: var(--color-ivory);
+}
+.rail-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.rail-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+/* Collections: each panel sticks under the header and the next slides over it */
+.collection-panel {
+  position: sticky;
+  top: var(--header-h);
+  height: calc(100svh - var(--header-h) - var(--tabbar-h));
+  min-height: 34rem;
+  max-height: 54rem;
+}
+@media (min-width: 768px) {
+  .collection-panel {
+    height: calc(100svh - var(--header-h));
+    min-height: 40rem;
+  }
+}
+
+/* Statement: words light up as the paragraph scrolls through (where supported) */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .statement {
+      view-timeline-name: --statement;
+    }
+    .statement-word {
+      animation: word-light linear both;
+      animation-timeline: --statement;
+      animation-range: cover calc(18% + var(--p) * 38%) cover calc(24% + var(--p) * 38%);
+    }
+  }
+}
+@keyframes word-light {
+  from {
+    opacity: 0.16;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Newsletter on indigo: the form takes the light colours */
+.newsletter input {
+  color: var(--color-ivory);
+}
+.newsletter input::placeholder {
+  color: color-mix(in srgb, var(--color-ivory) 70%, transparent);
+}
+.newsletter .border-ink {
+  border-color: var(--color-ivory);
+}
+.newsletter .focus-within\:border-emerald:focus-within {
+  border-color: var(--color-marigold);
+  box-shadow: inset 0 -2px 0 var(--color-marigold);
+}
+.newsletter .text-ink-soft {
+  color: color-mix(in srgb, var(--color-ivory) 78%, transparent);
+}
+.newsletter .text-crimson {
+  color: var(--color-marigold);
+}
+.newsletter :focus-visible {
+  outline-color: var(--color-marigold);
 }
 
 /* Skeleton shimmer in the logo's strata colours */
@@ -488,21 +725,16 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* Hero: no autoplay, no drift, no slide. A simple crossfade only. */
-  .hero-progress-fill {
+  /* Hero: no autoplay and no movement; slides simply swap. */
+  .hero-progress-fill,
+  .hero-slide .hero-backdrop,
+  .hero-slide .hero-rise,
+  .hero-slide .hero-model,
+  .hero-slide .hero-fade {
     animation: none !important;
   }
-  .hero-model,
-  .hero-line {
-    transform: none !important;
-  }
-  .hero-slide[data-state="active"] .hero-backdrop,
-  .hero-slide[data-state="active"] .hero-model,
-  .hero-slide[data-state="active"] .hero-line {
-    transition: opacity var(--dur-section) linear !important;
-    transition-delay: 0s !important;
-  }
-  .skeleton::after {
+  .skeleton::after,
+  .marquee-track {
     animation: none !important;
   }
   ::view-transition-old(*),
@@ -512,9 +744,32 @@ body {
   }
 }
 
-/* Display type: Bricolage Grotesque, set heavy and tight wherever .font-display is used */
+/* Display type: Bodoni Moda, bold and tight, with optical sizing for the hairlines */
 .font-display {
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  font-stretch: 92%;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-optical-sizing: auto;
+}
+.font-editorial {
+  font-weight: 400;
+  font-optical-sizing: auto;
+}
+
+@keyframes link-redraw {
+  0% {
+    background-size: 100% 1px;
+    background-position: 100% 100%;
+  }
+  45% {
+    background-size: 0 1px;
+    background-position: 100% 100%;
+  }
+  46% {
+    background-size: 0 1px;
+    background-position: 0 100%;
+  }
+  100% {
+    background-size: 100% 1px;
+    background-position: 0 100%;
+  }
 }

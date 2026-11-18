@@ -13,7 +13,7 @@ type State = { index: number; prev: number | null };
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-/** "Modest by design. Bold by nature." becomes two lines that stagger in. */
+/** "Modest by design. Bold by nature." becomes two lines that rise out of a mask. */
 const taglineLines = (t: string) => t.match(/[^.!?]+[.!?]*/g)?.map((s) => s.trim()).filter(Boolean) ?? [];
 
 function Model({ slide, first }: { slide: HeroSlide; first: boolean }) {
@@ -27,7 +27,7 @@ function Model({ slide, first }: { slide: HeroSlide; first: boolean }) {
       src={slide.model}
       alt={slide.modelAlt}
       fill
-      sizes="(min-width: 768px) 36rem, 80vw"
+      sizes="(min-width: 768px) 44vw, 86vw"
       className="object-contain object-bottom"
       loader={isLocal ? undefined : cloudinaryLoader}
       // The first slide's model is the LCP element; the rest load lazily.
@@ -38,28 +38,12 @@ function Model({ slide, first }: { slide: HeroSlide; first: boolean }) {
   );
 }
 
-/** "Worn here: <piece>" for phones, as an underlined text link (not a marketing button). */
-function WornHere({ slide }: { slide: HeroSlide }) {
-  const name = <span className="font-editorial text-xl italic normal-case">{slide.storyName}</span>;
-  return (
-    <>
-      <span className="label mr-2">Worn here</span>
-      {slide.productSlug ? (
-        <Link href={`/product/${slide.productSlug}`} className="text-link">
-          {name}
-        </Link>
-      ) : (
-        name
-      )}
-    </>
-  );
-}
-
 /**
- * The homepage hero:a flat colour field, an editorial headline on the left, and a
- * cut-out model standing on the right.
- * Autoplay is driven by the progress line's CSS animation, so pausing the animation
- * pauses the slideshow, and reduced-motion (animation: none) switches autoplay off.
+ * The homepage hero, set like a magazine cover: a flat colour field, the slide's line in
+ * huge Bodoni, and the cut-out model standing in front of the type.
+ * On each change the new colour wipes across, the model settles in and the headline
+ * rises line by line. Autoplay is driven by the progress line's CSS animation, so
+ * pausing that animation pauses the slideshow; reduced motion switches it all off.
  */
 export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
   const count = slides.length;
@@ -116,11 +100,14 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
         const state = i === index ? "active" : i === prev ? "prev" : "idle";
         const tone = readableOn(s.bgHex) === "ink" ? "text-ink" : "text-ivory";
         const lines = taglineLines(s.tagline);
+        const href = s.productSlug ? `/product/${s.productSlug}` : null;
         return (
           <div
             key={s.id}
             className={`hero-slide ${tone}`}
             data-state={state}
+            // The very first paint keeps the model visible (it is the LCP image): it only settles.
+            data-first={i === 0 && prev === null ? "" : undefined}
             role="group"
             aria-roledescription="slide"
             aria-label={`${i + 1} of ${count}${s.storyName ? `: ${s.storyName}` : ""}`}
@@ -128,12 +115,23 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
           >
             <div className="hero-backdrop" style={{ backgroundColor: s.bgHex }} />
 
+            {lines.length > 0 && (
+              <p className="hero-headline font-display gutter">
+                {lines.map((line, n) => (
+                  <span key={n} className="hero-mask">
+                    <span className="hero-rise" style={{ "--i": n } as CSSProperties}>
+                      {line}
+                    </span>
+                  </span>
+                ))}
+              </p>
+            )}
+
             <div className="hero-stage">
               <div className="hero-model">
-                <span className="hero-shadow" aria-hidden="true" />
-                {s.productSlug ? (
-                  // The model links to the piece too; the named link below is the accessible one.
-                  <Link href={`/product/${s.productSlug}`} tabIndex={-1} aria-hidden="true" className="absolute inset-0 block">
+                {href ? (
+                  // The model links to the piece too; the named link is the accessible one.
+                  <Link href={href} tabIndex={-1} aria-hidden="true" className="absolute inset-0 block">
                     <Model slide={s} first={i === 0} />
                   </Link>
                 ) : (
@@ -142,71 +140,37 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
               </div>
             </div>
 
-            <div className="hero-copy gutter">
-              {s.context && (
-                <p className="hero-line label" style={{ "--i": 0 } as CSSProperties}>
-                  {s.context}
-                </p>
-              )}
-              {lines.length > 0 && (
-                <p className="hero-headline font-display">
-                  {lines.map((line, n) => (
-                    <span key={n} className="hero-line" style={{ "--i": n + 1 } as CSSProperties}>
-                      {line}
-                    </span>
-                  ))}
-                </p>
-              )}
-              {/* Wrappers carry the breakpoint visibility: .hero-line sets its own display. */}
-              <div className="max-md:hidden">
-                <span
-                  className="hero-line mt-8 h-px w-12 bg-current"
-                  style={{ "--i": lines.length + 1 } as CSSProperties}
-                  aria-hidden="true"
-                />
-              </div>
-              {/* Phones: the piece's name sits under the headline, where the eye already is. */}
+            <div className="hero-top gutter">
+              {s.context ? <p className="hero-fade label">{s.context}</p> : <span />}
               {s.storyName && (
-                <div className="md:hidden">
-                  <p className="hero-line mt-3" style={{ "--i": lines.length + 1 } as CSSProperties}>
-                    <WornHere slide={s} />
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {s.storyName && (
-              <p className="gutter absolute right-0 bottom-10 text-right max-md:hidden">
-                <span className="hero-line label" style={{ "--i": 3 } as CSSProperties}>
-                  Worn here
-                </span>
-                <span className="hero-line mt-1 font-editorial text-3xl italic lg:text-4xl" style={{ "--i": 4 } as CSSProperties}>
-                  {s.productSlug ? (
-                    <Link href={`/product/${s.productSlug}`} className="text-link">
+                <p className="hero-fade text-right" style={{ "--i": 1 } as CSSProperties}>
+                  <span className="label mr-3 max-md:hidden">Worn here</span>
+                  {href ? (
+                    <Link href={href} className="text-link font-editorial text-xl italic md:text-3xl">
                       {s.storyName}
                     </Link>
                   ) : (
-                    s.storyName
+                    <span className="font-editorial text-xl italic md:text-3xl">{s.storyName}</span>
                   )}
-                </span>
-              </p>
-            )}
+                </p>
+              )}
+            </div>
           </div>
         );
       })}
 
-      {/* Same two buttons on every slide: the only marketing buttons on the homepage. */}
-      <div className="gutter absolute inset-x-0 bottom-6 z-10 flex gap-3 sm:right-auto sm:bottom-10">
-        <Link href="/women" className="hero-btn hero-btn-solid label flex-1 sm:flex-none">
-          Shop Women
+      {/* Same two buttons on every slide. */}
+      <div className="hero-actions gutter">
+        <Link href="/women" className="hero-btn hero-btn-solid flex-1 sm:flex-none">
+          Shop women
         </Link>
-        <Link href="/men" className="hero-btn label flex-1 sm:flex-none">
-          Shop Men
+        <Link href="/men" className="hero-btn flex-1 sm:flex-none">
+          Shop men
         </Link>
       </div>
 
       {count > 1 && (
-        <div className="hero-progress gutter absolute bottom-[5.25rem] left-0 z-10 flex items-center gap-1 sm:bottom-[6.5rem]">
+        <div className="hero-progress gutter">
           <button
             type="button"
             data-hero-toggle=""

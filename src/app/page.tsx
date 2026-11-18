@@ -7,9 +7,11 @@ import {
   Departments,
   Journal,
   LookSection,
+  Marquee,
   NewsletterSection,
   OurStory,
   Reviews,
+  Statement,
   TrustRow,
 } from "@/components/home/sections";
 import { RevealObserver } from "@/components/motion/RevealObserver";
@@ -26,7 +28,7 @@ export default async function HomePage() {
   const [slides, collections, products, look, reviews, posts] = await Promise.all([
     getHeroSlides(),
     getCollections(),
-    getBestOf(32),
+    getBestOf(40),
     getFeaturedLook(),
     getReviews(),
     getJournal(),
@@ -44,7 +46,7 @@ export default async function HomePage() {
       seenStyles.add(style);
       return true;
     })
-    .slice(0, 8);
+    .slice(0, 10);
 
   return (
     <>
@@ -63,7 +65,9 @@ export default async function HomePage() {
       />
       <h1 className="sr-only">Ebonímode: Afrocentric modest fashion for women and men</h1>
       <HeroSlideshow slides={slides} />
+      <Marquee />
       <Departments />
+      <Statement />
       <BestOf products={newIn} />
       <Collections collections={collections} />
       {look && look.hotspots.length > 0 && (
