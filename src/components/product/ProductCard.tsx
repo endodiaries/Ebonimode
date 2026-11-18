@@ -7,6 +7,9 @@ import type { ProductCardData } from "@/lib/data/home";
 import { Price } from "@/lib/currency";
 import { WishlistButton } from "./WishlistButton";
 
+/** Swatches shown on a card; the product page shows every colour. */
+const MAX_SWATCHES = 4;
+
 const isCutout = (publicId: string) => publicId.startsWith("site/product-cutouts/");
 
 /** Product photo, or a colour field in the product's own colour until photos are uploaded. */
@@ -107,22 +110,36 @@ export function ProductCard({
         </p>
       )}
 
-      {product.colourways.length > 1 && (
-        <ul aria-label="Colours" className="mt-3 flex gap-1.5">
-          {product.colourways.map((c) => (
-            <li key={c.slug}>
-              <Link
-                href={`/product/${c.slug}`}
-                aria-label={`${c.colour}${c.slug === product.slug ? " (this colour)" : ""}`}
-                aria-current={c.slug === product.slug ? "true" : undefined}
-                className="block h-6 w-6 border border-ink/20 p-0.5 aria-[current=true]:border-ink"
-              >
-                <span className="block h-full w-full" style={{ backgroundColor: c.hex ?? "transparent" }} />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+      {/* The swatch row keeps its height on every card, so names line up across a row. */}
+      <div className="mt-2 flex h-11 items-center">
+        {product.colourways.length > 1 && (
+          <ul aria-label="Colours" className="-ml-2 flex items-center">
+            {product.colourways.slice(0, MAX_SWATCHES).map((c) => (
+              <li key={c.slug}>
+                {/* 36px tap target around a 24px swatch */}
+                <Link
+                  href={`/product/${c.slug}`}
+                  aria-label={`${c.colour}${c.slug === product.slug ? " (this colour)" : ""}`}
+                  aria-current={c.slug === product.slug ? "true" : undefined}
+                  className="group/sw flex h-11 w-9 items-center justify-center"
+                >
+                  <span className="block h-6 w-6 border border-ink/20 p-0.5 group-aria-[current=true]/sw:border-ink">
+                    <span className="block h-full w-full" style={{ backgroundColor: c.hex ?? "transparent" }} />
+                  </span>
+                </Link>
+              </li>
+            ))}
+            {product.colourways.length > MAX_SWATCHES && (
+              <li>
+                <Link href={href} className="flex h-11 items-center px-1 text-sm text-ink-soft hover:text-ink">
+                  +{product.colourways.length - MAX_SWATCHES}
+                  <span className="sr-only"> more colours</span>
+                </Link>
+              </li>
+            )}
+          </ul>
+        )}
+      </div>
     </article>
   );
 }

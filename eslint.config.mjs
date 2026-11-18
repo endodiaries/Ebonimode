@@ -14,6 +14,9 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Supabase Edge Functions are Deno code, checked with `deno check`.
     "supabase/**",
+    // Third-party agent skills ship their own bundled scripts.
+    ".claude/**",
+    ".agents/**",
   ]),
 ]);
 

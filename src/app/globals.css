@@ -224,7 +224,7 @@ body {
   z-index: 2;
 }
 
-/* Colour field + giant name crossfade together */
+/* The colour field crossfades between slides */
 .hero-backdrop {
   position: absolute;
   inset: 0;
@@ -283,7 +283,7 @@ body {
 }
 .hero-headline {
   margin-top: 0.75rem;
-  font-size: clamp(2.25rem, 9.5vw, 3rem);
+  font-size: clamp(2.5rem, 11vw, 3.25rem);
   line-height: 0.95;
   text-wrap: balance;
 }
@@ -314,6 +314,12 @@ body {
     margin-top: 1.5rem;
     font-size: clamp(3rem, 5.6vw, 5.5rem);
   }
+}
+
+/* Links on the colour field keep the field's text colour: emerald would vanish on some fields */
+.hero .text-link:hover {
+  color: inherit;
+  text-decoration-thickness: 2px;
 }
 
 /* Tagline lines stagger in 80ms apart; the note follows */

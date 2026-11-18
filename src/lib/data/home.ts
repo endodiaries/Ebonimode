@@ -13,6 +13,11 @@ export type HeroSlide = {
   modelAlt: string;
   tagline: string;
   storyName: string;
+  /** The piece the model wears, when set: "Worn here" links to it. */
+  productId: string | null;
+  productSlug: string | null;
+  /** The slide's real collection name, or the piece's department ("Women" / "Men"). */
+  context: string;
 };
 
 export type CollectionSummary = {
@@ -135,7 +140,9 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
   try {
     const { data, error } = await createPublicClient()
       .from("hero_slides")
-      .select("id,bg_hex,print_key,model_public_id,model_alt,tagline,story_name,collections(name)")
+      .select(
+        "id,bg_hex,print_key,model_public_id,model_alt,tagline,story_name,collections(name,is_published),products(id,slug,status,department,product_collections(collections(name,is_published)))",
+      )
       .eq("is_active", true)
       .order("sort_order");
     if (error) throw error;
@@ -147,17 +154,34 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
       model_alt: string | null;
       tagline: string | null;
       story_name: string | null;
-      collections: { name: string } | null;
+      collections: { name: string; is_published: boolean } | null;
+      products: {
+        id: string;
+        slug: string;
+        status: string;
+        department: string;
+        product_collections: { collections: { name: string; is_published: boolean } | null }[];
+      } | null;
     };
-    return ((data ?? []) as unknown as Row[]).slice(0, 5).map((r) => ({
-      id: r.id,
-      bgHex: r.bg_hex,
-      printKey: r.print_key,
-      model: r.model_public_id,
-      modelAlt: r.model_alt ?? "",
-      tagline: r.tagline ?? "",
-      storyName: r.story_name ?? r.collections?.name ?? "",
-    }));
+    const departmentName: Record<string, string> = { women: "Women", men: "Men", unisex: "Unisex" };
+    return ((data ?? []) as unknown as Row[]).slice(0, 5).map((r) => {
+      // Only link to a piece shoppers can actually open.
+      const product = r.products?.status === "published" ? r.products : null;
+      const productCollection = product?.product_collections.find((l) => l.collections?.is_published)?.collections?.name;
+      const slideCollection = r.collections?.is_published ? r.collections.name : undefined;
+      return {
+        id: r.id,
+        bgHex: r.bg_hex,
+        printKey: r.print_key,
+        model: r.model_public_id,
+        modelAlt: r.model_alt ?? "",
+        tagline: r.tagline ?? "",
+        storyName: r.story_name ?? slideCollection ?? "",
+        productId: product?.id ?? null,
+        productSlug: product?.slug ?? null,
+        context: slideCollection ?? productCollection ?? (product ? departmentName[product.department] ?? "" : ""),
+      };
+    });
   } catch (e) {
     console.error("getHeroSlides failed", e);
     return [];

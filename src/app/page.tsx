@@ -26,11 +26,25 @@ export default async function HomePage() {
   const [slides, collections, products, look, reviews, posts] = await Promise.all([
     getHeroSlides(),
     getCollections(),
-    getBestOf(8),
+    getBestOf(32),
     getFeaturedLook(),
     getReviews(),
     getJournal(),
   ]);
+
+  // Pieces already worn in the hero are not repeated in "New in".
+  const inHero = new Set(slides.map((s) => s.productId).filter(Boolean));
+  // One card per style: other colourways are a swatch away.
+  const seenStyles = new Set<string>();
+  const newIn = products
+    .filter((p) => {
+      if (inHero.has(p.id)) return false;
+      const style = p.colourways.length > 1 ? p.colourways.map((c) => c.slug).sort().join("|") : p.id;
+      if (seenStyles.has(style)) return false;
+      seenStyles.add(style);
+      return true;
+    })
+    .slice(0, 8);
 
   return (
     <>
@@ -50,7 +64,7 @@ export default async function HomePage() {
       <h1 className="sr-only">Ebonímode: Afrocentric modest fashion for women and men</h1>
       <HeroSlideshow slides={slides} />
       <Departments />
-      <BestOf products={products} />
+      <BestOf products={newIn} />
       <Collections collections={collections} />
       {look && look.hotspots.length > 0 && (
         <LookSection>

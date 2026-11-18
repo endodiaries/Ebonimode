@@ -101,3 +101,22 @@ export const LockIcon = (p: IconProps) => (
     <path d="M5 10h14v11H5zM8 10V7a4 4 0 0 1 8 0v3M12 14v3" />
   </Icon>
 );
+
+export const PauseIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M9 5v14M15 5v14" />
+  </Icon>
+);
+
+export const PlayIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M7 4.5v15L19 12z" />
+  </Icon>
+);
+
+export const TapeIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M3 8h18v8H3z" />
+    <path d="M7 8v3M11 8v4M15 8v3M19 8v4" />
+  </Icon>
+);

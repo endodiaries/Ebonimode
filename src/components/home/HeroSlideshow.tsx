@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
 import { PlaceholderFigure } from "@/components/brand/PlaceholderFigure";
+import { PauseIcon, PlayIcon } from "@/components/icons";
 import { cloudinaryEnabled, cloudinaryLoader } from "@/lib/cloudinary";
 import { readableOn } from "@/lib/colour";
 import type { HeroSlide } from "@/lib/data/home";
@@ -37,8 +38,25 @@ function Model({ slide, first }: { slide: HeroSlide; first: boolean }) {
   );
 }
 
+/** "Worn here: <piece>" for phones, as an underlined text link (not a marketing button). */
+function WornHere({ slide }: { slide: HeroSlide }) {
+  const name = <span className="font-editorial text-xl italic normal-case">{slide.storyName}</span>;
+  return (
+    <>
+      <span className="label mr-2">Worn here</span>
+      {slide.productSlug ? (
+        <Link href={`/product/${slide.productSlug}`} className="text-link">
+          {name}
+        </Link>
+      ) : (
+        name
+      )}
+    </>
+  );
+}
+
 /**
- * The homepage hero: a flat colour field, an editorial headline on the left, and a
+ * The homepage hero:a flat colour field, an editorial headline on the left, and a
  * cut-out model standing on the right.
  * Autoplay is driven by the progress line's CSS animation, so pausing the animation
  * pauses the slideshow, and reduced-motion (animation: none) switches autoplay off.
@@ -52,6 +70,8 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
   const [hover, setHover] = useState(false);
   const [focus, setFocus] = useState(false);
   const [tabHidden, setTabHidden] = useState(false);
+  // "auto" follows hover and focus; an explicit Play or Pause from the visitor wins.
+  const [choice, setChoice] = useState<"auto" | "play" | "pause">("auto");
   const touchX = useRef<number | null>(null);
 
   useEffect(() => {
@@ -62,7 +82,7 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
 
   if (count === 0) return null;
   const active = slides[index];
-  const playing = count > 1 && !hover && !focus && !tabHidden;
+  const playing = count > 1 && !tabHidden && (choice === "auto" ? !hover && !focus : choice === "play");
   const fg = readableOn(active.bgHex) === "ink" ? "var(--color-ink)" : "var(--color-ivory)";
 
   return (
@@ -73,7 +93,8 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
       style={{ "--hero-fg": fg, "--hero-bg": active.bgHex } as CSSProperties}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      onFocusCapture={() => setFocus(true)}
+      // Focus pauses autoplay, except on the play/pause control, so "Play" really plays.
+      onFocusCapture={(e) => setFocus(!(e.target as HTMLElement).dataset.heroToggle)}
       onBlurCapture={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) setFocus(false);
       }}
@@ -110,15 +131,23 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
             <div className="hero-stage">
               <div className="hero-model">
                 <span className="hero-shadow" aria-hidden="true" />
-                <Model slide={s} first={i === 0} />
+                {s.productSlug ? (
+                  // The model links to the piece too; the named link below is the accessible one.
+                  <Link href={`/product/${s.productSlug}`} tabIndex={-1} aria-hidden="true" className="absolute inset-0 block">
+                    <Model slide={s} first={i === 0} />
+                  </Link>
+                ) : (
+                  <Model slide={s} first={i === 0} />
+                )}
               </div>
             </div>
 
             <div className="hero-copy gutter">
-              <p className="hero-line label" style={{ "--i": 0 } as CSSProperties}>
-                New collection N°{pad(i + 1)}
-                
-              </p>
+              {s.context && (
+                <p className="hero-line label" style={{ "--i": 0 } as CSSProperties}>
+                  {s.context}
+                </p>
+              )}
               {lines.length > 0 && (
                 <p className="hero-headline font-display">
                   {lines.map((line, n) => (
@@ -128,11 +157,22 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
                   ))}
                 </p>
               )}
-              <span
-                className="hero-line mt-6 h-px w-12 bg-current md:mt-8"
-                style={{ "--i": lines.length + 1 } as CSSProperties}
-                aria-hidden="true"
-              />
+              {/* Wrappers carry the breakpoint visibility: .hero-line sets its own display. */}
+              <div className="max-md:hidden">
+                <span
+                  className="hero-line mt-8 h-px w-12 bg-current"
+                  style={{ "--i": lines.length + 1 } as CSSProperties}
+                  aria-hidden="true"
+                />
+              </div>
+              {/* Phones: the piece's name sits under the headline, where the eye already is. */}
+              {s.storyName && (
+                <div className="md:hidden">
+                  <p className="hero-line mt-3" style={{ "--i": lines.length + 1 } as CSSProperties}>
+                    <WornHere slide={s} />
+                  </p>
+                </div>
+              )}
             </div>
 
             {s.storyName && (
@@ -141,7 +181,13 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
                   Worn here
                 </span>
                 <span className="hero-line mt-1 font-editorial text-3xl italic lg:text-4xl" style={{ "--i": 4 } as CSSProperties}>
-                  {s.storyName}
+                  {s.productSlug ? (
+                    <Link href={`/product/${s.productSlug}`} className="text-link">
+                      {s.storyName}
+                    </Link>
+                  ) : (
+                    s.storyName
+                  )}
                 </span>
               </p>
             )}
@@ -161,6 +207,15 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
 
       {count > 1 && (
         <div className="hero-progress gutter absolute bottom-[5.25rem] left-0 z-10 flex items-center gap-1 sm:bottom-[6.5rem]">
+          <button
+            type="button"
+            data-hero-toggle=""
+            className="-ml-3 flex h-11 w-11 cursor-pointer items-center justify-center motion-reduce:hidden"
+            aria-label={playing ? "Pause slideshow" : "Play slideshow"}
+            onClick={() => setChoice(playing ? "pause" : "play")}
+          >
+            {playing ? <PauseIcon size={18} /> : <PlayIcon size={18} />}
+          </button>
           <span className="label mr-2 tabular-nums" aria-hidden="true">
             {pad(index + 1)} / {pad(count)}
           </span>

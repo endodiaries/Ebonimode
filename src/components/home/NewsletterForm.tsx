@@ -18,7 +18,7 @@ export function NewsletterForm() {
   }
   return (
     <form action={action} noValidate className="mx-auto max-w-xl">
-      <div className="flex items-end gap-4 border-b border-ink">
+      <div className="flex items-end gap-4 border-b border-ink shadow-[inset_0_-1px_0_transparent] transition-[border-color,box-shadow] duration-[var(--dur-ui)] focus-within:border-emerald focus-within:shadow-[inset_0_-2px_0_var(--color-emerald)]">
         <label htmlFor="newsletter-email" className="sr-only">
           Email address
         </label>

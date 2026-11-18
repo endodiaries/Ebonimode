@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import { CldImage } from "@/components/brand/CldImage";
-import { LockIcon, QualityIcon, ReturnIcon, TruckIcon } from "@/components/icons";
+import { LockIcon, QualityIcon, TapeIcon, TruckIcon } from "@/components/icons";
 import { ProductCard } from "@/components/product/ProductCard";
 import { cloudinaryEnabled } from "@/lib/cloudinary";
 import { readableOn } from "@/lib/colour";
@@ -18,13 +18,10 @@ const CRAFT = [
 
 const stagger = (i: number) => ({ "--i": i }) as CSSProperties;
 
-function SectionHeading({ eyebrow, title, action }: { eyebrow?: string; title: ReactNode; action?: ReactNode }) {
+function SectionHeading({ title, action }: { title: ReactNode; action?: ReactNode }) {
   return (
     <div className="mb-10 flex flex-wrap items-end justify-between gap-x-8 gap-y-4 md:mb-14" data-reveal>
-      <div>
-        {eyebrow && <p className="label mb-3 text-ink-soft">{eyebrow}</p>}
-        <h2 className="font-display text-4xl leading-[1.05] md:text-5xl">{title}</h2>
-      </div>
+      <h2 className="font-display text-4xl leading-[1.05] md:text-5xl">{title}</h2>
       {action}
     </div>
   );
@@ -39,10 +36,10 @@ export function Departments() {
   ];
   return (
     <section aria-label="Departments" className="gutter py-4 md:py-6">
-      <ul className="mx-auto grid max-w-[90rem] gap-4 md:grid-cols-2 md:gap-6">
+      <ul className="mx-auto grid max-w-[90rem] grid-cols-2 gap-3 md:gap-6">
         {items.map((it, i) => (
           <li key={it.href} data-reveal style={stagger(i)}>
-            <Link href={it.href} className="group relative block aspect-[4/5] overflow-hidden bg-sand text-ivory md:aspect-[5/6]">
+            <Link href={it.href} className="group relative block aspect-[3/4] overflow-hidden bg-sand text-ivory md:aspect-[5/6]">
               {cloudinaryEnabled && (
                 <CldImage
                   publicId={it.photo.publicId}
@@ -53,10 +50,10 @@ export function Departments() {
                 />
               )}
               <span className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink/70 to-transparent" aria-hidden="true" />
-              <span className="absolute inset-x-0 bottom-0 block p-6 md:p-10">
-                <span className="block font-display text-5xl leading-none md:text-7xl">{it.label}</span>
-                <span className="mt-3 block font-editorial text-xl italic">{it.copy}</span>
-                <span className="text-link label mt-5 inline-block">{it.link} →</span>
+              <span className="absolute inset-x-0 bottom-0 block p-4 md:p-10">
+                <span className="block font-display text-4xl leading-none md:text-7xl">{it.label}</span>
+                <span className="mt-3 block font-editorial text-xl italic max-md:hidden">{it.copy}</span>
+                <span className="text-link label mt-3 inline-block md:mt-5">{it.link} →</span>
               </span>
             </Link>
           </li>
@@ -73,8 +70,7 @@ export function Collections({ collections }: { collections: CollectionSummary[] 
     <section className="gutter py-16 md:py-24">
       <div className="mx-auto max-w-[90rem]">
         <SectionHeading
-          eyebrow="Collections"
-          title="The collections"
+          title="Collections"
           action={
             <Link href="/collections" className="text-link label">
               See all collections →
@@ -101,12 +97,13 @@ export function Collections({ collections }: { collections: CollectionSummary[] 
                       />
                     </span>
                   )}
-                  <span className="relative block max-w-[62%] p-6 md:max-w-[52%] md:p-10">
+                  <span className="relative block max-w-[64%] p-6 md:max-w-[56%] md:p-10">
                     <span className="label block opacity-80">
                       {c.productCount > 0 ? `${c.productCount} pieces` : "Collection"}
                     </span>
-                    <span className="mt-4 block font-display text-4xl leading-[0.95] text-balance md:text-6xl">{c.name}</span>
-                    {c.description && <span className="mt-5 block font-editorial text-lg italic md:text-xl">{c.description}</span>}
+                    <span className="mt-4 block font-display text-[1.875rem] leading-[0.95] hyphens-auto md:text-4xl md:text-balance xl:text-5xl" lang="en">{c.name}</span>
+                    {/* Phones: the tile is too narrow for the description beside the model. */}
+                    {c.description && <span className="mt-5 block font-editorial text-lg italic max-md:hidden md:text-xl">{c.description}</span>}
                     <span className="text-link label mt-6 inline-block">Explore →</span>
                   </span>
                 </Link>
@@ -119,22 +116,22 @@ export function Collections({ collections }: { collections: CollectionSummary[] 
   );
 }
 
-/** 6. Trust row. */
+/** Trust row: only facts the business has confirmed. No returns promise until the policy exists. */
 export function TrustRow() {
-  // Titles only: no delivery times or guarantees are claimed until the policies are written.
   const points = [
-    { Icon: TruckIcon, title: "Fast delivery" },
-    { Icon: ReturnIcon, title: "Easy returns" },
-    { Icon: QualityIcon, title: "Quality assured" },
-    { Icon: LockIcon, title: "Secure payment" },
+    { Icon: TapeIcon, title: "Your size", note: "Sizes 8 to 18 in stock. Others made to order in 5 to 7 days." },
+    { Icon: QualityIcon, title: "Made by hand", note: "Hand-dyed Adire and handwoven Asooke." },
+    { Icon: TruckIcon, title: "Delivered", note: "Across Nigeria, and worldwide by DHL." },
+    { Icon: LockIcon, title: "Secure payment", note: "Card, bank transfer or USSD." },
   ];
   return (
-    <section aria-label="Why shop with us" className="gutter border-b border-ink/10">
+    <section aria-label="Why shop with us" className="gutter border-y border-ink/10">
       <ul className="mx-auto grid max-w-[90rem] grid-cols-2 gap-x-6 gap-y-10 py-12 md:grid-cols-4 md:py-16">
-        {points.map(({ Icon, title }, i) => (
-          <li key={title} className="flex flex-col items-center text-center" data-reveal style={stagger(i)}>
+        {points.map(({ Icon, title, note }, i) => (
+          <li key={title} className="flex flex-col items-start" data-reveal style={stagger(i)}>
             <Icon size={28} className="text-emerald" />
             <h3 className="label mt-4">{title}</h3>
+            <p className="mt-2 max-w-[26ch] text-base text-pretty text-ink-soft">{note}</p>
           </li>
         ))}
       </ul>
@@ -149,7 +146,6 @@ export function BestOf({ products }: { products: ProductCardData[] }) {
     <section className="gutter py-16 md:py-24">
       <div className="mx-auto max-w-[90rem]">
         <SectionHeading
-          eyebrow="Best of Ebonímode"
           title="New in"
           action={
             <Link href="/shop" className="text-link label">
@@ -175,7 +171,6 @@ export function LookSection({ children }: { children: ReactNode }) {
     <section className="gutter bg-sand py-16 md:py-24">
       <div className="mx-auto max-w-[90rem]">
         <SectionHeading
-          eyebrow="Lookbook"
           title="Shop the look"
           action={
             <Link href="/lookbook" className="text-link label">
@@ -196,7 +191,7 @@ export function OurStory() {
     <section className="gutter py-16 md:py-28">
       <div className="mx-auto grid max-w-[90rem] items-center gap-10 md:grid-cols-2 md:gap-16">
         {cloudinaryEnabled && (
-          <div className="relative aspect-[4/5] w-full overflow-hidden bg-sand md:max-w-[34rem] md:justify-self-end" data-reveal>
+          <div className="relative aspect-[4/5] w-full overflow-hidden bg-sand md:max-w-[36rem]" data-reveal>
             <CldImage
               publicId={story.publicId}
               alt={story.alt}
@@ -206,8 +201,7 @@ export function OurStory() {
           </div>
         )}
         <div className={cloudinaryEnabled ? "max-w-xl" : "mx-auto max-w-3xl text-center md:col-span-2"} data-reveal>
-          <p className="label text-ink-soft">Our story</p>
-          <h2 className="sr-only">Our story</h2>
+          <h2 className="font-display text-4xl leading-[1.05] md:text-5xl">Our story</h2>
           <p className="mt-6 font-editorial text-2xl leading-snug italic md:text-3xl md:leading-snug">{BRAND_STORY}</p>
           <dl className="mt-10 grid gap-6 border-t border-ink/15 pt-8 text-left sm:grid-cols-3">
             {CRAFT.map((c) => (
@@ -239,7 +233,6 @@ export function Reviews({ count, latest }: { count: number; latest: ReviewCard[]
     <section className="gutter bg-sand py-16 md:py-24">
       <div className="mx-auto max-w-[90rem]">
         <SectionHeading
-          eyebrow="Reviews"
           title={<>Let customers speak for us</>}
           action={
             <p className="text-ink-soft">
@@ -276,7 +269,6 @@ export function Journal({ posts }: { posts: JournalCard[] }) {
     <section className="gutter py-16 md:py-24">
       <div className="mx-auto max-w-[90rem]">
         <SectionHeading
-          eyebrow="Journal"
           title="Stories from the studio"
           action={
             <Link href="/journal" className="text-link label">
@@ -308,8 +300,7 @@ export function NewsletterSection({ children }: { children: ReactNode }) {
   return (
     <section className="gutter border-t border-ink/10 py-20 text-center md:py-28">
       <div data-reveal>
-        <p className="label text-ink-soft">Newsletter</p>
-        <h2 className="mt-4 font-display text-4xl md:text-5xl">Be first to see each colour story.</h2>
+        <h2 className="font-display text-4xl md:text-5xl">Be first to see each colour story.</h2>
         <p className="mt-4 mb-10 font-editorial text-xl italic">New collections, journal stories and quiet offers.</p>
         {children}
       </div>
