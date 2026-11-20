@@ -54,7 +54,7 @@ function Rail({ title, href, linkLabel, cards }: { title: string; href: string; 
     <ProductRail title={title} href={href} linkLabel={linkLabel}>
       {cards.slice(0, RAIL_LENGTH).map((p, i) => (
         <li key={p.id}>
-          <ProductCard product={p} index={i} showPrice={false} />
+          <ProductCard product={p} index={i} />
         </li>
       ))}
     </ProductRail>

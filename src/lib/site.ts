@@ -54,11 +54,20 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
   },
 ];
 
-/** Social links come from env so nothing is invented. Unset ones are hidden. */
+/** The owner's own accounts (Required Details doc, November 2026); env can override them. */
 export const socialLinks: NavLink[] = [
-  { label: "Instagram", href: process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? "" },
-  { label: "TikTok", href: process.env.NEXT_PUBLIC_TIKTOK_URL ?? "" },
+  { label: "Instagram", href: process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? "https://www.instagram.com/ebonimode_" },
+  { label: "TikTok", href: process.env.NEXT_PUBLIC_TIKTOK_URL ?? "https://www.tiktok.com/@ebonimode" },
 ].filter((l) => l.href);
+
+/** Customer contact details, as the owner supplied them. */
+export const contact = {
+  email: "talktoebonimode@gmail.com",
+  phone: "+234 809 945 4494",
+  phoneHref: "tel:+2348099454494",
+  whatsappHref: "https://wa.me/2348099454494",
+  address: "25b Oladimeji Alo Street, Lekki Phase I, Lagos",
+} as const;
 
 /** Methods Paystack supports for a Nigerian merchant. */
 export const paymentMethods = ["Visa", "Mastercard", "Verve", "Bank transfer", "USSD"];

@@ -5,6 +5,7 @@ import { cloudinaryEnabled } from "@/lib/cloudinary";
 import { readableOn } from "@/lib/colour";
 import type { ProductCardData } from "@/lib/data/home";
 import { Price } from "@/lib/currency";
+import { QuickAdd } from "./QuickAdd";
 import { WishlistButton } from "./WishlistButton";
 
 /** Swatches shown on a card; the product page shows every colour. */
@@ -24,7 +25,7 @@ export function ProductMedia({ product, sizes, hoverSwap = false }: { product: P
       return (
         <>
           <span
-            className={`absolute inset-x-[6%] top-[5%] bottom-0 transition-[opacity,transform] duration-700 ease-entrance group-hover:scale-[1.03] ${
+            className={`absolute inset-x-[2%] top-[3%] bottom-0 transition-[opacity,transform] duration-700 ease-entrance group-hover:scale-[1.03] ${
               swap ? "group-hover:opacity-0" : ""
             }`}
           >
@@ -32,7 +33,7 @@ export function ProductMedia({ product, sizes, hoverSwap = false }: { product: P
           </span>
           {swap && product.altImage && (
             <span
-              className="absolute inset-x-[6%] top-[5%] bottom-0 scale-[0.98] opacity-0 transition-[opacity,transform] duration-700 ease-entrance group-hover:scale-100 group-hover:opacity-100"
+              className="absolute inset-x-[2%] top-[3%] bottom-0 scale-[0.98] opacity-0 transition-[opacity,transform] duration-700 ease-entrance group-hover:scale-100 group-hover:opacity-100"
               aria-hidden="true"
             >
               <CldImage publicId={product.altImage.publicId} alt="" sizes={sizes} className="object-contain object-bottom" />
@@ -108,9 +109,12 @@ export function ProductCard({
   const href = `/product/${product.slug}`;
   return (
     <article className="group relative" data-reveal={reveal ? "" : undefined} style={{ "--i": index % 4 } as React.CSSProperties}>
-      <Link href={href} className="relative block aspect-[2/3] overflow-hidden bg-sand" tabIndex={-1} aria-hidden="true">
-        <ProductMedia product={product} sizes="(min-width: 1024px) 25vw, 50vw" hoverSwap />
-      </Link>
+      <div className="relative">
+        <Link href={href} className="card-studio relative block aspect-[2/3] overflow-hidden" tabIndex={-1} aria-hidden="true">
+          <ProductMedia product={product} sizes="(min-width: 1280px) 30vw, (min-width: 768px) 38vw, 72vw" hoverSwap />
+        </Link>
+        <QuickAdd product={product} />
+      </div>
       <WishlistButton productId={product.id} productName={product.name} />
 
       <h3 className="mt-4 text-base leading-snug tracking-[0.02em]">

@@ -46,8 +46,15 @@ export async function getProduct(slug: string): Promise<ProductDetail | null> {
         .select("description,fabric_care,details,occasions,fabric,fabric_weight,lining,care,avg_rating,review_count,product_images(cloudinary_public_id,alt,sort_order)")
         .eq("id", card.id)
         .single(),
-      // Unisex pieces have no chart of their own yet.
-      db.from("size_guides").select("name,unit,table_data,notes").eq("department", card.department).order("sort_order").limit(1).maybeSingle(),
+      // Unisex pieces have no chart of their own: letter-sized ones (S–XXL) use the men's
+      // chart, as the owner asked for the Jola Jort; numbered ones use the women's.
+      db
+        .from("size_guides")
+        .select("name,unit,table_data,notes")
+        .eq("department", card.department !== "unisex" ? card.department : card.sizes.some((s) => /^\d/.test(s.size)) ? "women" : "men")
+        .order("sort_order")
+        .limit(1)
+        .maybeSingle(),
     ]);
     if (detail.error) throw detail.error;
     type Row = {

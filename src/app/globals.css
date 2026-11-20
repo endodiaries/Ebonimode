@@ -12,6 +12,7 @@
   /* Gallery white pages, a warm studio-backdrop beige, espresso text */
   --color-ivory: #ffffff;
   --color-sand: #ebe3d9;
+  --color-studio: #d9cab8; /* the deeper photo-studio beige behind product cut-outs */
   --color-ink: #2b1f19;
   --color-white: #ffffff;
 
@@ -593,7 +594,7 @@ body {
 .rail {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 62%;
+  grid-auto-columns: 72%;
   gap: 0.75rem;
   overflow-x: auto;
   overscroll-behavior-x: contain;
@@ -609,13 +610,13 @@ body {
 }
 @media (min-width: 768px) {
   .rail {
-    grid-auto-columns: calc((100% - 2 * var(--gutter) - 3 * 1.25rem) / 3.4);
+    grid-auto-columns: calc((100% - 2 * var(--gutter) - 2 * 1.25rem) / 2.6);
     gap: 1.25rem;
   }
 }
 @media (min-width: 1280px) {
   .rail {
-    grid-auto-columns: calc((100% - 2 * var(--gutter) - 4 * 1.25rem) / 4.4);
+    grid-auto-columns: calc((100% - 2 * var(--gutter) - 3 * 1.25rem) / 3.5);
   }
 }
 .rail-btn {
@@ -644,5 +645,73 @@ body {
   [data-reveal="rise"] {
     transform: translate3d(0, 48px, 0);
     transition: opacity 900ms var(--ease-entrance), transform 1400ms var(--ease-entrance);
+  }
+}
+
+/* Product photos: the cut-out stands on a warm studio backdrop, lit from the front,
+   with a floor and a soft shadow at her feet, so every piece reads bold and full-frame. */
+.card-studio {
+  background-color: var(--color-studio);
+  background-image:
+    radial-gradient(ellipse 75% 55% at 50% 36%, rgb(255 255 255 / 0.32), transparent 72%),
+    radial-gradient(ellipse 46% 4% at 50% 99%, rgb(60 38 22 / 0.28), transparent 100%),
+    linear-gradient(to bottom, transparent 70%, rgb(60 38 22 / 0.1) 100%);
+}
+
+/* Quick add: sizes slide up over the photo on hover or focus; "+" opens them on touch. */
+.quick-add-panel {
+  position: absolute;
+  inset-inline: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 2;
+  padding: 0.75rem;
+  background: color-mix(in srgb, var(--color-ivory) 94%, transparent);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, 8px, 0);
+  transition: opacity var(--dur-ui) var(--ease-entrance), transform var(--dur-ui) var(--ease-entrance),
+    visibility 0s linear var(--dur-ui);
+}
+.quick-add[data-open] .quick-add-panel,
+.quick-add:focus-within .quick-add-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+@media (hover: hover) {
+  .group:hover .quick-add-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+}
+.quick-add-toggle {
+  position: absolute;
+  right: 0.25rem;
+  bottom: 0.25rem;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  cursor: pointer;
+}
+.quick-add-toggle::before {
+  content: "";
+  position: absolute;
+  inset: 0.375rem;
+  background: var(--color-ivory);
+  z-index: -1;
+}
+/* Touch: leave room in the open panel for the close button in its corner. */
+.quick-add[data-open] .quick-add-panel {
+  padding-right: 3rem;
+}
+@media (hover: hover) {
+  .quick-add-toggle {
+    display: none;
   }
 }

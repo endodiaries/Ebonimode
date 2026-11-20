@@ -90,7 +90,7 @@ export function CategoryTiles({ items }: { items: { name: string; slug: string; 
           {items.map((c, i) => (
             <li key={c.slug} data-reveal style={stagger(i % 4)}>
               <Link href={`/category/${c.slug}`} className="group block">
-                <span className="relative block aspect-[4/5] overflow-hidden bg-sand">
+                <span className="card-studio relative block aspect-[4/5] overflow-hidden">
                   <ProductMedia product={c.cover} sizes="(min-width: 1024px) 24vw, 50vw" />
                 </span>
                 <span className="label mt-4 block text-ink-soft">
@@ -112,7 +112,7 @@ export function TrustRow() {
   const points = [
     { Icon: TapeIcon, title: "Your size", note: "Sizes 8 to 18 in stock. Others made to order in 5 to 7 days." },
     { Icon: QualityIcon, title: "Made by hand", note: "Hand-dyed Adire and handwoven Asooke." },
-    { Icon: TruckIcon, title: "Delivered", note: "Across Nigeria, and worldwide by DHL." },
+    { Icon: TruckIcon, title: "Delivered", note: "Lagos in 1 to 3 working days after dispatch, the rest of Nigeria in 2 to 5, worldwide in 5 to 10." },
     { Icon: LockIcon, title: "Secure payment", note: "Card, bank transfer or USSD." },
   ];
   return (
