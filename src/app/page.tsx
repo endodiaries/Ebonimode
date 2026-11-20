@@ -1,3 +1,4 @@
+import { CampaignFilm } from "@/components/home/CampaignFilm";
 import { HeroSlideshow } from "@/components/home/HeroSlideshow";
 import { NewsletterForm } from "@/components/home/NewsletterForm";
 import { ProductRail } from "@/components/home/ProductRail";
@@ -10,6 +11,7 @@ import {
   NewsletterSection,
   OurStory,
   Reviews,
+  Statement,
   TrustRow,
 } from "@/components/home/sections";
 import { RevealObserver } from "@/components/motion/RevealObserver";
@@ -26,7 +28,17 @@ import {
   type ProductCardData,
 } from "@/lib/data/home";
 
-const RAIL_LENGTH = 10;
+const RAIL_LENGTH = 12;
+
+/** Campaign films by collection slug (Cloudinary video ids). Admin-editable in Phase 7. */
+const FILMS: Record<string, { publicId: string; lines: string[] }> = {
+  "chronicles-of-africa-eko": {
+    publicId: "site/video/campaign-4",
+    lines: [
+      "Inspired by the movement of Lagos’ waterways, with fluid wave patterns that pay homage to the lagoon and the Atlantic Ocean.",
+    ],
+  },
+};
 
 /** One card per style: the other colourways are a swatch away. */
 function onePerStyle(cards: ProductCardData[], skip = new Set<string>()) {
@@ -106,19 +118,33 @@ export default async function HomePage() {
 
   const [firstCollection, ...otherCollections] = collections;
   const collectionBlock = (c: (typeof collections)[number], side: "left" | "right") => {
-    const cards = railCards(catalogue.filter((p) => p.collections.includes(c.slug)));
+    // Every colourway gets its own card in a collection row (Eko III in blue and in green).
+    const cards = catalogue.filter((p) => p.collections.includes(c.slug));
+    const film = FILMS[c.slug];
     return (
       <div key={c.id}>
-        <CampaignBanner
-          title={c.name}
-          kicker={c.productCount > 0 ? pieces(c.productCount) : "Collection"}
-          href={`/collections/${c.slug}`}
-          linkLabel="Shop the collection"
-          publicId={c.bannerPublicId}
-          alt=""
-          field={c.themeHex}
-          side={side}
-        />
+        {film ? (
+          <CampaignFilm
+            publicId={film.publicId}
+            kicker={c.productCount > 0 ? `The film · ${pieces(c.productCount)}` : "The film"}
+            title={c.name}
+            lines={[...(c.description ? [c.description] : []), ...film.lines]}
+            href={`/collections/${c.slug}`}
+            linkLabel="Shop the collection"
+          />
+        ) : (
+          <CampaignBanner
+            title={c.name}
+            kicker={c.productCount > 0 ? pieces(c.productCount) : "Collection"}
+            note={c.description}
+            href={`/collections/${c.slug}`}
+            linkLabel="Shop the collection"
+            publicId={c.bannerPublicId}
+            alt=""
+            field={c.themeHex}
+            side={side}
+          />
+        )}
         <Rail title={c.name} href={`/collections/${c.slug}`} linkLabel="View all" cards={cards} />
       </div>
     );
@@ -144,6 +170,8 @@ export default async function HomePage() {
 
       <Rail title="Shop new arrivals" href="/shop" linkLabel="Shop all" cards={newArrivals} />
 
+      <Statement />
+
       {firstCollection && collectionBlock(firstCollection, "left")}
 
       {men.length > 0 && (
@@ -151,6 +179,7 @@ export default async function HomePage() {
           <CampaignBanner
             title="Menswear"
             kicker={pieces(men.length)}
+            note="Linen, Adire and Asọ́ọ̀kẹ, cut for the modern man."
             href="/men"
             linkLabel="Shop men"
             publicId={HOME_MEDIA.departments.men.publicId}

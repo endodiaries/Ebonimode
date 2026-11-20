@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Jost } from "next/font/google";
-import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
+import { Jost, Marcellus } from "next/font/google";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -10,11 +9,19 @@ import { getDisplayCurrencies, getMenuData } from "@/lib/data/home";
 import { BRAND_NAME, BRAND_STORY, siteUrl } from "@/lib/site";
 import "./globals.css";
 
-/** One typeface for the whole site, as fashion houses do: Jost, a clean geometric sans. */
+/** Text and UI: Jost, a clean geometric sans. */
 const jost = Jost({
   subsets: ["latin", "latin-ext"],
   style: ["normal", "italic"],
   variable: "--font-jost",
+  display: "swap",
+});
+
+/** Headings: Marcellus, a soft, flared classical face that reads feminine in spaced capitals. */
+const marcellus = Marcellus({
+  weight: "400",
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-marcellus",
   display: "swap",
 });
 
@@ -45,7 +52,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [menu, currencies] = await Promise.all([getMenuData(), getDisplayCurrencies()]);
   return (
-    <html lang="en-NG" className={jost.variable}>
+    <html lang="en-NG" className={`${jost.variable} ${marcellus.variable}`}>
       <body className="flex min-h-dvh flex-col">
         <a
           href="#main"
@@ -54,7 +61,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         <CurrencyProvider currencies={currencies}>
-        <AnnouncementBar />
         <SiteHeader menu={menu} />
         <main id="main" className="flex-1">
           {children}

@@ -39,7 +39,7 @@
   --color-ink-soft: #66544a;
 
   /* Typography (variables injected by next/font in layout.tsx) */
-  --font-display: var(--font-jost), "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-marcellus), Georgia, "Times New Roman", serif;
   --font-editorial: var(--font-jost), "Helvetica Neue", Arial, sans-serif;
   --font-sans: var(--font-jost), "Helvetica Neue", Arial, sans-serif;
 
@@ -59,7 +59,6 @@
   --dur-hero: 1100ms;
 
   /* Layout */
-  --announcement-h: 2.25rem;
   --header-h: 4rem;
   --tabbar-h: 3.75rem;
   --gutter: clamp(1rem, 4vw, 3rem);
@@ -212,7 +211,7 @@ body {
   --hero-bg: var(--color-ivory);
   position: relative;
   overflow: hidden;
-  height: clamp(34rem, 52.8vw, 47.5rem); /* 1440 x 760 on desktop */
+  height: clamp(28rem, 40vw, 36rem); /* about 1440 x 576 on desktop */
   color: var(--hero-fg);
   background: var(--color-sand);
   isolation: isolate;
@@ -306,11 +305,11 @@ body {
 /* Phones: a taller hero, with the stage ending above the counter and buttons */
 @media (max-width: 767px) {
   .hero {
-    height: 39rem;
+    height: 34rem;
   }
   .hero-stage {
-    bottom: 7.75rem;
-    height: 50%;
+    bottom: 7.25rem;
+    height: 44%;
   }
 }
 @media (min-width: 768px) {
@@ -400,7 +399,7 @@ body {
   transform: scaleX(1);
 }
 [aria-current="true"] > .hero-progress-track > .hero-progress-fill[data-autoplay] {
-  animation: hero-progress 6500ms linear forwards;
+  animation: hero-progress 4500ms linear forwards;
 }
 @keyframes hero-progress {
   from {
@@ -529,7 +528,7 @@ body {
   }
 }
 
-/* Display type: Jost in widely spaced capitals, the way fashion houses set their headings.
+/* Display type: Marcellus in widely spaced capitals, soft and feminine.
    .font-editorial is the same face in light italic, for decks, quotes and captions. */
 .font-display {
   font-weight: 400;

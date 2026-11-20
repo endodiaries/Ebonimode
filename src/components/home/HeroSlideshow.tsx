@@ -11,7 +11,6 @@ import type { HeroSlide } from "@/lib/data/home";
 
 type State = { index: number; prev: number | null };
 
-const pad = (n: number) => String(n).padStart(2, "0");
 
 /** "Modest by design. Bold by nature." becomes two lines that stagger in. */
 const taglineLines = (t: string) => t.match(/[^.!?]+[.!?]*/g)?.map((s) => s.trim()).filter(Boolean) ?? [];
@@ -216,9 +215,6 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
           >
             {playing ? <PauseIcon size={18} /> : <PlayIcon size={18} />}
           </button>
-          <span className="label mr-2 tabular-nums" aria-hidden="true">
-            {pad(index + 1)} / {pad(count)}
-          </span>
           {slides.map((s, i) => (
             <button
               key={s.id}

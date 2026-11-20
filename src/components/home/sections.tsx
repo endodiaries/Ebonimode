@@ -8,6 +8,7 @@ import type { JournalCard, ProductCardData, ReviewCard } from "@/lib/data/home";
 import { HOME_MEDIA } from "@/lib/home-media";
 import { ProductMedia } from "@/components/product/ProductCard";
 import { BRAND_STORY } from "@/lib/site";
+import { ABOUT_STORY } from "@/lib/content/brand";
 
 /** What the pieces are made of and how, taken from the brand's own product descriptions. */
 const CRAFT = [
@@ -34,6 +35,7 @@ function SectionHeading({ title, action }: { title: ReactNode; action?: ReactNod
 export function CampaignBanner({
   title,
   kicker,
+  note,
   href,
   linkLabel,
   publicId,
@@ -43,6 +45,7 @@ export function CampaignBanner({
 }: {
   title: string;
   kicker?: string;
+  note?: string | null;
   href: string;
   linkLabel: string;
   publicId: string | null;
@@ -72,10 +75,33 @@ export function CampaignBanner({
         <span data-reveal className="flex flex-col items-center">
           {kicker && <span className="label opacity-85">{kicker}</span>}
           <span className="campaign-title font-display mt-4 block">{title}</span>
+          {note && <span className="font-editorial mt-4 block max-w-sm text-lg text-pretty opacity-90 max-md:hidden">{note}</span>}
           <span className="text-link label mt-6 inline-block md:mt-8">{linkLabel}</span>
         </span>
       </span>
     </Link>
+  );
+}
+
+/** A few words from the brand, in its own voice (the owner's brand story). */
+export function Statement() {
+  const [first, , third, , last] = ABOUT_STORY.paragraphs;
+  return (
+    <section className="gutter py-20 text-center md:py-28" aria-label="About Ebonímode">
+      <div className="mx-auto max-w-4xl" data-reveal>
+        <p className="label text-ink-soft">Ebonímode</p>
+        {/* Sentence case: the unlayered .font-display rule would otherwise set it in capitals. */}
+        <p className="font-display mt-6 text-3xl leading-snug text-balance md:text-5xl md:leading-[1.2]" style={{ textTransform: "none", letterSpacing: "0.01em" }}>
+          {last}
+        </p>
+        <p className="mx-auto mt-8 max-w-2xl text-pretty text-ink-soft">
+          {first} {third}
+        </p>
+        <Link href="/collections" className="text-link label mt-9 inline-block">
+          Explore the collections
+        </Link>
+      </div>
+    </section>
   );
 }
 

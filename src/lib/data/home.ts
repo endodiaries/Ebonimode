@@ -172,7 +172,7 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
       } | null;
     };
     const departmentName: Record<string, string> = { women: "Women", men: "Men", unisex: "Unisex" };
-    return ((data ?? []) as unknown as Row[]).slice(0, 5).map((r) => {
+    return ((data ?? []) as unknown as Row[]).slice(0, 7).map((r) => {
       // Only link to a piece shoppers can actually open.
       const product = r.products?.status === "published" ? r.products : null;
       const productCollection = product?.product_collections.find((l) => l.collections?.is_published)?.collections?.name;
