@@ -11,7 +11,7 @@ export const easing = {
   exit: "cubic-bezier(0.4, 0, 0.2, 1)",
 } as const;
 
-export const heroAutoplayMs = 4500;
+export const heroAutoplayMs = 3500;
 export const revealStaggerMs = 60;
 export const revealDistancePx = 24;
 

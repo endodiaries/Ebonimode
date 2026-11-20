@@ -205,7 +205,7 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
       </div>
 
       {count > 1 && (
-        <div className="hero-progress gutter absolute bottom-[5.25rem] left-0 z-10 flex items-center gap-1 sm:bottom-[6.5rem]">
+        <div className="hero-progress gutter absolute bottom-[4.75rem] left-0 z-10 flex items-center sm:bottom-[6rem]">
           <button
             type="button"
             data-hero-toggle=""
@@ -215,26 +215,15 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
           >
             {playing ? <PauseIcon size={18} /> : <PlayIcon size={18} />}
           </button>
-          {slides.map((s, i) => (
-            <button
-              key={s.id}
-              type="button"
-              className="flex h-11 cursor-pointer items-center px-1"
-              aria-label={`Show slide ${i + 1}${s.storyName ? `: ${s.storyName}` : ""}`}
-              aria-current={i === index ? "true" : undefined}
-              onClick={() => go(i)}
-            >
-              <span className="hero-progress-track">
-                <span
-                  key={i === index ? `on-${index}` : "off"}
-                  className="hero-progress-fill"
-                  data-autoplay={i === index ? "" : undefined}
-                  style={{ animationPlayState: playing ? "running" : "paused" }}
-                  onAnimationEnd={() => go(index + 1)}
-                />
-              </span>
-            </button>
-          ))}
+          {/* Invisible timer: its CSS animation sets the pace, so pausing it pauses the slideshow,
+              and reduced motion (animation: none) turns autoplay off. */}
+          <span
+            key={`timer-${index}`}
+            className="hero-timer"
+            aria-hidden="true"
+            style={{ animationPlayState: playing ? "running" : "paused" }}
+            onAnimationEnd={() => go(index + 1)}
+          />
         </div>
       )}
 

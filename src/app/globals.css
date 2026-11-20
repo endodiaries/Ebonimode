@@ -379,27 +379,14 @@ body {
   outline-color: var(--hero-fg);
 }
 
-/* Thin progress lines (indicators, not calls to action) */
-.hero-progress-track {
-  display: block;
-  position: relative;
-  width: 2.5rem;
-  height: 1px;
-  background: color-mix(in srgb, var(--hero-fg) 30%, transparent);
-  overflow: hidden;
-}
-.hero-progress-fill {
+/* Slide timer: an invisible animation that sets each slide's time on screen (3.5s). */
+.hero-timer {
   position: absolute;
-  inset: 0;
-  background: var(--hero-fg);
-  transform-origin: left;
-  transform: scaleX(0);
-}
-[aria-current="true"] > .hero-progress-track > .hero-progress-fill {
-  transform: scaleX(1);
-}
-[aria-current="true"] > .hero-progress-track > .hero-progress-fill[data-autoplay] {
-  animation: hero-progress 4500ms linear forwards;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  animation: hero-progress 3500ms linear forwards;
 }
 @keyframes hero-progress {
   from {
@@ -505,7 +492,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   /* Hero: no autoplay, no drift, no slide. A simple crossfade only. */
-  .hero-progress-fill {
+  .hero-timer {
     animation: none !important;
   }
   .hero-model,
