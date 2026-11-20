@@ -29,6 +29,17 @@ Feel: a clean, modern luxury storefront with a bold African identity. Spacious a
 - Minimal modern fashion homepages: a hero with the **brand name set huge behind a cut-out model who overlaps the lettering**, a tiny tagline top-left, actions bottom-left, a "new collection" note bottom-right; a department strip with small thumbnails and "Shop women →" links; a split promo banner with a big headline beside a model; a row of trust points (fast delivery, easy returns, quality, secure payment); a clean "Best of" product grid; a simple newsletter.
 - Ebonímode's own twist: the brand name is written in African print, scenes are built from colour fields, and every collection is a colour story.
 
+## 2.0 Current design direction (owner, 20 November 2026: overrides 2.1 to 2.6 where they conflict)
+After rejecting a magazine-style redesign, the owner chose **ofuure.com** as the reference: take its structure and mood (never its branding or imagery).
+- **Type:** headings in **Marcellus** (soft, feminine; set in widely spaced capitals via `.font-display`, sentence case for brand statements); text and UI in **Jost**. Labels and buttons are spaced capitals.
+- **Colour:** white pages, espresso ink `#2b1f19`, sand `#ebe3d9`, studio beige `#d9cab8` behind product cut-outs, emerald for focus and hover. Collection colours appear as lit "studio backdrop" fields (`.studio`).
+- **No announcement bar.**
+- **Hero:** a shorter slideshow of seven slides (admin hero slides), 3.5s each, no counter and no progress lines; a small pause button stays (WCAG 2.2.2). Same two buttons, Shop Women and Shop Men.
+- **Homepage rhythm:** hero; "Shop new arrivals" row; a few words from the owner's brand story; for each collection a campaign banner (or its campaign film) followed by a sliding row of its pieces; a Menswear banner and row; Shop by category (real counts); Shop the Look; Our story; trust row (confirmed facts only); newsletter.
+- **Product cards:** tall 2:3 cut-out on the studio beige, model filling the frame; name, price, swatches; quick add (hover on desktop, "+" on touch); a second view on hover. Collection rows show every colourway as its own card. Homepage cards DO show prices.
+- **Film:** campaign films play muted only while on screen, with a pause button, never autoplaying with reduced motion or Save-Data.
+- **Copy:** short brand lines may be written as placeholders; never invent facts. No free delivery.
+
 ### 2.1 The brand name (updated by the owner, November 2026)
 - The brand name is **not** set in batik print anywhere, and there is **no giant name in the hero**. No batik print is used as decoration.
 - The header shows the **handwritten wordmark from the logo, in a very bold weight** (`src/assets/ebonimode-wordmark.png`), centred, in ink, with accessible text.
