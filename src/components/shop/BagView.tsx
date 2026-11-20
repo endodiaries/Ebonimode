@@ -25,14 +25,14 @@ export function BagView({ products }: { products: ProductCardData[] }) {
   if (rows.length === 0) {
     return (
       <div className="py-16 text-center">
-        <p className="font-editorial text-2xl italic">Your bag is empty.</p>
+        <p className="font-editorial text-2xl">Your bag is empty.</p>
         {gone > 0 && <p className="mt-3 text-ink-soft">Some pieces you added are no longer available.</p>}
         <p className="mt-8 flex flex-wrap justify-center gap-8">
           <Link href="/women" className="text-link label">
-            Shop women →
+            Shop women
           </Link>
           <Link href="/men" className="text-link label">
-            Shop men →
+            Shop men
           </Link>
         </p>
       </div>
@@ -109,19 +109,25 @@ export function BagView({ products }: { products: ProductCardData[] }) {
           </div>
           <div className="flex justify-between gap-4 text-ink-soft">
             <dt>Delivery</dt>
-            <dd>Worked out at checkout</dd>
+            <dd>Chosen at checkout</dd>
           </div>
         </dl>
         {currency.code !== "NGN" && <p className="mt-4 text-sm text-ink-soft">Shown in {currency.code} for reference. You will be charged in naira.</p>}
         {unpriced && <p className="mt-4 text-vermilion">One of these pieces has no price yet, so it is not in the subtotal.</p>}
         {short && <p className="mt-4 text-vermilion">Please adjust the pieces marked above before checking out.</p>}
-        <button type="button" className="btn mt-6 w-full" disabled>
-          Checkout
-        </button>
-        <p className="mt-3 text-sm text-ink-soft">Checkout is being built and will open here soon.</p>
+        {unpriced || short ? (
+          <button type="button" className="btn mt-6 w-full" disabled>
+            Checkout
+          </button>
+        ) : (
+          <Link href="/checkout" className="btn mt-6 w-full">
+            Checkout
+          </Link>
+        )}
+        <p className="mt-3 text-sm text-ink-soft">Delivery across Nigeria. Pay by card, bank transfer or USSD.</p>
         <p className="mt-6">
           <Link href="/shop" className="text-link label">
-            Keep shopping →
+            Keep shopping
           </Link>
         </p>
       </aside>

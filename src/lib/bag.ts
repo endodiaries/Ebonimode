@@ -82,6 +82,11 @@ export function setBagQty(productId: string, size: string, qty: number): void {
   write(read().flatMap((l) => (l.productId === productId && l.size === size ? (qty > 0 ? [{ ...l, qty }] : []) : [l])));
 }
 
+/** Empties the bag (after a confirmed payment). */
+export function clearBag(): void {
+  write([]);
+}
+
 export function useBag(): readonly BagLine[] {
   return useSyncExternalStore(subscribe, read, () => EMPTY);
 }
