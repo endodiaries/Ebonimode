@@ -27,7 +27,6 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
       { label: "New in", href: "/shop?sort=new" },
       { label: "Collections", href: "/collections" },
       { label: "Shop all", href: "/shop" },
-      { label: "Gift cards", href: "/gift-cards" },
     ],
   },
   {
@@ -35,10 +34,7 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
     links: [
       { label: "About", href: "/about" },
       { label: "Our impact", href: "/impact" },
-      { label: "Artisans", href: "/artisans" },
-      { label: "Journal", href: "/journal" },
-      { label: "Lookbook", href: "/lookbook" },
-      { label: "Reviews", href: "/reviews" },
+      { label: "Contact", href: "/contact" },
     ],
   },
   {
@@ -47,9 +43,6 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
       { label: "Size guide", href: "/size-guide" },
       { label: "Shipping & returns", href: "/shipping-returns" },
       { label: "FAQs", href: "/faqs" },
-      { label: "Contact", href: "/contact" },
-      { label: "Privacy", href: "/privacy" },
-      { label: "Terms", href: "/terms" },
     ],
   },
 ];

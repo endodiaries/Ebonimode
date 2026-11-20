@@ -161,14 +161,7 @@ export function LookSection({ children }: { children: ReactNode }) {
   return (
     <section className="gutter bg-sand py-16 md:py-24">
       <div className="mx-auto max-w-[90rem]">
-        <SectionHeading
-          title="Shop the look"
-          action={
-            <Link href="/lookbook" className="text-link label">
-              See every look
-            </Link>
-          }
-        />
+        <SectionHeading title="Shop the look" />
         <div data-reveal>{children}</div>
       </div>
     </section>
@@ -209,8 +202,8 @@ export function OurStory() {
             <Link href="/impact" className="text-link label">
               Our impact
             </Link>
-            <Link href="/artisans" className="text-link label">
-              Meet the artisans
+            <Link href="/about" className="text-link label">
+              About us
             </Link>
           </p>
         </div>
