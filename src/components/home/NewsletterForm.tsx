@@ -34,7 +34,7 @@ export function NewsletterForm() {
         />
         {/* Honeypot for bots: hidden from people and assistive tech. */}
         <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
-        <button type="submit" disabled={pending} className="label h-12 cursor-pointer whitespace-nowrap transition-opacity hover:opacity-70 disabled:opacity-60">
+        <button type="submit" disabled={pending} className="label h-12 cursor-pointer whitespace-nowrap hover:text-emerald disabled:opacity-60">
           {pending ? "Joining…" : "Join"}
         </button>
       </div>

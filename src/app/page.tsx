@@ -1,52 +1,128 @@
 import { HeroSlideshow } from "@/components/home/HeroSlideshow";
 import { NewsletterForm } from "@/components/home/NewsletterForm";
+import { ProductRail } from "@/components/home/ProductRail";
 import { ShopTheLook } from "@/components/home/ShopTheLook";
 import {
-  BestOf,
-  Collections,
-  Departments,
+  CampaignBanner,
+  CategoryTiles,
   Journal,
   LookSection,
-  Marquee,
   NewsletterSection,
   OurStory,
   Reviews,
-  Statement,
   TrustRow,
 } from "@/components/home/sections";
 import { RevealObserver } from "@/components/motion/RevealObserver";
+import { ProductCard } from "@/components/product/ProductCard";
 import { BRAND_NAME, BRAND_STORY, siteUrl } from "@/lib/site";
-import { getBestOf, getCollections, getFeaturedLook, getHeroSlides, getJournal, getReviews } from "@/lib/data/home";
+import { HOME_MEDIA } from "@/lib/home-media";
+import {
+  getCatalogueCards,
+  getCollections,
+  getFeaturedLook,
+  getHeroSlides,
+  getJournal,
+  getReviews,
+  type ProductCardData,
+} from "@/lib/data/home";
+
+const RAIL_LENGTH = 10;
+
+/** One card per style: the other colourways are a swatch away. */
+function onePerStyle(cards: ProductCardData[], skip = new Set<string>()) {
+  const seen = new Set<string>();
+  return cards.filter((p) => {
+    if (skip.has(p.id)) return false;
+    const style = p.colourways.length > 1 ? p.colourways.map((c) => c.slug).sort().join("|") : p.id;
+    if (seen.has(style)) return false;
+    seen.add(style);
+    return true;
+  });
+}
+
+/** One card per style, unless that leaves the row nearly empty: then show every colourway. */
+function railCards(cards: ProductCardData[], skip?: Set<string>) {
+  const styles = onePerStyle(cards, skip);
+  return styles.length >= 4 ? styles : cards.filter((p) => !skip?.has(p.id));
+}
+
+const pieces = (n: number) => `${n} ${n === 1 ? "piece" : "pieces"}`;
+
+function Rail({ title, href, linkLabel, cards }: { title: string; href: string; linkLabel: string; cards: ProductCardData[] }) {
+  if (cards.length === 0) return null;
+  return (
+    <ProductRail title={title} href={href} linkLabel={linkLabel}>
+      {cards.slice(0, RAIL_LENGTH).map((p, i) => (
+        <li key={p.id}>
+          <ProductCard product={p} index={i} showPrice={false} />
+        </li>
+      ))}
+    </ProductRail>
+  );
+}
 
 /**
- * Homepage: hero, departments, new in, collections, look, story, trust, newsletter.
+ * Homepage, in the rhythm of a fashion house's storefront: the hero, new arrivals,
+ * then a campaign banner for each collection (and for menswear) followed by a row
+ * of its pieces; categories with counts; the look; the story; trust; newsletter.
  * Reviews and journal appear only once real ones exist. All data comes from cached
- * reads, so the whole page prerenders into the static shell. The announcement bar,
- * header, strata divider and footer live in the root layout.
+ * reads, so the whole page prerenders into the static shell.
  */
 export default async function HomePage() {
-  const [slides, collections, products, look, reviews, posts] = await Promise.all([
+  const [slides, collections, catalogue, look, reviews, posts] = await Promise.all([
     getHeroSlides(),
     getCollections(),
-    getBestOf(40),
+    getCatalogueCards(),
     getFeaturedLook(),
     getReviews(),
     getJournal(),
   ]);
 
-  // Pieces already worn in the hero are not repeated in "New in".
-  const inHero = new Set(slides.map((s) => s.productId).filter(Boolean));
-  // One card per style: other colourways are a swatch away.
-  const seenStyles = new Set<string>();
-  const newIn = products
-    .filter((p) => {
-      if (inHero.has(p.id)) return false;
-      const style = p.colourways.length > 1 ? p.colourways.map((c) => c.slug).sort().join("|") : p.id;
-      if (seenStyles.has(style)) return false;
-      seenStyles.add(style);
-      return true;
-    })
-    .slice(0, 10);
+  // Pieces already worn in the hero are not repeated in "New arrivals".
+  const inHero = new Set(slides.map((s) => s.productId).filter((id): id is string => Boolean(id)));
+  const newArrivals = railCards(catalogue, inHero);
+  const men = catalogue.filter((p) => p.department === "men");
+
+  // Categories by size, each shown with a cut-out of one of its pieces.
+  const byCategory = new Map<string, { name: string; slug: string; count: number; cover: ProductCardData }>();
+  for (const p of catalogue) {
+    if (!p.category) continue;
+    const entry = byCategory.get(p.category.slug);
+    if (entry) {
+      entry.count += 1;
+      if (!entry.cover.image && p.image) entry.cover = p;
+    } else {
+      byCategory.set(p.category.slug, { ...p.category, count: 1, cover: p });
+    }
+  }
+  const departmentWord = { women: "Women's", men: "Men's", unisex: "Unisex" } as const;
+  const top = [...byCategory.values()].sort((a, b) => b.count - a.count).slice(0, 4);
+  // Two categories can share a name (men's and women's trousers): say which is which.
+  const categories = top.map((c) =>
+    [...byCategory.values()].filter((o) => o.name === c.name).length > 1
+      ? { ...c, name: `${departmentWord[c.cover.department]} ${c.name.toLowerCase()}` }
+      : c,
+  );
+
+  const [firstCollection, ...otherCollections] = collections;
+  const collectionBlock = (c: (typeof collections)[number], side: "left" | "right") => {
+    const cards = railCards(catalogue.filter((p) => p.collections.includes(c.slug)));
+    return (
+      <div key={c.id}>
+        <CampaignBanner
+          title={c.name}
+          kicker={c.productCount > 0 ? pieces(c.productCount) : "Collection"}
+          href={`/collections/${c.slug}`}
+          linkLabel="Shop the collection"
+          publicId={c.bannerPublicId}
+          alt=""
+          field={c.themeHex}
+          side={side}
+        />
+        <Rail title={c.name} href={`/collections/${c.slug}`} linkLabel="View all" cards={cards} />
+      </div>
+    );
+  };
 
   return (
     <>
@@ -65,11 +141,31 @@ export default async function HomePage() {
       />
       <h1 className="sr-only">Ebonímode: Afrocentric modest fashion for women and men</h1>
       <HeroSlideshow slides={slides} />
-      <Marquee />
-      <Departments />
-      <Statement />
-      <BestOf products={newIn} />
-      <Collections collections={collections} />
+
+      <Rail title="Shop new arrivals" href="/shop" linkLabel="Shop all" cards={newArrivals} />
+
+      {firstCollection && collectionBlock(firstCollection, "left")}
+
+      {men.length > 0 && (
+        <div>
+          <CampaignBanner
+            title="Menswear"
+            kicker={pieces(men.length)}
+            href="/men"
+            linkLabel="Shop men"
+            publicId={HOME_MEDIA.departments.men.publicId}
+            alt=""
+            field={HOME_MEDIA.departments.men.field}
+            side="right"
+          />
+          <Rail title="Menswear" href="/men" linkLabel="View all" cards={railCards(men)} />
+        </div>
+      )}
+
+      {otherCollections.map((c, i) => collectionBlock(c, i % 2 === 0 ? "left" : "right"))}
+
+      <CategoryTiles items={categories} />
+
       {look && look.hotspots.length > 0 && (
         <LookSection>
           <ShopTheLook look={look} />

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { StrataDivider } from "@/components/brand/StrataDivider";
 import { BRAND_STORY, footerNav, paymentMethods, socialLinks } from "@/lib/site";
 import logo from "@/assets/ebonimode-logo-light.png";
-import wordmark from "@/assets/ebonimode-wordmark-light.png";
 
 /** Strata divider, then the footer. The full logo sits here, straight on the green, with the name in ivory. */
 export function SiteFooter() {
@@ -12,7 +11,7 @@ export function SiteFooter() {
     <footer className="mt-auto">
       <StrataDivider />
       <div className="gutter bg-emerald-deep pt-16 pb-[calc(var(--tabbar-h)+2.5rem)] text-ivory md:pb-12">
-        <div className="mx-auto grid max-w-[96rem] gap-12 lg:grid-cols-[minmax(0,22rem)_1fr]">
+        <div className="mx-auto grid max-w-[90rem] gap-12 lg:grid-cols-[minmax(0,22rem)_1fr]">
           <div>
             <Link href="/" aria-label="Ebonímode home" className="inline-block">
               <Image src={logo} alt="Ebonímode logo" width={104} sizes="104px" className="h-auto w-[6.5rem]" />
@@ -23,7 +22,7 @@ export function SiteFooter() {
           <div className="grid grid-cols-2 gap-10 sm:grid-cols-3">
             {footerNav.map((group) => (
               <nav key={group.title} aria-label={group.title}>
-                <h2 className="mb-4 font-display text-xl text-ivory">{group.title}</h2>
+                <h2 className="label mb-4 text-marigold">{group.title}</h2>
                 <ul className="space-y-1">
                   {group.links.map((l) => (
                     <li key={l.href}>
@@ -38,15 +37,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        {/* The wordmark, set across the full width: the last thing on every page. */}
-        <Image
-          src={wordmark}
-          alt=""
-          sizes="100vw"
-          className="mx-auto mt-20 h-auto w-full max-w-[60rem] opacity-95"
-        />
-
-        <div className="mx-auto mt-10 flex max-w-[96rem] flex-col gap-6 border-t border-ivory/20 pt-6 text-base text-ivory/75 md:flex-row md:items-center md:justify-between">
+        <div className="mx-auto mt-14 flex max-w-[90rem] flex-col gap-6 border-t border-gold/40 pt-6 text-base text-ivory/75 md:flex-row md:items-center md:justify-between">
           <p>
             © <CopyrightYear /> Ebonímode
           </p>

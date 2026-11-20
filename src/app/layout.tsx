@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bodoni_Moda, Hanken_Grotesk } from "next/font/google";
+import { Jost } from "next/font/google";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -10,19 +10,11 @@ import { getDisplayCurrencies, getMenuData } from "@/lib/data/home";
 import { BRAND_NAME, BRAND_STORY, siteUrl } from "@/lib/site";
 import "./globals.css";
 
-/* Display and editorial: Bodoni Moda, the fashion-masthead face (variable weight and optical size). */
-const display = Bodoni_Moda({
+/** One typeface for the whole site, as fashion houses do: Jost, a clean geometric sans. */
+const jost = Jost({
   subsets: ["latin", "latin-ext"],
   style: ["normal", "italic"],
-  axes: ["opsz"],
-  variable: "--font-bodoni",
-  display: "swap",
-});
-
-/* Text and interface: Hanken Grotesk, a clean grotesk that stays out of the clothes' way. */
-const sans = Hanken_Grotesk({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-hanken",
+  variable: "--font-jost",
   display: "swap",
 });
 
@@ -53,7 +45,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [menu, currencies] = await Promise.all([getMenuData(), getDisplayCurrencies()]);
   return (
-    <html lang="en-NG" className={`${display.variable} ${sans.variable}`}>
+    <html lang="en-NG" className={jost.variable}>
       <body className="flex min-h-dvh flex-col">
         <a
           href="#main"

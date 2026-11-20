@@ -108,12 +108,12 @@ export function ProductCard({
   const href = `/product/${product.slug}`;
   return (
     <article className="group relative" data-reveal={reveal ? "" : undefined} style={{ "--i": index % 4 } as React.CSSProperties}>
-      <Link href={href} className="relative block aspect-[3/4] overflow-hidden bg-sand" tabIndex={-1} aria-hidden="true">
+      <Link href={href} className="relative block aspect-[2/3] overflow-hidden bg-sand" tabIndex={-1} aria-hidden="true">
         <ProductMedia product={product} sizes="(min-width: 1024px) 25vw, 50vw" hoverSwap />
       </Link>
       <WishlistButton productId={product.id} productName={product.name} />
 
-      <h3 className="mt-4 text-base leading-snug font-medium">
+      <h3 className="mt-4 text-base leading-snug tracking-[0.02em]">
         <Link href={href} className="hover:underline">
           {product.name}
         </Link>
