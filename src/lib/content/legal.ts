@@ -151,7 +151,7 @@ export const TERMS: LegalSection[] = [
   {
     heading: "Your order",
     paragraphs: [
-      "Your order is confirmed once we have received and verified your payment, and you will see an order confirmation. We may cancel an order if a piece is no longer available, if there is an obvious error in its price or description, or if we suspect fraud. If we cancel your order, we will tell you and refund what you paid in full.",
+      "Your order is confirmed once we have received and verified your payment, and you will see an order confirmation. We may cancel an order if a piece is no longer available, if there is an obvious error in its price or description, or if we suspect fraud. If we cancel your order, we will contact you.",
     ],
   },
   {
