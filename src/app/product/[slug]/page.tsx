@@ -118,7 +118,7 @@ export default async function ProductPage({ params }: Props) {
             <Gallery images={images} />
 
             <div className="md:sticky md:top-28 md:self-start">
-              <h1 className="font-display text-4xl leading-[0.98] text-balance md:text-5xl">{card.name}</h1>
+              <h1 className="font-display text-2xl leading-[1.15] text-balance md:text-4xl">{card.name}</h1>
               <p className="mt-4 text-2xl font-semibold">
                 <Price ngn={card.priceNgn} tags={card.tags} />
               </p>

@@ -29,7 +29,7 @@ async function AccountDetails() {
 
   return (
     <>
-      <h1 className="mt-4 font-display text-4xl md:text-5xl">{firstName ? `Hello, ${firstName}.` : "Hello."}</h1>
+      <h1 className="mt-4 font-display text-3xl text-balance md:text-5xl">{firstName ? `Hello, ${firstName}.` : "Hello."}</h1>
       <dl className="mt-10 divide-y divide-ink/10 border-y border-ink/10">
         <div className="flex flex-wrap justify-between gap-2 py-4">
           <dt className="label self-center text-ink-soft">Name</dt>

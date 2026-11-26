@@ -37,16 +37,16 @@ function Model({ slide, first }: { slide: HeroSlide; first: boolean }) {
 }
 
 /**
- * Each slide presents its pieces like a designer's line-up, styled a little differently each
- * time: on a fine horizon line, in arched windows tinted in each piece's own colour, or in
- * thin gallery frames the model steps out of. Captions name each colour.
+ * Each slide presents its pieces like a designer's line-up, styled differently each time:
+ * arched windows tinted in each piece's colour, a staggered cascade, tall colour columns,
+ * or a spotlight with the main piece in front. The figures breathe gently while shown.
  */
-const VARIANTS = ["lineup", "arches", "frames"] as const;
+const VARIANTS = ["arches", "cascade", "columns", "spotlight"] as const;
 
-/** One piece in the line-up, with its caption underneath (never covered by the image). */
+/** One piece in the line-up; it links to the piece's page. */
 function Figure({ f, eager, n }: { f: HeroFigure; eager: boolean; n: number }) {
   return (
-    <Link href={`/product/${f.slug}`} className="hero-figure" style={{ "--n": n, "--tint": f.hex ?? "var(--color-sand)" } as CSSProperties}>
+    <Link href={`/product/${f.slug}`} className="hero-figure" style={{ "--n": n, ...(f.hex ? { "--tint": f.hex } : {}) } as CSSProperties}>
       <span className="hero-figure-art">
         <span className="hero-figure-frame" aria-hidden="true" />
         <Image
@@ -60,10 +60,6 @@ function Figure({ f, eager, n }: { f: HeroFigure; eager: boolean; n: number }) {
           fetchPriority={eager ? "high" : "auto"}
           loading={eager ? "eager" : "lazy"}
         />
-      </span>
-      <span className="hero-caption">
-        {f.label && f.hex && <span className="hero-caption-dot" aria-hidden="true" />}
-        {f.label}
       </span>
     </Link>
   );
@@ -141,7 +137,6 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
             inert={i !== index}
           >
             <div className="hero-stage" data-variant={variant}>
-              <span className="hero-horizon" aria-hidden="true" />
               {s.group.length > 1 ? (
                 <div className="hero-group" data-count={s.group.length}>
                   {s.group.map((f, n) => (

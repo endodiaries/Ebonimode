@@ -61,16 +61,21 @@ function railCards(cards: ProductCardData[], skip?: Set<string>) {
 }
 
 const isCutout = (p: ProductCardData) => Boolean(p.image?.publicId.startsWith("site/product-cutouts/"));
-const titleCase = (s: string) => s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
-const figure = (p: ProductCardData, byColour: boolean): HeroFigure => {
+function tintFor(hex: string | null): string | null {
+  if (!hex || !/^#?[0-9a-f]{6}$/i.test(hex)) return null;
+  const n = parseInt(hex.replace("#", ""), 16);
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  return 0.299 * r + 0.587 * g + 0.114 * b > 200 ? null : hex;
+}
+const figure = (p: ProductCardData): HeroFigure => {
   const own = p.colourways.find((c) => c.slug === p.slug);
   return {
     publicId: p.image!.publicId,
     alt: p.image!.alt,
     slug: p.slug,
     name: p.name,
-    label: byColour && own?.colour ? titleCase(own.colour) : "",
-    hex: own?.hex ?? p.colourHex,
+    // Very pale pieces (white linen) would vanish against white; they take the slide colour instead.
+    hex: tintFor(own?.hex ?? p.colourHex),
   };
 };
 
@@ -110,8 +115,7 @@ function withHeroGroups(slides: HeroSlide[], catalogue: ProductCardData[]): Hero
     const others = group.filter((p) => p.id !== own.id).slice(0, 3);
     const ordered = group.some((p) => p.id === own.id) ? [...others.slice(0, Math.ceil(others.length / 2)), own, ...others.slice(Math.ceil(others.length / 2))] : others;
     ordered.forEach((p) => used.add(p.id));
-    const byColour = colourways.length > 1;
-    return { ...slide, group: ordered.map((p) => figure(p, byColour)) };
+    return { ...slide, group: ordered.map(figure) };
   });
 }
 

@@ -734,22 +734,20 @@ body {
   position: absolute;
 }
 
-/* The line-up: pieces stand side by side, each with its caption underneath */
+/* The line-up: pieces stand side by side */
 .hero-group {
   inset: 0;
   display: flex;
-  align-items: stretch;
+  align-items: flex-end;
   justify-content: center;
   gap: clamp(0.5rem, 1.6vw, 1.75rem);
 }
 .hero-figure {
   position: relative;
-  display: flex;
-  flex-direction: column;
+  display: block;
   flex: 0 1 26%;
+  height: 100%;
   min-width: 0;
-  color: var(--color-ink);
-  text-decoration: none;
 }
 .hero-group[data-count="2"] .hero-figure {
   flex-basis: 34%;
@@ -758,88 +756,52 @@ body {
   flex-basis: 23%;
 }
 .hero-figure-art {
-  position: relative;
-  flex: 1 1 auto;
-  min-height: 0;
+  position: absolute;
+  inset: 0;
   opacity: 0;
-  transform: translate3d(0, 26px, 0);
+  transform: translate3d(0, 30px, 0);
 }
 .hero-slide[data-state="active"] .hero-figure-art {
   opacity: 1;
   transform: none;
-  transition: transform 1000ms var(--ease-entrance), opacity 700ms var(--ease-entrance);
-  transition-delay: calc(250ms + var(--n, 0) * 120ms);
+  transition: transform 1100ms var(--ease-entrance), opacity 700ms var(--ease-entrance);
+  transition-delay: calc(200ms + var(--n, 0) * 130ms);
 }
-.hero-figure-img {
-  transition: transform 500ms var(--ease-entrance);
+/* A slow breathing float while the slide is shown, each figure on its own beat */
+@keyframes hero-breathe {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -9px, 0);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-slide[data-state="active"] .hero-figure-img {
+    animation: hero-breathe 4.2s ease-in-out infinite alternate;
+    animation-delay: calc(1.4s + var(--n, 0) * 0.55s);
+  }
 }
 @media (hover: hover) {
-  .hero-figure:hover .hero-figure-img {
-    transform: translate3d(0, -6px, 0);
-  }
-  .hero-figure:hover .hero-caption {
-    text-decoration: underline;
-    text-underline-offset: 0.35em;
+  .hero-figure:hover .hero-figure-art {
+    transform: scale(1.02);
+    transition-delay: 0s;
   }
 }
 
-/* Captions: the colour (or the piece), in small spaced capitals, never under the image */
-.hero-caption {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-  min-height: 2.75rem;
-  padding-top: 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  line-height: 1.2;
-  text-align: center;
-  text-transform: uppercase;
-  opacity: 0;
-}
-.hero-caption-dot {
-  flex: none;
-  width: 0.625rem;
-  height: 0.625rem;
-  border-radius: 999px;
-  background: var(--tint);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-ink) 20%, transparent);
-}
-.hero-slide[data-state="active"] .hero-caption {
-  opacity: 1;
-  transition: opacity 600ms var(--ease-entrance);
-  transition-delay: calc(700ms + var(--n, 0) * 120ms);
-}
-
-/* Style 1, line-up: the pieces stand on a fine horizon line that draws itself across */
-.hero-horizon {
-  display: none;
-  left: -4%;
-  right: -4%;
-  bottom: 2.75rem;
-  height: 1px;
-  background: var(--color-ink);
-  transform: scaleX(0);
-  transform-origin: left;
-}
-[data-variant="lineup"] .hero-horizon {
-  display: block;
-}
-.hero-slide[data-state="active"] [data-variant="lineup"] .hero-horizon {
-  transform: none;
-  transition: transform 1200ms cubic-bezier(0.77, 0, 0.175, 1);
-}
-
-/* Style 2, arched windows tinted in each piece's own colour; style 3, thin gallery frames */
+/* The tinted shapes behind the figures (arches and columns) */
 .hero-figure-frame {
   display: none;
   position: absolute;
 }
+.hero-figure {
+  --tint: var(--accent);
+}
+
+/* Style 1, arched windows tinted in each piece's own colour */
 [data-variant="arches"] .hero-figure-frame {
   display: block;
-  inset: 10% 2% 0;
+  inset: 30% 2% 0;
   border-radius: 999px 999px 0 0;
   background: color-mix(in srgb, var(--tint) 24%, var(--color-ivory));
   transform: scaleY(0);
@@ -847,32 +809,58 @@ body {
 }
 .hero-slide[data-state="active"] [data-variant="arches"] .hero-figure-frame {
   transform: none;
-  transition: transform 1000ms var(--ease-entrance);
-  transition-delay: calc(var(--n, 0) * 110ms);
-}
-[data-variant="frames"] .hero-figure-frame {
-  display: block;
-  inset: 24% 5% 0;
-  border: 1px solid var(--color-ink);
-  clip-path: inset(100% 0 0 0);
-}
-.hero-slide[data-state="active"] [data-variant="frames"] .hero-figure-frame {
-  clip-path: inset(0 0 0 0);
-  transition: clip-path 900ms cubic-bezier(0.77, 0, 0.175, 1);
+  transition: transform 1100ms var(--ease-entrance);
   transition-delay: calc(var(--n, 0) * 110ms);
 }
 
-/* Phones: at most three pieces, captions on up to two lines */
+/* Style 2, cascade: the pieces step in a tall-short rhythm, like a runway line-up */
+[data-variant="cascade"] .hero-figure:nth-child(even) {
+  height: 84%;
+  margin-bottom: 6%;
+}
+[data-variant="cascade"] .hero-group {
+  align-items: center;
+}
+
+/* Style 3, tall rounded colour columns behind each piece */
+[data-variant="columns"] .hero-figure-frame {
+  display: block;
+  inset: 30% 10% 2%;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tint) 30%, var(--color-ivory));
+  opacity: 0;
+  transform: translate3d(0, 40px, 0);
+}
+.hero-slide[data-state="active"] [data-variant="columns"] .hero-figure-frame {
+  opacity: 1;
+  transform: none;
+  transition: transform 1100ms var(--ease-entrance), opacity 800ms var(--ease-entrance);
+  transition-delay: calc(var(--n, 0) * 110ms);
+}
+
+/* Style 4, spotlight: the main piece large in front, its other colours stepping out behind */
+[data-variant="spotlight"] .hero-group {
+  gap: 0;
+}
+[data-variant="spotlight"] .hero-figure {
+  height: 80%;
+  margin-inline: -4%;
+}
+[data-variant="spotlight"] .hero-group[data-count="2"] .hero-figure:first-child,
+[data-variant="spotlight"] .hero-group[data-count="3"] .hero-figure:nth-child(2),
+[data-variant="spotlight"] .hero-group[data-count="4"] .hero-figure:nth-child(3) {
+  height: 100%;
+  flex-basis: 36%;
+  z-index: 1;
+}
+
+/* Phones: at most three pieces */
 @media (max-width: 767px) {
   .hero-figure:nth-child(n + 4) {
     display: none;
   }
   .hero-group {
     gap: 0.5rem;
-  }
-  .hero-caption {
-    letter-spacing: 0.08em;
-    min-height: 3rem;
   }
 }
 
@@ -891,16 +879,50 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .hero-figure-art,
-  .hero-horizon,
-  [data-variant="arches"] .hero-figure-frame {
+  [data-variant="arches"] .hero-figure-frame,
+  [data-variant="columns"] .hero-figure-frame {
     transform: none !important;
   }
-  [data-variant="frames"] .hero-figure-frame {
-    clip-path: none !important;
-  }
-  .hero-slide[data-state="active"] .hero-figure-art,
-  .hero-slide[data-state="active"] .hero-caption {
+  .hero-slide[data-state="active"] .hero-figure-art {
     transition: opacity var(--dur-section) linear !important;
     transition-delay: 0s !important;
+  }
+}
+
+/* Hero size: fills the screen below the header (and above the tab bar on phones) */
+.hero {
+  height: clamp(36rem, calc(100svh - var(--header-h)), 56rem);
+}
+@media (max-width: 767px) {
+  .hero {
+    height: max(36rem, calc(100svh - var(--header-h) - var(--tabbar-h)));
+  }
+  .hero-stage {
+    height: 56%;
+  }
+  .hero-btn {
+    padding-inline: 0.75rem;
+    white-space: nowrap;
+  }
+}
+@media (max-width: 379px) {
+  .hero-btn {
+    letter-spacing: 0.08em;
+  }
+}
+
+/* Tablets (portrait): stack like phones, headline on top and a full-width line-up below */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hero-copy {
+    top: 3rem;
+    width: 100%;
+    transform: none;
+  }
+  .hero-stage {
+    left: 50%;
+    width: 88vw;
+    margin-left: -44vw;
+    bottom: 8.5rem;
+    height: 56%;
   }
 }

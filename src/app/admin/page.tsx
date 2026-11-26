@@ -23,7 +23,7 @@ async function AdminHome() {
   return (
     <>
       <p className="label text-ink-soft">Admin</p>
-      <h1 className="mt-4 font-display text-4xl md:text-5xl">You are signed in as an admin.</h1>
+      <h1 className="mt-4 font-display text-2xl text-balance md:text-4xl">You are signed in as an admin.</h1>
       <p className="mt-6">{user.email}</p>
       <p className="mt-6 font-editorial text-xl italic">The dashboard arrives in Phase 7.</p>
     </>

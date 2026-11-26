@@ -20,8 +20,8 @@ export function ShopTheLook({ look }: { look: LookData }) {
   const hasPhoto = cloudinaryEnabled && !look.image.startsWith("placeholder/");
 
   return (
-    <div className="grid gap-8 md:grid-cols-[minmax(0,36rem)_minmax(0,1fr)] md:items-center md:gap-16">
-      <div className={`relative aspect-[4/5] w-full overflow-hidden ${tone}`} style={{ backgroundColor: field }}>
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)] lg:items-center lg:gap-16">
+      <div className={`relative mx-auto aspect-[4/5] w-full max-w-[36rem] overflow-hidden ${tone}`} style={{ backgroundColor: field }}>
         {hasPhoto ? (
           <CldImage
             publicId={look.image}

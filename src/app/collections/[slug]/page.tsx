@@ -42,7 +42,7 @@ export default async function CollectionPage({ params }: Props) {
           <div className="mx-auto grid max-w-[90rem] md:grid-cols-2">
             <div className="py-14 md:py-24">
               <p className="label opacity-80">Collection · {products.length} pieces</p>
-              <h1 className="mt-4 font-display text-5xl leading-[0.95] text-balance md:text-7xl">{c.name}</h1>
+              <h1 className="mt-4 font-display text-3xl leading-[1.12] text-balance md:text-5xl">{c.name}</h1>
               {c.description && <p className="mt-6 max-w-md font-editorial text-xl italic md:text-2xl">{c.description}</p>}
             </div>
             {c.bannerPublicId && cloudinaryEnabled && (

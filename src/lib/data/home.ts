@@ -27,8 +27,6 @@ export type HeroFigure = {
   alt: string;
   slug: string;
   name: string;
-  /** Caption under the figure: the colour for colourways ("Blue"); empty for a group of different pieces. */
-  label: string;
   /** The piece's own colour, for the arch tint and the caption dot. */
   hex: string | null;
 };

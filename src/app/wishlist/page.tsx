@@ -9,7 +9,7 @@ export default async function WishlistPage() {
   return (
     <div className="gutter pt-8 pb-24 md:pt-14">
       <div className="mx-auto max-w-[90rem]">
-        <h1 className="font-display text-5xl leading-[0.95] md:text-7xl">Wishlist</h1>
+        <h1 className="font-display text-3xl md:text-5xl">Wishlist</h1>
         <p className="mt-4 mb-10 max-w-2xl font-editorial text-xl italic">Saved on this device. Sign in to keep it on every device.</p>
         <WishlistView products={products} />
       </div>

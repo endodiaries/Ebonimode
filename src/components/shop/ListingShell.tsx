@@ -59,7 +59,7 @@ export function ListingShell({
           </nav>
           {!banner && (
             <header className="mt-6 mb-8 md:mt-10 md:mb-12">
-              <h1 className="font-display text-5xl leading-[0.95] md:text-7xl">{title}</h1>
+              <h1 className="font-display text-3xl md:text-5xl">{title}</h1>
               {intro && <p className="mt-4 max-w-2xl font-editorial text-xl italic md:text-2xl">{intro}</p>}
             </header>
           )}
