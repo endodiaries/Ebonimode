@@ -31,13 +31,15 @@ Feel: a clean, modern luxury storefront with a bold African identity. Spacious a
 
 ## 2.0 Current design direction (owner, 20 November 2026: overrides 2.1 to 2.6 where they conflict)
 After rejecting a magazine-style redesign, the owner chose **ofuure.com** as the reference: take its structure and mood (never its branding or imagery).
-- **Type:** headings in **Marcellus** (soft, feminine; set in widely spaced capitals via `.font-display`, sentence case for brand statements); text and UI in **Jost**. Labels and buttons are spaced capitals.
+- **Type:** headings in **Marcellus** (soft, feminine; set in widely spaced capitals via `.font-display`, sentence case for brand statements); text and UI in **Jost**. Labels and buttons are spaced capitals. Settled by the owner on 26 Nov 2026 after a side-by-side test with Fraunces: do not change it unasked.
 - **Colour:** white pages, espresso ink `#2b1f19`, sand `#ebe3d9`, studio beige `#d9cab8` behind product cut-outs, emerald for focus and hover. Collection colours appear as lit "studio backdrop" fields (`.studio`).
 - **No announcement bar.**
-- **Hero:** a shorter slideshow of seven slides (admin hero slides), 3.5s each, no counter and no progress lines; a small pause button stays (WCAG 2.2.2). Same two buttons, Shop Women and Shop Men.
-- **Homepage rhythm:** hero; "Shop new arrivals" row; a few words from the owner's brand story; for each collection a campaign banner (or its campaign film) followed by a sliding row of its pieces; a Menswear banner and row; Shop by category (real counts); Shop the Look; Our story; trust row (confirmed facts only); newsletter.
+- **Hero (reference: thekeshshop.com, on white):** full screen below the header; seven slides (admin hero slides), 3.5s each, no counter, no progress lines, no captions or outfit names; a small pause button stays (WCAG 2.2.2). Same two buttons, Shop Women and Shop Men. Each slide shows its piece in every colourway side by side (single-colour pieces are joined by others from their collection; menswear by other men's pieces). Styles vary by slide: arches tinted in each piece's colour, a tall-short cascade, rounded colour columns, a spotlight. Figures breathe gently. The owner rejected silhouettes/shadows, brush strokes, dots, doodles and a chunky poster font.
+- **Homepage rhythm:** hero; "Shop new arrivals" row; a few words from the owner's brand story; for each collection a campaign banner (or its campaign film) followed by a sliding row of its pieces; the Menswear turntable (men's pieces rotate, one centre stage) and row; Shop by category (real counts); Shop the Look; Our story; trust row (confirmed facts only); newsletter.
 - **Product cards:** tall 2:3 cut-out on the studio beige, model filling the frame; name, price, swatches; quick add (hover on desktop, "+" on touch); a second view on hover. Collection rows show every colourway as its own card. Homepage cards DO show prices.
 - **Film:** campaign films play muted only while on screen, with a pause button, never autoplaying with reduced motion or Save-Data.
+- **Currencies:** display rates set by the owner (USD 1,400, GBP 1,800, EUR 1,500, CAD 1,000, GHS 200 naira); converted prices show as approximate (≈) and checkout charges in naira.
+- **Responsive:** checked on 24 pages at 360, 390, 768 and 1024 px with no sideways scrolling; keep it that way.
 - **Copy:** short brand lines may be written as placeholders; never invent facts. No free delivery.
 
 ### 2.1 The brand name (updated by the owner, November 2026)
