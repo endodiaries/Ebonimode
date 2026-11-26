@@ -703,131 +703,204 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────
-   HERO AS A POSTER ON WHITE (owner, 26 Nov 2026; reference: thekeshshop.com)
-   Cut-out model in front of her own silhouette in the slide colour, with a brush
-   stroke, halftone dots and ink doodles. Only transform, opacity and clip-path animate.
+   HERO AS A SERIES OF POSTERS ON WHITE (owner, 26 Nov 2026; reference: thekeshshop.com)
+   Each slide shows the piece in all its colours (or a group of pieces) in front of a
+   backdrop in the slide colour that changes from slide to slide. Only transform,
+   opacity and clip-path animate.
    ────────────────────────────────────────────────────────────── */
 .hero {
   background: var(--color-ivory);
 }
-.font-poster {
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
-  font-weight: 900;
-  font-stretch: 125%;
-  text-transform: uppercase;
-}
-.hero .hero-headline.font-poster {
-  font-size: clamp(1.875rem, 8.6vw, 2.5rem);
-  letter-spacing: -0.01em;
-  line-height: 0.92;
+.hero .hero-headline.font-display {
+  font-size: clamp(1.75rem, 8vw, 2.25rem);
+  letter-spacing: 0.12em;
+  line-height: 1.12;
 }
 @media (min-width: 768px) {
-  .hero .hero-headline.font-poster {
-    font-size: clamp(2.75rem, 4.6vw, 4.75rem);
+  .hero .hero-headline.font-display {
+    font-size: clamp(2.25rem, 3.6vw, 3.5rem);
+  }
+  /* A wider stage for groups of two to four pieces */
+  .hero-stage {
+    left: 69%;
+    width: min(56vw, 54rem);
+    margin-left: calc(min(56vw, 54rem) / -2);
+  }
+  .hero-copy {
+    width: 40%;
   }
 }
-
-/* The stage keeps its box; everything inside layers in DOM order. */
-.hero-stage > * {
+.hero-stage > :not(.hero-model) {
   position: absolute;
 }
 
-/* Flat silhouette in the slide colour, set back and up-left of the model */
-.hero-silhouette {
+/* The line-up: pieces stand side by side, each with its caption underneath */
+.hero-group {
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: bottom;
-  opacity: 0;
-  transform: translate3d(-3%, 2%, 0);
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(0.5rem, 1.6vw, 1.75rem);
 }
-.hero-slide[data-state="active"] .hero-silhouette {
-  opacity: 1;
-  transform: translate3d(-11%, -4%, 0);
-  transition: transform 1300ms var(--ease-entrance) 120ms, opacity 700ms var(--ease-entrance) 120ms;
-}
-
-/* A loose brush stroke in the slide colour, wiped on from the left */
-.hero-brush {
-  left: -30%;
-  top: 22%;
-  width: 120%;
-  height: 52%;
-  color: var(--accent);
-  opacity: 0.28;
-  clip-path: inset(0 100% 0 0);
-}
-.hero-brush svg {
-  width: 100%;
-  height: 100%;
-}
-.hero-slide[data-state="active"] .hero-brush {
-  clip-path: inset(0 0 0 0);
-  transition: clip-path 900ms cubic-bezier(0.77, 0, 0.175, 1) 200ms;
-}
-
-/* Halftone dots, fading out at the edges */
-.hero-dots {
-  right: -12%;
-  top: 6%;
-  width: 46%;
-  height: 46%;
-  background-image: radial-gradient(var(--accent) 1.7px, transparent 2px);
-  background-size: 11px 11px;
-  -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent);
-  mask-image: radial-gradient(closest-side, #000 30%, transparent);
-  opacity: 0;
-}
-.hero-slide[data-state="active"] .hero-dots {
-  opacity: 0.6;
-  transition: opacity 900ms var(--ease-entrance) 300ms;
-}
-
-/* Ink doodles pop in one after another */
-.hero-doodles {
-  inset: 0;
-  pointer-events: none;
-}
-.hero-doodle {
-  position: absolute;
+.hero-figure {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 26%;
+  min-width: 0;
   color: var(--color-ink);
+  text-decoration: none;
+}
+.hero-group[data-count="2"] .hero-figure {
+  flex-basis: 34%;
+}
+.hero-group[data-count="4"] .hero-figure {
+  flex-basis: 23%;
+}
+.hero-figure-art {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
   opacity: 0;
-  transform: rotate(var(--r, 0deg)) scale(0.4);
+  transform: translate3d(0, 26px, 0);
 }
-.hero-doodle svg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-.hero-slide[data-state="active"] .hero-doodle {
+.hero-slide[data-state="active"] .hero-figure-art {
   opacity: 1;
-  transform: rotate(var(--r, 0deg)) scale(1);
-  transition: transform 520ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 300ms var(--ease-entrance);
-  transition-delay: calc(650ms + var(--i, 0) * 110ms);
+  transform: none;
+  transition: transform 1000ms var(--ease-entrance), opacity 700ms var(--ease-entrance);
+  transition-delay: calc(250ms + var(--n, 0) * 120ms);
 }
+.hero-figure-img {
+  transition: transform 500ms var(--ease-entrance);
+}
+@media (hover: hover) {
+  .hero-figure:hover .hero-figure-img {
+    transform: translate3d(0, -6px, 0);
+  }
+  .hero-figure:hover .hero-caption {
+    text-decoration: underline;
+    text-underline-offset: 0.35em;
+  }
+}
+
+/* Captions: the colour (or the piece), in small spaced capitals, never under the image */
+.hero-caption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2.75rem;
+  padding-top: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  opacity: 0;
+}
+.hero-caption-dot {
+  flex: none;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 999px;
+  background: var(--tint);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-ink) 20%, transparent);
+}
+.hero-slide[data-state="active"] .hero-caption {
+  opacity: 1;
+  transition: opacity 600ms var(--ease-entrance);
+  transition-delay: calc(700ms + var(--n, 0) * 120ms);
+}
+
+/* Style 1, line-up: the pieces stand on a fine horizon line that draws itself across */
+.hero-horizon {
+  display: none;
+  left: -4%;
+  right: -4%;
+  bottom: 2.75rem;
+  height: 1px;
+  background: var(--color-ink);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+[data-variant="lineup"] .hero-horizon {
+  display: block;
+}
+.hero-slide[data-state="active"] [data-variant="lineup"] .hero-horizon {
+  transform: none;
+  transition: transform 1200ms cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Style 2, arched windows tinted in each piece's own colour; style 3, thin gallery frames */
+.hero-figure-frame {
+  display: none;
+  position: absolute;
+}
+[data-variant="arches"] .hero-figure-frame {
+  display: block;
+  inset: 10% 2% 0;
+  border-radius: 999px 999px 0 0;
+  background: color-mix(in srgb, var(--tint) 24%, var(--color-ivory));
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+.hero-slide[data-state="active"] [data-variant="arches"] .hero-figure-frame {
+  transform: none;
+  transition: transform 1000ms var(--ease-entrance);
+  transition-delay: calc(var(--n, 0) * 110ms);
+}
+[data-variant="frames"] .hero-figure-frame {
+  display: block;
+  inset: 24% 5% 0;
+  border: 1px solid var(--color-ink);
+  clip-path: inset(100% 0 0 0);
+}
+.hero-slide[data-state="active"] [data-variant="frames"] .hero-figure-frame {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 900ms cubic-bezier(0.77, 0, 0.175, 1);
+  transition-delay: calc(var(--n, 0) * 110ms);
+}
+
+/* Phones: at most three pieces, captions on up to two lines */
 @media (max-width: 767px) {
-  .hero-doodle {
-    width: calc(var(--w, 1) * 2.5rem) !important;
+  .hero-figure:nth-child(n + 4) {
+    display: none;
+  }
+  .hero-group {
+    gap: 0.5rem;
+  }
+  .hero-caption {
+    letter-spacing: 0.08em;
+    min-height: 3rem;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .hero-slide[data-state="active"] .hero-silhouette,
-  .hero-slide[data-state="active"] .hero-doodle {
-    transition: opacity var(--dur-section) linear !important;
-  }
-  .hero-brush {
-    clip-path: none;
-  }
-}
-
-/* Phones: a little more room so the poster headline and the model never touch */
+/* Phones: a little more room so the headline and the pieces never touch */
 @media (max-width: 767px) {
   .hero {
     height: 37rem;
   }
   .hero-stage {
+    left: 50%;
+    width: 94vw;
+    margin-left: -47vw;
     height: 42%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-figure-art,
+  .hero-horizon,
+  [data-variant="arches"] .hero-figure-frame {
+    transform: none !important;
+  }
+  [data-variant="frames"] .hero-figure-frame {
+    clip-path: none !important;
+  }
+  .hero-slide[data-state="active"] .hero-figure-art,
+  .hero-slide[data-state="active"] .hero-caption {
+    transition: opacity var(--dur-section) linear !important;
+    transition-delay: 0s !important;
   }
 }

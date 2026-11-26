@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Jost, Marcellus } from "next/font/google";
+import { Jost, Marcellus } from "next/font/google";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -14,14 +14,6 @@ const jost = Jost({
   subsets: ["latin", "latin-ext"],
   style: ["normal", "italic"],
   variable: "--font-jost",
-  display: "swap",
-});
-
-/** Hero posters: Archivo in its widest, heaviest cut, for chunky poster headlines. */
-const poster = Archivo({
-  subsets: ["latin", "latin-ext"],
-  axes: ["wdth"],
-  variable: "--font-archivo",
   display: "swap",
 });
 
@@ -60,7 +52,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [menu, currencies] = await Promise.all([getMenuData(), getDisplayCurrencies()]);
   return (
-    <html lang="en-NG" className={`${jost.variable} ${marcellus.variable} ${poster.variable}`}>
+    <html lang="en-NG" className={`${jost.variable} ${marcellus.variable}`}>
       <body className="flex min-h-dvh flex-col">
         <a
           href="#main"

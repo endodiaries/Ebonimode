@@ -25,6 +25,8 @@ import {
   getHeroSlides,
   getJournal,
   getReviews,
+  type HeroFigure,
+  type HeroSlide,
   type ProductCardData,
 } from "@/lib/data/home";
 
@@ -58,6 +60,61 @@ function railCards(cards: ProductCardData[], skip?: Set<string>) {
   return styles.length >= 4 ? styles : cards.filter((p) => !skip?.has(p.id));
 }
 
+const isCutout = (p: ProductCardData) => Boolean(p.image?.publicId.startsWith("site/product-cutouts/"));
+const titleCase = (s: string) => s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+const figure = (p: ProductCardData, byColour: boolean): HeroFigure => {
+  const own = p.colourways.find((c) => c.slug === p.slug);
+  return {
+    publicId: p.image!.publicId,
+    alt: p.image!.alt,
+    slug: p.slug,
+    name: p.name,
+    label: byColour && own?.colour ? titleCase(own.colour) : "",
+    hex: own?.hex ?? p.colourHex,
+  };
+};
+
+/**
+ * Who stands on each hero slide: every colourway of the slide's piece (Eko III in green and
+ * blue, Eid Luxe in four colours). A piece with one colour is joined by others from its
+ * collection; menswear by other men's pieces, so the men's slides show a group. Pieces used
+ * on an earlier slide are not repeated.
+ */
+function withHeroGroups(slides: HeroSlide[], catalogue: ProductCardData[]): HeroSlide[] {
+  const used = new Set<string>();
+  // Pieces (and their colourways) that have a slide of their own are never borrowed by another slide.
+  const reserved = new Set(
+    slides.flatMap((s) => {
+      const own = catalogue.find((p) => p.id === s.productId);
+      return own ? catalogue.filter((p) => own.colourways.some((c) => c.slug === p.slug)).map((p) => p.id).concat(own.id) : [];
+    }),
+  );
+  return slides.map((slide) => {
+    const own = catalogue.find((p) => p.id === slide.productId);
+    if (!own) return slide;
+    const colourways = catalogue.filter((p) => own.colourways.some((c) => c.slug === p.slug) && isCutout(p));
+    let group = colourways.length > 1 ? colourways : [own].filter(isCutout);
+    if (group.length < 2) {
+      const pool = onePerStyle(
+        catalogue.filter((p) =>
+          p.id !== own.id &&
+          !used.has(p.id) &&
+          !reserved.has(p.id) &&
+          isCutout(p) &&
+          (own.department === "men" ? p.department === "men" : p.collections.some((c) => own.collections.includes(c))),
+        ),
+      );
+      group = [...group, ...pool].slice(0, 3);
+    }
+    // The slide's own piece stands in the middle of the group.
+    const others = group.filter((p) => p.id !== own.id).slice(0, 3);
+    const ordered = group.some((p) => p.id === own.id) ? [...others.slice(0, Math.ceil(others.length / 2)), own, ...others.slice(Math.ceil(others.length / 2))] : others;
+    ordered.forEach((p) => used.add(p.id));
+    const byColour = colourways.length > 1;
+    return { ...slide, group: ordered.map((p) => figure(p, byColour)) };
+  });
+}
+
 const pieces = (n: number) => `${n} ${n === 1 ? "piece" : "pieces"}`;
 
 function Rail({ title, href, linkLabel, cards }: { title: string; href: string; linkLabel: string; cards: ProductCardData[] }) {
@@ -81,7 +138,7 @@ function Rail({ title, href, linkLabel, cards }: { title: string; href: string; 
  * reads, so the whole page prerenders into the static shell.
  */
 export default async function HomePage() {
-  const [slides, collections, catalogue, look, reviews, posts] = await Promise.all([
+  const [baseSlides, collections, catalogue, look, reviews, posts] = await Promise.all([
     getHeroSlides(),
     getCollections(),
     getCatalogueCards(),
@@ -90,6 +147,7 @@ export default async function HomePage() {
     getJournal(),
   ]);
 
+  const slides = withHeroGroups(baseSlides, catalogue);
   // Pieces already worn in the hero are not repeated in "New arrivals".
   const inHero = new Set(slides.map((s) => s.productId).filter((id): id is string => Boolean(id)));
   const newArrivals = railCards(catalogue, inHero);

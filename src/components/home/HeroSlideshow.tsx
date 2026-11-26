@@ -5,9 +5,8 @@ import Link from "next/link";
 import { useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
 import { PlaceholderFigure } from "@/components/brand/PlaceholderFigure";
 import { PauseIcon, PlayIcon } from "@/components/icons";
-import { cldSilhouette, cloudinaryEnabled, cloudinaryLoader } from "@/lib/cloudinary";
-import { HeroDoodles } from "./HeroDoodles";
-import type { HeroSlide } from "@/lib/data/home";
+import { cloudinaryEnabled, cloudinaryLoader } from "@/lib/cloudinary";
+import type { HeroFigure, HeroSlide } from "@/lib/data/home";
 
 type State = { index: number; prev: number | null };
 
@@ -37,27 +36,42 @@ function Model({ slide, first }: { slide: HeroSlide; first: boolean }) {
   );
 }
 
-/** "Worn here: <piece>" for phones, as an underlined text link (not a marketing button). */
-function WornHere({ slide }: { slide: HeroSlide }) {
-  const name = <span className="font-editorial text-xl italic normal-case">{slide.storyName}</span>;
+/**
+ * Each slide presents its pieces like a designer's line-up, styled a little differently each
+ * time: on a fine horizon line, in arched windows tinted in each piece's own colour, or in
+ * thin gallery frames the model steps out of. Captions name each colour.
+ */
+const VARIANTS = ["lineup", "arches", "frames"] as const;
+
+/** One piece in the line-up, with its caption underneath (never covered by the image). */
+function Figure({ f, eager, n }: { f: HeroFigure; eager: boolean; n: number }) {
   return (
-    <>
-      <span className="label mr-2">Worn here</span>
-      {slide.productSlug ? (
-        <Link href={`/product/${slide.productSlug}`} className="text-link">
-          {name}
-        </Link>
-      ) : (
-        name
-      )}
-    </>
+    <Link href={`/product/${f.slug}`} className="hero-figure" style={{ "--n": n, "--tint": f.hex ?? "var(--color-sand)" } as CSSProperties}>
+      <span className="hero-figure-art">
+        <span className="hero-figure-frame" aria-hidden="true" />
+        <Image
+          src={f.publicId}
+          alt={f.alt}
+          fill
+          sizes="(min-width: 768px) 16rem, 30vw"
+          className="hero-figure-img object-contain object-bottom"
+          loader={cloudinaryLoader}
+          preload={eager}
+          fetchPriority={eager ? "high" : "auto"}
+          loading={eager ? "eager" : "lazy"}
+        />
+      </span>
+      <span className="hero-caption">
+        {f.label && f.hex && <span className="hero-caption-dot" aria-hidden="true" />}
+        {f.label}
+      </span>
+    </Link>
   );
 }
 
 /**
- * The homepage hero, set like a poster on white: a chunky headline on the left; on the right
- * the cut-out model in front of a flat silhouette of herself in the slide's colour (made by
- * Cloudinary), a brush stroke, a patch of halftone dots and hand-drawn doodles.
+ * The homepage hero on white: the headline on the left; on the right the piece in all its
+ * colours (or a group of pieces) presented like a designer's line-up, with each colour named.
  * Autoplay is driven by the progress line's CSS animation, so pausing the animation
  * pauses the slideshow, and reduced-motion (animation: none) switches autoplay off.
  */
@@ -114,6 +128,7 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
       {slides.map((s, i) => {
         const state = i === index ? "active" : i === prev ? "prev" : "idle";
         const lines = taglineLines(s.tagline);
+        const variant = VARIANTS[i % VARIANTS.length];
         return (
           <div
             key={s.id}
@@ -125,48 +140,26 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
             aria-label={`${i + 1} of ${count}${s.storyName ? `: ${s.storyName}` : ""}`}
             inert={i !== index}
           >
-            <div className="hero-stage">
-              <span className="hero-brush" aria-hidden="true">
-                {/* Thick strokes roughened by a noise filter, so the edges read as paint. */}
-                <svg viewBox="0 0 400 220" preserveAspectRatio="none">
-                  <defs>
-                    <filter id={`hero-paint-${i}`} x="-10%" y="-20%" width="120%" height="140%">
-                      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed={i + 2} />
-                      <feDisplacementMap in="SourceGraphic" scale="22" />
-                    </filter>
-                  </defs>
-                  <g filter={`url(#hero-paint-${i})`} fill="none" stroke="currentColor" strokeLinecap="round">
-                    <path d="M28 168C110 92 230 52 372 46" strokeWidth="62" />
-                    <path d="M70 196C170 140 270 118 358 112" strokeWidth="24" opacity="0.75" />
-                    <path d="M120 70C200 44 280 30 340 30" strokeWidth="12" opacity="0.6" />
-                  </g>
-                </svg>
-              </span>
-              <span className="hero-dots" aria-hidden="true" />
-              {cloudinaryEnabled && !s.model.startsWith("/") && !s.model.startsWith("placeholder/") && (
-                // The model's own shape, flat in the slide colour, offset behind her.
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  className="hero-silhouette"
-                  src={cldSilhouette(s.model, s.bgHex, 900)}
-                  alt=""
-                  aria-hidden="true"
-                  loading={i === 0 ? "eager" : "lazy"}
-                  decoding="async"
-                />
-              )}
-              <HeroDoodles index={i} />
-              <div className="hero-model">
-                <span className="hero-shadow" aria-hidden="true" />
-                {s.productSlug ? (
-                  // The model links to the piece too; the named link below is the accessible one.
-                  <Link href={`/product/${s.productSlug}`} tabIndex={-1} aria-hidden="true" className="absolute inset-0 block">
+            <div className="hero-stage" data-variant={variant}>
+              <span className="hero-horizon" aria-hidden="true" />
+              {s.group.length > 1 ? (
+                <div className="hero-group" data-count={s.group.length}>
+                  {s.group.map((f, n) => (
+                    <Figure key={f.slug} f={f} eager={i === 0} n={n} />
+                  ))}
+                </div>
+              ) : (
+                <div className="hero-model">
+                  {s.productSlug ? (
+                    // The model links to the piece too; the named link below is the accessible one.
+                    <Link href={`/product/${s.productSlug}`} tabIndex={-1} aria-hidden="true" className="absolute inset-0 block">
+                      <Model slide={s} first={i === 0} />
+                    </Link>
+                  ) : (
                     <Model slide={s} first={i === 0} />
-                  </Link>
-                ) : (
-                  <Model slide={s} first={i === 0} />
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="hero-copy gutter">
@@ -176,7 +169,7 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
                 </p>
               )}
               {lines.length > 0 && (
-                <p className="hero-headline font-poster">
+                <p className="hero-headline font-display">
                   {lines.map((line, n) => (
                     <span key={n} className="hero-line" style={{ "--i": n + 1 } as CSSProperties}>
                       {line}
@@ -184,40 +177,8 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
                   ))}
                 </p>
               )}
-              {/* Wrappers carry the breakpoint visibility: .hero-line sets its own display. */}
-              <div className="max-md:hidden">
-                <span
-                  className="hero-line mt-8 h-px w-12 bg-current"
-                  style={{ "--i": lines.length + 1 } as CSSProperties}
-                  aria-hidden="true"
-                />
-              </div>
-              {/* Phones: the piece's name sits under the headline, where the eye already is. */}
-              {s.storyName && (
-                <div className="md:hidden">
-                  <p className="hero-line mt-3" style={{ "--i": lines.length + 1 } as CSSProperties}>
-                    <WornHere slide={s} />
-                  </p>
-                </div>
-              )}
             </div>
 
-            {s.storyName && (
-              <p className="gutter absolute right-0 bottom-10 text-right max-md:hidden">
-                <span className="hero-line label" style={{ "--i": 3 } as CSSProperties}>
-                  Worn here
-                </span>
-                <span className="hero-line mt-1 font-editorial text-3xl italic lg:text-4xl" style={{ "--i": 4 } as CSSProperties}>
-                  {s.productSlug ? (
-                    <Link href={`/product/${s.productSlug}`} className="text-link">
-                      {s.storyName}
-                    </Link>
-                  ) : (
-                    s.storyName
-                  )}
-                </span>
-              </p>
-            )}
           </div>
         );
       })}

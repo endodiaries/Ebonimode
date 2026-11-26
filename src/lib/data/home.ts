@@ -18,6 +18,19 @@ export type HeroSlide = {
   productSlug: string | null;
   /** The slide's real collection name, or the piece's department ("Women" / "Men"). */
   context: string;
+  /** Pieces shown together on the slide: the piece's colourways, or companions from its collection or department. */
+  group: HeroFigure[];
+};
+
+export type HeroFigure = {
+  publicId: string;
+  alt: string;
+  slug: string;
+  name: string;
+  /** Caption under the figure: the colour for colourways ("Blue"); empty for a group of different pieces. */
+  label: string;
+  /** The piece's own colour, for the arch tint and the caption dot. */
+  hex: string | null;
 };
 
 export type CollectionSummary = {
@@ -188,6 +201,7 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
         productId: product?.id ?? null,
         productSlug: product?.slug ?? null,
         context: slideCollection ?? productCollection ?? (product ? departmentName[product.department] ?? "" : ""),
+        group: [],
       };
     });
   } catch (e) {
