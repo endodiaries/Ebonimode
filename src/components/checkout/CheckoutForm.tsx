@@ -5,6 +5,7 @@ import { useMemo, useState, useTransition } from "react";
 import { CldImage } from "@/components/brand/CldImage";
 import { placeOrder, type CheckoutResult } from "@/app/checkout/actions";
 import { useBag } from "@/lib/bag";
+import { formatIn, useCurrency } from "@/lib/currency";
 import { cloudinaryEnabled } from "@/lib/cloudinary";
 import type { ShippingRate } from "@/lib/data/checkout";
 import type { ProductCardData } from "@/lib/data/home";
@@ -46,6 +47,7 @@ export function CheckoutForm({
   defaultName: string;
 }) {
   const lines = useBag();
+  const currency = useCurrency();
   const [state, setState] = useState("");
   const [rateId, setRateId] = useState("");
   const [result, setResult] = useState<CheckoutResult | null>(null);
@@ -244,6 +246,12 @@ export function CheckoutForm({
             <dd className="tabular-nums">{naira(subtotal + (rate?.priceNgn ?? 0))}</dd>
           </div>
         </dl>
+        {currency.code !== "NGN" && (
+          <p className="mt-3 text-sm">
+            You will be charged {naira(subtotal + (rate?.priceNgn ?? 0))}, about {formatIn(subtotal + (rate?.priceNgn ?? 0), currency)}. Your bank sets the exact
+            conversion.
+          </p>
+        )}
         <p className="mt-2 text-sm text-ink-soft">Prices are checked again when you pay. Any promo code is applied on the payment page total.</p>
 
         {result?.error && (

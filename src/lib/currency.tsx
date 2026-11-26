@@ -61,9 +61,20 @@ export function formatIn(ngn: number, c: Currency): string {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency: c.code, minimumFractionDigits: digits, maximumFractionDigits: digits }).format(convert(ngn, c));
 }
 
+const list0 = (c: Currency): Currency => (c.code === "NGN" ? c : NGN);
+
 /** A price in the visitor's currency, or the placeholder while a piece has no price yet. */
 export function Price({ ngn, tags = [] }: { ngn: number; tags?: readonly string[] }) {
   const c = useCurrency();
   if (tags.includes("sample") || tags.includes("price-pending")) return <>{PRICE_PLACEHOLDER}</>;
+  // Other currencies are a guide: we charge in naira, so mark them as approximate.
+  if (c.code !== "NGN")
+    return (
+      <span title={`About ${formatIn(ngn, c)}. You pay ${formatIn(ngn, list0(c))} in naira at checkout.`}>
+        <span aria-hidden="true">≈ </span>
+        <span className="sr-only">about </span>
+        {formatIn(ngn, c)}
+      </span>
+    );
   return <>{formatIn(ngn, c)}</>;
 }

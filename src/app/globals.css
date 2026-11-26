@@ -926,3 +926,44 @@ body {
     height: 56%;
   }
 }
+
+/* Wide pieces (boubous) were shrunk to their slot's width. Let each image reach a little
+   past its slot so it can grow to full height, overlapping its neighbours slightly. */
+.hero-figure-art > img {
+  left: -16% !important;
+  width: 132% !important;
+}
+.hero-group[data-count="2"] .hero-figure {
+  flex-basis: 42%;
+}
+@media (min-width: 1024px) {
+  .hero-group[data-count="4"] {
+    gap: clamp(0.25rem, 1vw, 1rem);
+  }
+}
+/* Four pieces: a wider stage on large screens, and the boubous may spread further */
+.hero-group[data-count="4"] .hero-figure-art > img {
+  left: -26% !important;
+  width: 152% !important;
+}
+@media (min-width: 1024px) {
+  .hero-stage:has(.hero-group[data-count="4"]) {
+    left: 68%;
+    width: min(62vw, 62rem);
+    margin-left: calc(min(62vw, 62rem) / -2);
+  }
+}
+/* Arches frame the faces of four-piece groups, whose figures stand a little shorter */
+[data-variant="arches"] .hero-group[data-count="4"] .hero-figure-frame {
+  top: 40%;
+}
+/* Phones show three of four pieces: give those three the full width */
+@media (max-width: 767px) {
+  .hero-group[data-count="4"] .hero-figure {
+    flex-basis: 31%;
+  }
+  .hero-group[data-count="4"] .hero-figure-art > img {
+    left: -20% !important;
+    width: 140% !important;
+  }
+}
