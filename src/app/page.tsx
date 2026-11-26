@@ -26,6 +26,7 @@ import {
   getHeroSlides,
   getJournal,
   getReviews,
+  isSoldOut,
   type HeroFigure,
   type HeroSlide,
   type ProductCardData,
@@ -61,7 +62,8 @@ function railCards(cards: ProductCardData[], skip?: Set<string>) {
   return styles.length >= 4 ? styles : cards.filter((p) => !skip?.has(p.id));
 }
 
-const isCutout = (p: ProductCardData) => Boolean(p.image?.publicId.startsWith("site/product-cutouts/"));
+// Hero pieces must be in stock and have a background-free photo.
+const isCutout = (p: ProductCardData) => Boolean(p.image?.publicId.startsWith("site/product-cutouts/")) && !isSoldOut(p);
 function tintFor(hex: string | null): string | null {
   if (!hex || !/^#?[0-9a-f]{6}$/i.test(hex)) return null;
   const n = parseInt(hex.replace("#", ""), 16);

@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { HeartIcon } from "@/components/icons";
 import { saveWishlistChange } from "@/app/actions";
 import { addToBag } from "@/lib/bag";
+import { NotifyMe } from "./NotifyMe";
 import { Price } from "@/lib/currency";
 import type { ProductCardData } from "@/lib/data/home";
 import type { SizeGuide } from "@/lib/data/product";
@@ -118,6 +119,7 @@ export function BuyBox({ product, sizeGuide }: { product: ProductCardData; sizeG
           <HeartIcon size={20} fill={saved ? "currentColor" : "none"} className={saved ? "text-crimson" : ""} />
         </button>
       </div>
+      {allSoldOut && <NotifyMe productId={product.id} sizes={product.sizes.map((s) => s.size)} />}
       <p aria-live="polite" className={`mt-3 min-h-6 text-base ${message?.tone === "warn" ? "text-vermilion" : "text-emerald"}`}>
         {message?.text}
         {message?.tone === "ok" && (
@@ -132,7 +134,7 @@ export function BuyBox({ product, sizeGuide }: { product: ProductCardData; sizeG
       {whatsapp && (
         <p className="mt-2">
           <a href={`https://wa.me/${whatsapp}?text=${waText}`} target="_blank" rel="noopener noreferrer" className="text-link label">
-            Order on WhatsApp →
+            Order on WhatsApp
           </a>
         </p>
       )}

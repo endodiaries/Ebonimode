@@ -107,19 +107,31 @@ export function ProductCard({
   reveal?: boolean;
 }) {
   const href = `/product/${product.slug}`;
+  // Every size gone: say so plainly. Restocking in the admin brings the piece back automatically.
+  const soldOut = product.sizes.length > 0 && product.sizes.every((s) => s.stock < 1);
   return (
     <article className="group relative" data-reveal={reveal ? "" : undefined} style={{ "--i": index % 4 } as React.CSSProperties}>
       <div className="relative">
-        <Link href={href} className="card-studio relative block aspect-[2/3] overflow-hidden" tabIndex={-1} aria-hidden="true">
+        <Link
+          href={href}
+          className={`card-studio relative block aspect-[2/3] overflow-hidden ${soldOut ? "[&_img]:opacity-60" : ""}`}
+          tabIndex={-1}
+          aria-hidden="true"
+        >
           <ProductMedia product={product} sizes="(min-width: 1280px) 30vw, (min-width: 768px) 38vw, 72vw" hoverSwap />
         </Link>
-        <QuickAdd product={product} />
+        {soldOut ? (
+          <span className="label pointer-events-none absolute top-3 left-3 bg-ivory px-2.5 py-1.5 text-ink">Sold out</span>
+        ) : (
+          <QuickAdd product={product} />
+        )}
       </div>
       <WishlistButton productId={product.id} productName={product.name} />
 
       <h3 className="mt-4 text-base leading-snug tracking-[0.02em]">
         <Link href={href} className="hover:underline">
           {product.name}
+          {soldOut && <span className="sr-only"> (sold out)</span>}
         </Link>
       </h3>
       {showPrice && (

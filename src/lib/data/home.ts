@@ -152,6 +152,14 @@ function toCard(p: ProductRow, all: ProductRow[]): ProductCardData {
   };
 }
 
+/** True when a piece has sizes and every one of them is out of stock. */
+export const isSoldOut = (p: { sizes: { stock: number }[] }) => p.sizes.length > 0 && p.sizes.every((s) => s.stock < 1);
+
+/** Pieces that can be bought come first; sold-out ones keep their order at the end. */
+function availableFirst(cards: ProductCardData[]): ProductCardData[] {
+  return [...cards.filter((c) => !isSoldOut(c)), ...cards.filter(isSoldOut)];
+}
+
 export async function getHeroSlides(): Promise<HeroSlide[]> {
   "use cache";
   cacheLife("hours");
@@ -247,12 +255,12 @@ export async function getCollections(): Promise<CollectionSummary[]> {
 /** Featured products first, topped up with the newest, for the "Best of" grid. */
 export async function getBestOf(limit = 8): Promise<ProductCardData[]> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("minutes"); // stock changes with every sale: keep it fresh
   cacheTag("products");
   try {
     const all = await fetchProducts();
-    const picked = [...all.filter((p) => p.is_featured), ...all.filter((p) => !p.is_featured)].slice(0, limit);
-    return picked.map((p) => toCard(p, all));
+    const picked = [...all.filter((p) => p.is_featured), ...all.filter((p) => !p.is_featured)];
+    return availableFirst(picked.map((p) => toCard(p, all))).slice(0, limit);
   } catch (e) {
     console.error("getBestOf failed", e);
     return [];
@@ -262,11 +270,11 @@ export async function getBestOf(limit = 8): Promise<ProductCardData[]> {
 /** Every published product as a card, newest first. Shared by product and listing pages. */
 export async function getCatalogueCards(): Promise<ProductCardData[]> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("minutes"); // stock changes with every sale: keep it fresh
   cacheTag("products");
   try {
     const all = await fetchProducts();
-    return all.map((p) => toCard(p, all));
+    return availableFirst(all.map((p) => toCard(p, all)));
   } catch (e) {
     console.error("getCatalogueCards failed", e);
     return [];
@@ -275,7 +283,7 @@ export async function getCatalogueCards(): Promise<ProductCardData[]> {
 
 export async function getDepartmentCounts(): Promise<{ women: number; men: number; total: number }> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("minutes"); // stock changes with every sale: keep it fresh
   cacheTag("products");
   try {
     const all = await fetchProducts();
@@ -291,7 +299,7 @@ export async function getDepartmentCounts(): Promise<{ women: number; men: numbe
 
 export async function getFeaturedLook(): Promise<LookData | null> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("minutes"); // stock changes with every sale: keep it fresh
   cacheTag("looks", "products");
   try {
     const { data, error } = await createPublicClient()

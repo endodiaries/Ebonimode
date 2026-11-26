@@ -33,7 +33,7 @@ export async function getProductSlugs(): Promise<string[]> {
 /** Everything the product page needs, or null if the piece is not published. */
 export async function getProduct(slug: string): Promise<ProductDetail | null> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("minutes"); // stock changes with every sale: keep it fresh
   cacheTag("products", "reviews", "looks");
   const cards = await getCatalogueCards();
   const card = cards.find((c) => c.slug === slug);

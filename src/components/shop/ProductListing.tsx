@@ -85,7 +85,11 @@ export function ProductListing({ products, hide = [] }: { products: ProductCardD
       return want.length === 0 || valuesOf(p, g.key).some((v) => want.includes(v));
     });
 
+  const soldOut = (p: ProductCardData) => p.sizes.length > 0 && p.sizes.every((s) => s.stock < 1);
   const results = products.filter((p) => matches(p)).sort((a, b) => {
+    // Pieces that can be bought always come before sold-out ones, whatever the sort.
+    const byStock = Number(soldOut(a)) - Number(soldOut(b));
+    if (byStock !== 0) return byStock;
     if (sort === "name") return a.name.localeCompare(b.name);
     if (sort === "price-asc" || sort === "price-desc") {
       // Pieces without a price yet always go last.
