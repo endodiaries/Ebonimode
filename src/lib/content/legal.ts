@@ -3,6 +3,7 @@
  * shop's real setup and the owner's own policies, under Nigerian law (NDPA 2023, FCCPA 2018).
  * The owner should have them reviewed before launch. Edit the text here; the pages render it.
  */
+import { RETURNS_POLICY } from "@/lib/content/brand";
 import { contact } from "@/lib/site";
 
 export type LegalSection = { heading: string; paragraphs?: string[]; list?: string[]; after?: string[] };
@@ -161,10 +162,16 @@ export const TERMS: LegalSection[] = [
     ],
   },
   {
-    heading: "Returns, exchanges and store credit",
-    paragraphs: [
-      "You may return or exchange a piece within 5 days of delivery if it is unused, unworn, unwashed and has its original tags and packaging. Eligible returns receive store credit; we do not offer cash refunds for change-of-mind returns. Sale items and pop-up purchases are final sale. Return shipping is paid by the customer. Full details are in our Returns, Exchanges & Refund Policy.",
-      "If you receive a damaged or incorrect item, contact us as soon as possible with your order details and photographs so we can put it right.",
+    // The owner's own Returns, Exchanges & Refund Policy, word for word (Required Details doc).
+    heading: "Returns, exchanges and refunds",
+    paragraphs: [RETURNS_POLICY.intro, "To qualify for a return:"],
+    list: RETURNS_POLICY.eligibility,
+    after: [
+      `The following purchases are considered final sale: ${RETURNS_POLICY.finalSale.map((f) => f.replace(/\.$/, "").toLowerCase()).join("; ")}. ${RETURNS_POLICY.finalSaleNote}`,
+      ...RETURNS_POLICY.exchanges,
+      ...RETURNS_POLICY.refunds,
+      RETURNS_POLICY.shipping,
+      ...RETURNS_POLICY.damaged,
     ],
   },
   {
