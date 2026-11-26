@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useEffect, useReducer, useRef, useState, type CSSProperties } from "react";
 import { PlaceholderFigure } from "@/components/brand/PlaceholderFigure";
 import { PauseIcon, PlayIcon } from "@/components/icons";
-import { cloudinaryEnabled, cloudinaryLoader } from "@/lib/cloudinary";
-import { readableOn } from "@/lib/colour";
+import { cldSilhouette, cloudinaryEnabled, cloudinaryLoader } from "@/lib/cloudinary";
+import { HeroDoodles } from "./HeroDoodles";
 import type { HeroSlide } from "@/lib/data/home";
 
 type State = { index: number; prev: number | null };
@@ -55,8 +55,9 @@ function WornHere({ slide }: { slide: HeroSlide }) {
 }
 
 /**
- * The homepage hero: a colour field lit like a studio backdrop, a line in spaced
- * capitals on the left, and the cut-out model standing on the right.
+ * The homepage hero, set like a poster on white: a chunky headline on the left; on the right
+ * the cut-out model in front of a flat silhouette of herself in the slide's colour (made by
+ * Cloudinary), a brush stroke, a patch of halftone dots and hand-drawn doodles.
  * Autoplay is driven by the progress line's CSS animation, so pausing the animation
  * pauses the slideshow, and reduced-motion (animation: none) switches autoplay off.
  */
@@ -82,14 +83,13 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
   if (count === 0) return null;
   const active = slides[index];
   const playing = count > 1 && !tabHidden && (choice === "auto" ? !hover && !focus : choice === "play");
-  const fg = readableOn(active.bgHex) === "ink" ? "var(--color-ink)" : "var(--color-ivory)";
 
   return (
     <section
       className="hero"
       aria-roledescription="carousel"
       aria-label="Colour stories"
-      style={{ "--hero-fg": fg, "--hero-bg": active.bgHex } as CSSProperties}
+      style={{ "--hero-fg": "var(--color-ink)", "--hero-bg": "var(--color-ivory)" } as CSSProperties}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       // Focus pauses autoplay, except on the play/pause control, so "Play" really plays.
@@ -113,21 +113,49 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
     >
       {slides.map((s, i) => {
         const state = i === index ? "active" : i === prev ? "prev" : "idle";
-        const tone = readableOn(s.bgHex) === "ink" ? "text-ink" : "text-ivory";
         const lines = taglineLines(s.tagline);
         return (
           <div
             key={s.id}
-            className={`hero-slide ${tone}`}
+            className="hero-slide text-ink"
+            style={{ "--accent": s.bgHex } as CSSProperties}
             data-state={state}
             role="group"
             aria-roledescription="slide"
             aria-label={`${i + 1} of ${count}${s.storyName ? `: ${s.storyName}` : ""}`}
             inert={i !== index}
           >
-            <div className="hero-backdrop studio" style={{ "--field": s.bgHex } as CSSProperties} />
-
             <div className="hero-stage">
+              <span className="hero-brush" aria-hidden="true">
+                {/* Thick strokes roughened by a noise filter, so the edges read as paint. */}
+                <svg viewBox="0 0 400 220" preserveAspectRatio="none">
+                  <defs>
+                    <filter id={`hero-paint-${i}`} x="-10%" y="-20%" width="120%" height="140%">
+                      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed={i + 2} />
+                      <feDisplacementMap in="SourceGraphic" scale="22" />
+                    </filter>
+                  </defs>
+                  <g filter={`url(#hero-paint-${i})`} fill="none" stroke="currentColor" strokeLinecap="round">
+                    <path d="M28 168C110 92 230 52 372 46" strokeWidth="62" />
+                    <path d="M70 196C170 140 270 118 358 112" strokeWidth="24" opacity="0.75" />
+                    <path d="M120 70C200 44 280 30 340 30" strokeWidth="12" opacity="0.6" />
+                  </g>
+                </svg>
+              </span>
+              <span className="hero-dots" aria-hidden="true" />
+              {cloudinaryEnabled && !s.model.startsWith("/") && !s.model.startsWith("placeholder/") && (
+                // The model's own shape, flat in the slide colour, offset behind her.
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  className="hero-silhouette"
+                  src={cldSilhouette(s.model, s.bgHex, 900)}
+                  alt=""
+                  aria-hidden="true"
+                  loading={i === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                />
+              )}
+              <HeroDoodles index={i} />
               <div className="hero-model">
                 <span className="hero-shadow" aria-hidden="true" />
                 {s.productSlug ? (
@@ -148,7 +176,7 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
                 </p>
               )}
               {lines.length > 0 && (
-                <p className="hero-headline font-display">
+                <p className="hero-headline font-poster">
                   {lines.map((line, n) => (
                     <span key={n} className="hero-line" style={{ "--i": n + 1 } as CSSProperties}>
                       {line}

@@ -25,6 +25,16 @@ export function cldImage(publicId: string, opts: CldOptions = {}): string {
   return `https://res.cloudinary.com/${cloudName}/image/upload/${t.join(",")}/${publicId}`;
 }
 
+/**
+ * A flat, single-colour silhouette of a cut-out (transparent background kept), used as the
+ * coloured "shadow" behind models in the hero. Cloudinary colourises every opaque pixel.
+ */
+export function cldSilhouette(publicId: string, hex: string, width = 900): string {
+  if (!cloudName) throw new Error("NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME is not set");
+  const colour = hex.replace("#", "").toUpperCase();
+  return `https://res.cloudinary.com/${cloudName}/image/upload/e_colorize:100,co_rgb:${colour},f_auto,q_auto,w_${width},c_limit/${publicId}`;
+}
+
 /** Build a delivery URL for a video `public_id`. */
 export function cldVideo(publicId: string, width = 1280): string {
   if (!cloudName) throw new Error("NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME is not set");
