@@ -1,5 +1,6 @@
 import { CampaignFilm } from "@/components/home/CampaignFilm";
 import { HeroSlideshow } from "@/components/home/HeroSlideshow";
+import { MenswearShowcase } from "@/components/home/MenswearShowcase";
 import { NewsletterForm } from "@/components/home/NewsletterForm";
 import { ProductRail } from "@/components/home/ProductRail";
 import { ShopTheLook } from "@/components/home/ShopTheLook";
@@ -238,16 +239,14 @@ export default async function HomePage() {
 
       {men.length > 0 && (
         <div>
-          <CampaignBanner
+          <MenswearShowcase
+            figures={onePerStyle(men).filter(isCutout).slice(0, 7).map(figure)}
             title="Menswear"
             kicker={pieces(men.length)}
             note="Linen, Adire and Asọ́ọ̀kẹ, cut for the modern man."
             href="/men"
             linkLabel="Shop men"
-            publicId={HOME_MEDIA.departments.men.publicId}
-            alt=""
             field={HOME_MEDIA.departments.men.field}
-            side="right"
           />
           <Rail title="Menswear" href="/men" linkLabel="View all" cards={railCards(men)} />
         </div>

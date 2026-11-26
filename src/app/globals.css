@@ -967,3 +967,132 @@ body {
     width: 140% !important;
   }
 }
+
+/* ──────────────────────────────────────────────────────────────
+   MENSWEAR TURNTABLE: one piece centre stage, the next ones beside it, smaller and softer.
+   ────────────────────────────────────────────────────────────── */
+.menswear {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  height: 38rem;
+}
+@media (min-width: 768px) {
+  .menswear {
+    height: clamp(32rem, 46vw, 44rem);
+  }
+}
+.menswear-copy {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 5;
+  padding: 2.5rem 1.5rem 0;
+  text-align: center;
+}
+@media (min-width: 768px) {
+  .menswear-copy {
+    inset-inline: auto;
+    left: var(--gutter);
+    top: 50%;
+    width: 36%;
+    padding: 0;
+    text-align: left;
+    transform: translateY(-50%);
+  }
+}
+.menswear-stage {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: min(60vw, 17rem);
+  height: 62%;
+  margin-left: calc(min(60vw, 17rem) / -2);
+}
+@media (min-width: 768px) {
+  .menswear-stage {
+    left: 70%;
+    width: min(24vw, 22rem);
+    height: 94%;
+    margin-left: calc(min(24vw, 22rem) / -2);
+  }
+}
+.menswear-figure {
+  position: absolute;
+  inset: 0;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: bottom center;
+  transition: transform 900ms var(--ease-entrance), opacity 700ms var(--ease-entrance), filter 700ms var(--ease-entrance);
+}
+.menswear-figure[data-offset="0"] {
+  opacity: 1;
+  z-index: 3;
+  pointer-events: auto;
+  transform: none;
+}
+.menswear-figure[data-offset="1"],
+.menswear-figure[data-offset="-1"] {
+  opacity: 0.9;
+  z-index: 2;
+  pointer-events: auto;
+  filter: saturate(0.85) brightness(0.92);
+}
+.menswear-figure[data-offset="1"] {
+  transform: translate3d(78%, 0, 0) scale(0.74);
+}
+.menswear-figure[data-offset="-1"] {
+  transform: translate3d(-78%, 0, 0) scale(0.74);
+}
+.menswear-figure[data-offset="2"],
+.menswear-figure[data-offset="-2"] {
+  opacity: 0.45;
+  z-index: 1;
+  filter: saturate(0.6) brightness(0.85);
+}
+.menswear-figure[data-offset="2"] {
+  transform: translate3d(138%, 0, 0) scale(0.54);
+}
+.menswear-figure[data-offset="-2"] {
+  transform: translate3d(-138%, 0, 0) scale(0.54);
+}
+.menswear-figure[data-offset="3"] {
+  transform: translate3d(180%, 0, 0) scale(0.4);
+}
+.menswear-figure[data-offset="-3"] {
+  transform: translate3d(-180%, 0, 0) scale(0.4);
+}
+/* Phones: only the centre piece and its neighbours, closer in */
+@media (max-width: 767px) {
+  .menswear-figure[data-offset="1"] {
+    transform: translate3d(62%, 0, 0) scale(0.66);
+  }
+  .menswear-figure[data-offset="-1"] {
+    transform: translate3d(-62%, 0, 0) scale(0.66);
+  }
+  .menswear-figure[data-offset="2"],
+  .menswear-figure[data-offset="-2"] {
+    opacity: 0;
+  }
+}
+.menswear-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid currentColor;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity var(--dur-micro) var(--ease-entrance), background-color var(--dur-micro) var(--ease-entrance);
+}
+.menswear-arrow:hover {
+  opacity: 1;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .menswear-figure {
+    transition: opacity var(--dur-section) linear;
+  }
+}
