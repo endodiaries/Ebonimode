@@ -258,8 +258,16 @@ export function CheckoutForm({
         </button>
         <p className="mt-3 text-sm text-ink-soft">
           You will pay securely with Paystack: card, bank transfer or USSD. By paying you agree to our{" "}
+          <Link href="/terms" className="text-link">
+            terms of sale
+          </Link>
+          ,{" "}
           <Link href="/shipping-returns" className="text-link">
             delivery and returns policy
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy" className="text-link">
+            privacy policy
           </Link>
           .
         </p>

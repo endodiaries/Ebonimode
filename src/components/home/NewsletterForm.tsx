@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { subscribeToNewsletter, type NewsletterState } from "@/app/actions";
 
@@ -41,7 +42,11 @@ export function NewsletterForm() {
         {state.error}
       </p>
       <p id="newsletter-consent" className="text-base text-ink-soft">
-        By joining you agree to receive emails from Ebonímode. Unsubscribe at any time.
+        By joining you agree to receive emails from Ebonímode. Unsubscribe at any time. See our{" "}
+        <Link href="/privacy" className="text-link">
+          privacy policy
+        </Link>
+        .
       </p>
     </form>
   );

@@ -43,6 +43,8 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
       { label: "Size guide", href: "/size-guide" },
       { label: "Shipping & returns", href: "/shipping-returns" },
       { label: "FAQs", href: "/faqs" },
+      { label: "Privacy policy", href: "/privacy" },
+      { label: "Terms of sale", href: "/terms" },
     ],
   },
 ];
